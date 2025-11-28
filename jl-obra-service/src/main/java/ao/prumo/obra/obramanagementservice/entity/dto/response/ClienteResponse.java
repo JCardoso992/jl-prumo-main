@@ -2,7 +2,6 @@ package ao.prumo.obra.obramanagementservice.entity.dto.response;
 
 import ao.prumo.obra.obramanagementservice.entity.enums.EstadoCliente;
 import lombok.*;
-import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 

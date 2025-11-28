@@ -20,18 +20,17 @@ public interface  FuncionarioMapper
 
     // Mapeamento de Funcionario para FuncionarioResponse
     @Mapping(source = "id", target = "codFuncionario")
-    @Mapping(source = "agenciaId", target = "codAgencia")
-    @Mapping(source = "cargoId", target = "codCargo")
-    @Mapping(source = "organizacaoId", target = "codOrganizacao")
-    @Mapping(source = "pessoaId", target = "codPessoa")
+    @Mapping(source = "pessoaId", target = "codPessoa", qualifiedByName = "mapPessoaToResponse")
+    @Mapping(source = "agenciaId", target = "codAgencia", qualifiedByName = "mapAgenciaToResponse")
+    @Mapping(source = "cargoId", target = "mapCargoToResponse", qualifiedByName = "mapCargoToResponse")
     FuncionarioResponse toResponse(Funcionario entity);
 
     // Mapeamento de FuncionarioRequest para Funcionario
-    @Mapping(source = "codAgencia", target = "agenciaId")
+    /*@Mapping(source = "codAgencia", target = "agenciaId")
     @Mapping(source = "codCargo", target = "cargoId")
     @Mapping(source = "codOrganizacao", target = "organizacaoId")
     @Mapping(target = "pessoaId", source = "codPessoa") // Mapeamento do objeto aninhado
-    @Mapping(target = "keycloak_id", source = "keycloak_id")
+    @Mapping(target = "keycloak_id", source = "keycloak_id")*/
 
     // Ignorar as propriedades que são gerenciadas pelo JPA/BD
     @Mapping(target = "id", ignore = true)
@@ -71,4 +70,27 @@ public interface  FuncionarioMapper
         }
         return new Pessoa(pessoaRequest.getId());
     }*/
+    @Named("mapPessoaToResponse")
+    default PessoaResponse mapPessoaToResponse(Pessoa entity) {
+        if (entity == null) {
+            return null;
+        }
+        return PessoaMapper.INSTANCE.toResponse(entity);
+    }
+
+    @Named("mapAgenciaToResponse")
+    default AgenciaResponse mapAgenciaToResponse(Pessoa entity) {
+        if (entity == null) {
+            return null;
+        }
+        return AgenciaMapper.INSTANCE.toResponse(entity);
+    }
+
+    @Named("mapCargoToResponse")
+    default AgenciaResponse mapCargoToResponse(Pessoa entity) {
+        if (entity == null) {
+            return null;
+        }
+        return ACargoMapper.INSTANCE.toResponse(entity);
+    }
 }

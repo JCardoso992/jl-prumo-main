@@ -1,11 +1,10 @@
 package ao.prumo.obra.obramanagementservice.entity.dto.mapper;
 
-import ao.prumo.obra.obramanagementservice.entity.Cliente;
-import ao.prumo.obra.obramanagementservice.entity.Pessoa;
-import ao.prumo.obra.obramanagementservice.entity.dto.request.ClienteRequest;
-import ao.prumo.obra.obramanagementservice.entity.dto.request.PessoaRequest;
-import ao.prumo.obra.obramanagementservice.entity.dto.response.ClienteResponse;
-import ao.prumo.obra.obramanagementservice.entity.dto.response.PessoaResponse;
+import ao.prumo.obra.obramanagementservice.entity.VersaoProjeto;
+import ao.prumo.obra.obramanagementservice.entity.ProjetoArquitetonico;
+import ao.prumo.obra.obramanagementservice.entity.dto.request.VersaoProjetoRequest;
+import ao.prumo.obra.obramanagementservice.entity.dto.response.VersaoProjetoResponse;
+import ao.prumo.obra.obramanagementservice.entity.dto.response.ProjetoArquitetonicoResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -14,19 +13,19 @@ import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = {PessoaMapper.class},
+@Mapper(componentModel = "spring", uses = {ProjetoArquitetonicoMapper.class},
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
-public interface ClienteMapper
+public interface VersaoProjetoMapper
 {
-    ClienteMapper INSTANCE = Mappers.getMapper(ClienteMapper.class);
+    VersaoProjetoMapper INSTANCE = Mappers.getMapper(VersaoProjetoMapper.class);
 
-    // Mapeamento de Cliente para ClienteResponse
+    // Mapeamento de VersaoProjeto para VersaoProjetoResponse
     @Mapping(source = "id", target = "codCliente")
-    @Mapping(source = "pessoaId", target = "codPessoa", qualifiedByName = "mapPessoaToResponse")
-    ClienteResponse toResponse(Cliente entity);
+    @Mapping(source = "projetoArquitetonicoId", target = "codProjetoArquitetonico", qualifiedByName = "mapProjetoArquitetonicoToResponse")
+    VersaoProjetoResponse toResponse(VersaoProjeto entity);
 
-    // Mapeamento de ClienteRequest para Cliente
+    // Mapeamento de VersaoProjetoRequest para VersaoProjeto
     //@Mapping(source = "codPessoaId", target = "pessoaId", qualifiedByName = "mapPessoaRequestToEntity")
     // Ignorar as propriedades que são gerenciadas pelo JPA/BD
     @Mapping(target = "id", ignore = true)
@@ -34,9 +33,9 @@ public interface ClienteMapper
     @Mapping(target = "lastModifiedData", ignore = true)
     @Mapping(target = "createdBy", ignore = true)
     @Mapping(target = "lastModifiedBy", ignore = true)
-    Cliente toEntity(ClienteRequest req);
+    VersaoProjeto toEntity(VersaoProjetoRequest req);
 
-    List<ClienteResponse> listToResponse(List<Cliente> clientes);
+    List<VersaoProjetoResponse> listToResponse(List<VersaoProjeto> veroesProjeto);
 
     // Método para mapear PessoaRequest para Pessoa (usado nos mapeamentos acima)
     /*@Named("mapPessoaRequestToEntity")
@@ -48,12 +47,12 @@ public interface ClienteMapper
     }*/
 
     // Método para mapear Pessoa para PessoaResponse (usado nos mapeamentos acima)
-    @Named("mapPessoaToResponse")
-    default PessoaResponse mapPessoaToResponse(Pessoa entity) {
+    @Named("mapProjetoArquitetonicoToResponse")
+    default ProjetoArquitetonicoResponse mapPessoaToResponse(ProjetoArquitetonico entity) {
         if (entity == null) {
             return null;
         }
-        return PessoaMapper.INSTANCE.toResponse(entity);
+        return ProjetoArquitetonicoMapper.INSTANCE.toResponse(entity);
     }
 
 }

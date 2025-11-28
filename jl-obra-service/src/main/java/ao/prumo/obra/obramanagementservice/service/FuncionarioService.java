@@ -78,7 +78,7 @@ public class FuncionarioService extends BaseService<Funcionario, UUID> {
         // 3. Salvar o Funcionário
         //Funcionario funcionario = funcionarioMapper.toEntity(request);
         //funcionario.setPessoaId(pessoaSalva); // Associa a pessoa recém-criada
-       // FuncionarioResponse response = funcionarioMapper.toResponse(repository.save(funcionario));
+        // FuncionarioResponse response = funcionarioMapper.toResponse(repository.save(funcionario));
         FuncionarioResponse response = new FuncionarioResponse();
         return response;
     }

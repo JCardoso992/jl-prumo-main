@@ -1,8 +1,6 @@
 package ao.prumo.obra.obramanagementservice.entity.dto.response;
 
-import ao.prumo.obra.obramanagementservice.entity.*;
 import ao.prumo.obra.obramanagementservice.entity.enums.TipoContrato;
-import ao.prumo.obra.obramanagementservice.utils.base.BaseEntityResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,7 +27,6 @@ public class FuncionarioResponse
     private TipoContrato tipoContrato;
     private AgenciaResponse codAgencia;
     private CargoResponse codCargo;
-    private OrganizacaoResponse codOrganizacao;
     private PessoaResponse codPessoa;
 
 }

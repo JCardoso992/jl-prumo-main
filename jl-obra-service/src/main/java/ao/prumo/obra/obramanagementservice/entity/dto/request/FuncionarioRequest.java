@@ -43,7 +43,6 @@ public class FuncionarioRequest
     // IDs para entidades que já devem existir
     private UUID codAgencia;
     private UUID codCargo;
-    private UUID codOrganizacao;
     private UUID keycloak_id;
 
     // Objeto aninhado para criar uma nova Pessoa junto com o Funcionário
