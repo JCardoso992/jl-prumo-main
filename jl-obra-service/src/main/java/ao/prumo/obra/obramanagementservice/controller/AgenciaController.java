@@ -5,6 +5,7 @@ import ao.prumo.obra.obramanagementservice.entity.dto.request.AgenciaRequest;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.AgenciaResponse;
 import ao.prumo.obra.obramanagementservice.service.AgenciaService;
 import ao.prumo.obra.obramanagementservice.utils.globalConstantes.Constante;
+import ao.prumo.obra.obramanagementservice.utils.http.ResponseHttpBuilder;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -32,77 +33,86 @@ public class AgenciaController
     @Autowired
     private AgenciaService service;
 
-    @Operation(summary = "Lista de agências paginadas")
-    @ApiResponse(responseCode = "200", description = "Lista de agências encontradas páginadas")
-    @GetMapping("/pages/{id}")
-    public ResponseEntity<HashMap> listaDeAgencias(
-            @RequestParam(name = "page", defaultValue = "0", required = false) int page,
-            @RequestParam(name = "size", defaultValue = "12", required = false) int size,
-            @PathVariable("id") Integer id
-    ){
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Agencia> agenciaPage = service.findAll(pageable);
-        AgenciaResponse response = new AgenciaResponse();
-        return ResponseEntity.ok(response.paginar(agenciaPage));
-    }
-
-    @Operation(summary = "Lista de agências")
-    @ApiResponse(responseCode = "200", description = "Lista de agências encontradas")
-    @GetMapping("/{id}")
-    public ResponseEntity<?> listaDeAgencias(@PathVariable("id") UUID id)
-    {
-        List<Agencia> agenciaPage = service.findAll();
-        AgenciaResponse response = new AgenciaResponse();
-        return ResponseEntity.ok(response.listToDTO(agenciaPage));
-    }
-
-    @Operation(summary = "Pesquisar determinada agência")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Agência encontrada"),
-            @ApiResponse(responseCode = "404", description = "Agência não encontrada")
-    })
-    @GetMapping("/pesquisar/{id}")
-    public ResponseEntity<?> pesguisarAgenciaById(@PathVariable("id") UUID id)
-    {
-        Agencia agencia = service.findById(id);
-        AgenciaResponse response = new AgenciaResponse();
-        return ResponseEntity.ok(response.convertToDTO(agencia));
-    }
+    // =========================================================================
+    // 1. CREATE (POST) - Criar uma nova Agência
+    // =========================================================================
 
     @Operation(summary = "Criar uma nova agência")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Agência criada com sucesso"),
-           @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
+            @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<AgenciaResponse> criarAgencia(@Valid @RequestBody AgenciaRequest request) {
-        Agencia novaAgencia = service.save(request.convertToEntity());
-        AgenciaResponse response = new AgenciaResponse().convertToDTO(novaAgencia);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    public ResponseEntity<?> criarAgencia(@Valid @RequestBody AgenciaRequest request) {
+        AgenciaResponse response = service.criarAgencia(request);
+        // Usa o builder para padronizar a resposta HTTP 201 CREATED
+        return ResponseHttpBuilder.created("Agência criada com sucesso.", response);
     }
 
-    @Operation(summary = "Atualizar agência existente")
+    // =========================================================================
+    // 2. READ (GET) - Listar todas as Agências (Paginado)
+    // =========================================================================
+
+    @Operation(summary = "Listar todas as agências (com paginação)")
+    @ApiResponse(responseCode = "200", description = "Lista de agências encontrada")
+    @GetMapping
+    public ResponseEntity<?> listaDeAgencias(
+            @RequestParam(name = "page", defaultValue = "0", required = false) int page,
+            @RequestParam(name = "size", defaultValue = "12", required = false) int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        // O método findAll retorna um HashMap com dados paginados
+        //HashMap<String, Object> dadosPaginados = service.findAll(pageable);
+
+        // Usa o builder para padronizar a resposta HTTP 200 OK
+        return null;//ResponseHttpBuilder.info("Lista de agências recuperada com sucesso.", dadosPaginados);
+    }
+
+    // 2. READ (GET) - Buscar por ID
+
+    @Operation(summary = "Buscar agência por ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Agência encontrada"),
+            @ApiResponse(responseCode = "404", description = "Agência não encontrada")
+    })
+    @GetMapping("/{id}")
+    public ResponseEntity<?> buscarAgenciaPorId(@PathVariable UUID id) {
+        //AgenciaResponse response = service.buscarPorId(id);
+        // Usa o builder para padronizar a resposta HTTP 200 OK
+        return null;//ResponseHttpBuilder.info("Agência recuperada com sucesso.", response);
+    }
+
+    // =========================================================================
+    // 3. UPDATE (PUT) - Atualizar uma Agência
+    // =========================================================================
+
+    @Operation(summary = "Atualizar uma agência existente")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Agência atualizada com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Agência não encontrada")
+            @ApiResponse(responseCode = "404", description = "Agência não encontrada"),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<AgenciaResponse> atualizarAgencia(@PathVariable UUID id, @Valid @RequestBody AgenciaRequest request) {
-        Agencia agenciaAtualizada = service.update(id, request.convertToEntity());
-        AgenciaResponse response = new AgenciaResponse().convertToDTO(agenciaAtualizada);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<?> atualizarAgencia(@PathVariable UUID id, @Valid @RequestBody AgenciaRequest request) {
+        AgenciaResponse response = service.alterarAgencia(id, request);
+        // Usa o builder para padronizar a resposta HTTP 200 OK
+        return ResponseHttpBuilder.info("Agência atualizada com sucesso.", response);
     }
 
-    @Operation(summary = "Eliminar agência existente")
+    // =========================================================================
+    // 4. DELETE (DELETE) - Excluir uma Agência
+    // =========================================================================
+
+    @Operation(summary = "Apagar uma agência pelo ID")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Agência eliminada com sucesso"),
+            @ApiResponse(responseCode = "204", description = "Agência apagada com sucesso"),
             @ApiResponse(responseCode = "404", description = "Agência não encontrada")
     })
-    @PutMapping("/eliminar/{id}")
-    public ResponseEntity<AgenciaResponse> eliminarAgencia(@PathVariable UUID id, @Valid @RequestBody AgenciaRequest request) {
-        Agencia agenciaAtualizada = service.update(id, request.convertToEntity());
-        AgenciaResponse response = new AgenciaResponse().convertToDTO(agenciaAtualizada);
-        return ResponseEntity.ok(response);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> excluirAgencia(@PathVariable UUID id) {
+        service.excluirAgencia(id);
+        // Retorna 204 No Content (sem corpo)
+        return ResponseEntity.noContent().build();
     }
 }

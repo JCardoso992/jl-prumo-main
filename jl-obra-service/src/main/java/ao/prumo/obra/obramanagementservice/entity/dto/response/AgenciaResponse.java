@@ -17,5 +17,6 @@ public class AgenciaResponse
     private String abreviacao;
     private String descricao;
     private Boolean status;
+    private String arquivoPath;
 
 }

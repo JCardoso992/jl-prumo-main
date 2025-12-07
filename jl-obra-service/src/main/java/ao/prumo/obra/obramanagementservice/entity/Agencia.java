@@ -26,8 +26,8 @@ public class Agencia extends BaseAuditingEntity
     private String abreviacao;
     @Column(name = "descricao", columnDefinition = "TEXT")
     private String descricao;
-    @Column(name = "status")
-    private Boolean status;
+    @Column(name = "arquivo_path", columnDefinition = "TEXT")
+    private String arquivoPath;
 
     public Agencia(UUID codAgencia) {
         this.id = codAgencia;

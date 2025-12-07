@@ -2,6 +2,8 @@ package ao.prumo.obra.obramanagementservice.utils.exception;
 
 import ao.prumo.obra.obramanagementservice.utils.http.ResponseHttp;
 import ao.prumo.obra.obramanagementservice.utils.http.ResponseHttpBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -18,7 +20,7 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class RestExceptionHandler
 {
-
+  private static final Logger log = LoggerFactory.getLogger(RestExceptionHandler.class);
   // Manipulador para a exceção de recurso não encontrado
   @ExceptionHandler(ResourceNotFoundException.class)
   public ResponseEntity<ResponseHttp> handleResourceNotFoundException(ResourceNotFoundException ex, WebRequest request) {
@@ -37,6 +39,8 @@ public class RestExceptionHandler
     String errorDetails = ex.getBindingResult().getFieldErrors().stream()
             .map(fieldError -> "'" + fieldError.getField() + "': " + fieldError.getDefaultMessage())
             .collect(Collectors.joining(", "));
+    log.error("Erro inesperado na URI: {}. Detalhe: {}", request.getDescription(false).replace("uri=", ""), ex.getMessage(), ex);
+
 
     return ResponseHttpBuilder.build(
             HttpStatus.BAD_REQUEST,
@@ -48,8 +52,8 @@ public class RestExceptionHandler
   // Manipulador genérico para qualquer outra exceção não tratada
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ResponseHttp> handleGlobalException(Exception ex, WebRequest request) {
-    // É importante logar a exceção completa no servidor para depuração
-    // log.error("Erro não tratado na requisição {}: {}", request.getDescription(false), ex);
+    // Isso será gravado nos arquivos de log (FILE e ERROR_FILE)
+    log.error("Erro inesperado na URI: {}. Detalhe: {}", request.getDescription(false).replace("uri=", ""), ex.getMessage(), ex);
 
     return ResponseHttpBuilder.build(
             HttpStatus.INTERNAL_SERVER_ERROR,
