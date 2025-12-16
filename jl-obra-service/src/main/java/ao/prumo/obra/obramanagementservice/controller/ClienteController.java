@@ -5,6 +5,7 @@ import ao.prumo.obra.obramanagementservice.entity.dto.request.ClienteRequest;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.ClienteResponse;
 import ao.prumo.obra.obramanagementservice.service.ClienteService;
 import ao.prumo.obra.obramanagementservice.utils.globalConstantes.Constante;
+import ao.prumo.obra.obramanagementservice.utils.http.ResponseHttpBuilder;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -29,80 +30,95 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ClienteController
 {
-    @Autowired
-    private ClienteService service;
+    private final ClienteService service;
 
-    @Operation(summary = "Lista de clientes paginados")
-    @ApiResponse(responseCode = "200", description = "Lista de clientes encontrados páginados")
-    @GetMapping("/pages/{id}")
-    public ResponseEntity<HashMap> listaDeClientes(
-            @RequestParam(name = "page", defaultValue = "0", required = false) int page,
-            @RequestParam(name = "size", defaultValue = "12", required = false) int size,
-            @PathVariable("id") Integer id
-    ){
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Cliente> ClientePage = service.findAll(pageable);
-        ClienteResponse response = new ClienteResponse();
-        return ResponseEntity.ok(response.paginar(ClientePage));
-    }
+    // =========================================================================
+    // 1. CREATE (POST) - Criar Novo Cliente
+    // =========================================================================
 
-    @Operation(summary = "Lista de clientes")
-    @ApiResponse(responseCode = "200", description = "Lista de clientes encontrados")
-    @GetMapping("/{id}")
-    public ResponseEntity<?> listaDeClientes(@PathVariable("id") UUID id)
-    {
-        List<Cliente> ClientePage = service.findAll();
-        ClienteResponse response = new ClienteResponse();
-        return ResponseEntity.ok(response.listToDTO(ClientePage));
-    }
-
-    @Operation(summary = "Pesquisar determinada cliente")
+    @Operation(summary = "Cria um novo cliente no sistema")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Cliente encontrada"),
-            @ApiResponse(responseCode = "404", description = "Cliente não encontrada")
-    })
-    @GetMapping("/pesquisar/{id}")
-    public ResponseEntity<?> pesguisarClienteById(@PathVariable("id") UUID id)
-    {
-        Cliente Cliente = service.findById(id);
-        ClienteResponse response = new ClienteResponse();
-        return ResponseEntity.ok(response.convertToDTO(Cliente));
-    }
-
-    @Operation(summary = "Criar uma novo cliente")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Cliente criado com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
+            @ApiResponse(responseCode = "201", description = "Cliente criado com sucesso."),
+            @ApiResponse(responseCode = "400", description = "Dados de entrada inválidos (erro de validação).")
     })
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<ClienteResponse> criarCliente(@Valid @RequestBody ClienteRequest request) {
-        Cliente novaCliente = service.save(request.convertToEntity());
-        ClienteResponse response = new ClienteResponse().convertToDTO(novaCliente);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    public ResponseEntity<?> criarCliente(@Valid @RequestBody ClienteRequest request) {
+        ClienteResponse response = service.criarCliente(request);
+        // Utiliza o ResponseHttpBuilder para retornar 201 CREATED
+        return ResponseHttpBuilder.created("Cliente criado com sucesso.", response);
     }
 
-    @Operation(summary = "Atualizar cliente existente")
+    // =========================================================================
+    // 2. READ (GET) - Listar Todos (Paginado)
+    // =========================================================================
+
+   /* @Operation(summary = "Lista todos os clientes com paginação")
+    @ApiResponse(responseCode = "200", description = "Lista de clientes recuperada com sucesso.")
+    @GetMapping
+    public ResponseEntity<?> listaDeClientes(
+            @RequestParam(name = "page", defaultValue = "0", required = false) int page,
+            @RequestParam(name = "size", defaultValue = "12", required = false) int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        // Assumindo que o BaseService.findAll(Pageable) retorna o HashMap paginado
+        HashMap<String, Object> dadosPaginados = service.findAll(pageable);
+
+        // Utiliza o ResponseHttpBuilder para retornar 200 OK
+        return ResponseHttpBuilder.info("Lista de clientes recuperada.", dadosPaginados);
+    }
+
+    // 2. READ (GET) - Buscar por ID
+
+    @Operation(summary = "Busca um cliente pelo ID")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Cliente atualizado com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Cliente não encontrado")
+            @ApiResponse(responseCode = "200", description = "Cliente encontrado."),
+            @ApiResponse(responseCode = "404", description = "Cliente não encontrado.")
+    })
+    @GetMapping("/{id}")
+    public ResponseEntity<?> buscarClientePorId(@PathVariable UUID id) {
+        // Você precisará de um método findById ou similar no ClienteService que retorne o DTO.
+        // Assumindo que você o implementou:
+        // ClienteResponse response = service.buscarPorId(id);
+
+        // Para usar a estrutura existente que herda do BaseService:
+        Cliente cliente = service.findById(id);
+        ClienteResponse response = service.getClienteMapper().toResponse(cliente);
+
+        // Utiliza o ResponseHttpBuilder para retornar 200 OK
+        return ResponseHttpBuilder.info("Cliente recuperado com sucesso.", response);
+    }*/
+
+    // =========================================================================
+    // 3. UPDATE (PUT) - Atualizar Cliente
+    // =========================================================================
+
+    @Operation(summary = "Atualiza os dados de um cliente existente")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Cliente atualizado com sucesso."),
+            @ApiResponse(responseCode = "400", description = "Dados de entrada inválidos."),
+            @ApiResponse(responseCode = "404", description = "Cliente não encontrado.")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<ClienteResponse> atualizarCliente(@PathVariable UUID id, @Valid @RequestBody ClienteRequest request) {
-        Cliente ClienteAtualizada = service.update(id, request.convertToEntity());
-        ClienteResponse response = new ClienteResponse().convertToDTO(ClienteAtualizada);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<?> atualizarCliente(@PathVariable UUID id, @Valid @RequestBody ClienteRequest request) {
+        ClienteResponse response = service.alterarCliente(id, request);
+        // Utiliza o ResponseHttpBuilder para retornar 200 OK
+        return ResponseHttpBuilder.info("Cliente atualizado com sucesso.", response);
     }
 
-    @Operation(summary = "Eliminar cliente existente")
+    // =========================================================================
+    // 4. DELETE (DELETE) - Excluir Cliente
+    // =========================================================================
+
+    @Operation(summary = "Apaga um cliente pelo ID")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Cliente eliminado com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Cliente não encontrado")
+            @ApiResponse(responseCode = "204", description = "Cliente apagado com sucesso."),
+            @ApiResponse(responseCode = "404", description = "Cliente não encontrado.")
     })
-    @PutMapping("/eliminar/{id}")
-    public ResponseEntity<ClienteResponse> eliminarCliente(@PathVariable UUID id, @Valid @RequestBody ClienteRequest request) {
-        Cliente ClienteAtualizada = service.update(id, request.convertToEntity());
-        ClienteResponse response = new ClienteResponse().convertToDTO(ClienteAtualizada);
-        return ResponseEntity.ok(response);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> excluirCliente(@PathVariable UUID id) {
+        service.excluirCliente(id);
+        // Retorna o status 204 No Content, que é o padrão para DELETE bem-sucedido sem corpo.
+        return ResponseEntity.noContent().build();
     }
 }
