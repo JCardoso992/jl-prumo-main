@@ -25,7 +25,7 @@ public interface DespesaMapper
     DespesaResponse toResponse(Despesa entity);
 
     // Mapeamento de DespesaRequest para Despesa
-    @Mapping(source = "codDespesaPai", target = "despesaPaiId", qualifiedByName = "mapDespesaRequestToEntity")
+    @Mapping(source = "codDespesaPai", target = "despesaPaiId", qualifiedByName = "mapCodDespesaRequestToEntity")
     // Ignorar as propriedades que são gerenciadas pelo JPA/BD
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdDate", ignore = true)
@@ -37,12 +37,9 @@ public interface DespesaMapper
     List<DespesaResponse> listToResponse(List<Despesa> pessoas);
 
     // Método para mapear DespesaRequest para Despesa (usado nos mapeamentos acima)
-    @Named("mapDespesaRequestToEntity")
-    default Despesa mapDespesaRequestToEntity(DespesaRequest request) {
-        if (request == null) {
-            return null;
-        }
-        return DespesaMapper.INSTANCE.toEntity(request);
+    @Named("mapCodDespesaRequestToEntity")
+    default Despesa mapDespesaRequestToEntity(UUID id) {
+        return id == null ? null : new Despesa(id);
     }
     // Método para mapear Despesa para DespesaResponse (usado nos mapeamentos acima)
     @Named("mapDespesaResponse")

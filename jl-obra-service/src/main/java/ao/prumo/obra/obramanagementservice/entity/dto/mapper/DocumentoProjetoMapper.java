@@ -35,6 +35,16 @@ public interface DocumentoProjetoMapper
             return null;
         }
         return FuncionarioMapper.INSTANCE.toResponse(entity);
+        /*
+        // ========================= AUX METHOD =========================
+        @Named("mapFuncionarioIdToEntity")
+        default Funcionario mapFuncionarioIdToEntity(UUID id) {
+            if (id == null) return null;
+            Funcionario funcionario = new Funcionario();
+            funcionario.setId(id);
+            return funcionario;
+        }
+        */
     }
 
 }

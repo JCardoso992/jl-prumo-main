@@ -29,11 +29,23 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class DespesaController
 {
-    @Autowired
+   
     private DespesaService service;
 
-    @Operation(summary = "Lista de despesas paginadas")
-    @ApiResponse(responseCode = "200", description = "Lista de despesas encontradas páginadas")
+    @Operation(summary = "Criar uma nova despesa")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Despesa criada com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
+    })
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<?> criarDespesa(@Valid @RequestBody DespesaRequest request) {
+        DespesaResponse response = service.criarDespesa(request);
+        return ResponseHttpBuilder.created("Despesa criada com sucesso.", response);
+    }
+
+    @Operation(summary = "Listar despesas (paginado)")
+    @ApiResponse(responseCode = "200", description = "Lista encontrada")
     @GetMapping("/pages/{id}")
     public ResponseEntity<HashMap> listaDeDespesas(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
@@ -41,9 +53,16 @@ public class DespesaController
             @PathVariable("id") Integer id
     ){
         Pageable pageable = PageRequest.of(page, size);
-        Page<Despesa> DespesaPage = service.findAll(pageable);
-        DespesaResponse response = new DespesaResponse();
-        return ResponseEntity.ok(response.paginar(DespesaPage));
+        Page<DespesaResponse> result = service.listar(pageable);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("content", result.getContent());
+        response.put("page", result.getNumber());
+        response.put("size", result.getSize());
+        response.put("totalElements", result.getTotalElements());
+        response.put("totalPages", result.getTotalPages());
+
+        return ResponseHttpBuilder.info("Lista de despesas recuperada com sucesso.", response);
     }
 
     @Operation(summary = "Lista de despesas")
@@ -56,54 +75,42 @@ public class DespesaController
         return ResponseEntity.ok(response.listToDTO(DespesaPage));
     }
 
-    @Operation(summary = "Pesquisar determinada despesa")
+    // =========================================================================
+    // READ - BY ID
+    // =========================================================================
+    @Operation(summary = "Buscar despesa por ID")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Despesa encontrada"),
             @ApiResponse(responseCode = "404", description = "Despesa não encontrada")
     })
-    @GetMapping("/Despesa/{id}")
-    public ResponseEntity<?> pesguisarDespesaById(@PathVariable("id") UUID id)
-    {
-        Despesa Despesa = service.findById(id);
-        DespesaResponse response = new DespesaResponse();
-        return ResponseEntity.ok(response.convertToDTO(Despesa));
+    @GetMapping("/{id}")
+    public ResponseEntity<?> buscarPorId(@PathVariable UUID id) {
+        DespesaResponse response = service.buscarPorId(id);
+        return ResponseHttpBuilder.info("Despesa recuperada com sucesso.", response);
     }
 
-    @Operation(summary = "Criar uma nova despesa")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Despesa criada com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
-    })
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<DespesaResponse> criarDespesa(@Valid @RequestBody DespesaRequest request) {
-        Despesa novaDespesa = service.save(request.convertToEntity());
-        DespesaResponse response = new DespesaResponse().convertToDTO(novaDespesa);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
-    }
 
-    @Operation(summary = "Atualizar despesa existente")
+    @Operation(summary = "Atualizar despesa")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Despesa atualizada com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Despesa não encontrada")
+            @ApiResponse(responseCode = "404", description = "Despesa não encontrada"),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<DespesaResponse> atualizarDespesa(@PathVariable UUID id, @Valid @RequestBody DespesaRequest request) {
-        Despesa DespesaAtualizada = service.update(id, request.convertToEntity());
-        DespesaResponse response = new DespesaResponse().convertToDTO(DespesaAtualizada);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<?> atualizarDespesa(@PathVariable UUID id, @Valid @RequestBody DespesaRequest request) {
+        DespesaResponse response = service.atualizar(id, request);
+        return ResponseHttpBuilder.info("Despesa atualizada com sucesso.", response);
     }
 
-    @Operation(summary = "Eliminar despesa existente")
+    @Operation(summary = "Eliminar despesa")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Despesa eliminada com sucesso"),
             @ApiResponse(responseCode = "404", description = "Despesa não encontrada")
     })
-    @PutMapping("/eliminar/{id}")
-    public ResponseEntity<DespesaResponse> eliminarDespesa(@PathVariable UUID id, @Valid @RequestBody DespesaRequest request) {
-        Despesa DespesaAtualizada = service.update(id, request.convertToEntity());
-        DespesaResponse response = new DespesaResponse().convertToDTO(DespesaAtualizada);
-        return ResponseEntity.ok(response);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> eliminarDespesa(@PathVariable UUID id) {
+        service.excluir(id);
+        return ResponseEntity.noContent().build();
     }
 }
 

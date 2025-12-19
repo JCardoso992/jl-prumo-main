@@ -23,11 +23,11 @@ public interface ContaOrganizacaoMapper
 
     // Mapeamento de ContaOrganizacao para ContaOrganizacaoResponse
     @Mapping(source = "id", target = "codContaOrganizacao")
-    @Mapping(source = "agenciaId", target = "codContaOrganizacao", qualifiedByName = "mapAgenciaToResponse")
+    @Mapping(source = "agenciaId", target = "codAgencia", qualifiedByName = "mapAgenciaToResponse")
     ContaOrganizacaoResponse toResponse(ContaOrganizacao entity);
 
     // Mapeamento de ContaOrganizacaoRequest para ContaOrganizacao
-    @Mapping(source = "codAgencia", target = "agenciaId", qualifiedByName = "mapCodContaOrganizacaoToEntity")
+    //@Mapping(source = "codAgencia", target = "agenciaId", qualifiedByName = "mapCodAgenciaToEntity")
     // Ignorar as propriedades que são gerenciadas pelo JPA/BD
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdDate", ignore = true)
@@ -39,8 +39,8 @@ public interface ContaOrganizacaoMapper
     List<ContaOrganizacaoResponse> listToResponse(List<ContaOrganizacao> contasDaOrganicacao);
 
     // Métodos auxiliares para converter IDs para entidades
-    @Named("mapCodContaOrganizacaoToEntity")
-    default Agencia mapCodContaOrganizacaoToEntity(UUID id) {
+    @Named("mapCodAgenciaToEntity")
+    default Agencia mapCodAgenciaToEntity(UUID id) {
         if (id == null) {
             return null;
         }

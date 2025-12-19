@@ -23,16 +23,28 @@ import java.util.HashMap;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(Constante.ROUTE + "/documento")
-@Tag(name="Documento do Projeto", description="Gestão de obras/projetos, documento de projetos associados")
+@RequestMapping(Constante.ROUTE + "/documento-projeto")
+@Tag(name="DocumentoProjeto", description="Gestão de obras/projetos, documento de projetos associados")
 @RequiredArgsConstructor
 public class DocumentoProjetoController
 {
-    @Autowired
+
     private DocumentoProjetoService service;
 
-    @Operation(summary = "Lista de documentos de projeto paginados")
-    @ApiResponse(responseCode = "200", description = "Lista de documentos de projeto encontrados páginados")
+    @Operation(summary = "Criar um novo documento de projeto")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Documento de projeto criado com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
+    })
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<DocumentoProjetoResponse> criarDocumentoProjeto(@Valid @RequestBody DocumentoProjetoRequest request) {
+        DocumentoProjetoResponse response = service.criarDocumentoProjeto(request);
+        return ResponseHttpBuilder.created("Documento do projeto criado com sucesso.", response);
+    }
+
+    @Operation(summary = "Listar documentos do projeto (paginado)")
+    @ApiResponse(responseCode = "200", description = "Lista encontrada")
     @GetMapping("/pages/{organizacao}/{projeto}")
     public ResponseEntity<HashMap> listaDeDocumentoProjetos(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
@@ -41,9 +53,16 @@ public class DocumentoProjetoController
             @PathVariable("projeto") Integer projeto
     ){
         Pageable pageable = PageRequest.of(page, size);
-        Page<DocumentoProjeto> DocumentoProjetoPage = service.findAll(pageable);
-        DocumentoProjetoResponse response = new DocumentoProjetoResponse();
-        return ResponseEntity.ok(response.paginar(DocumentoProjetoPage));
+        Page<DocumentoProjetoResponse> result = service.listar(pageable);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("content", result.getContent());
+        response.put("page", result.getNumber());
+        response.put("size", result.getSize());
+        response.put("totalElements", result.getTotalElements());
+        response.put("totalPages", result.getTotalPages());
+
+        return ResponseHttpBuilder.info("Lista de documentos recuperada com sucesso.", response);
     }
 
     /* @Operation(summary = "Lista de agências")
@@ -56,7 +75,7 @@ public class DocumentoProjetoController
         return ResponseEntity.ok(response.listToDTO(DocumentoProjetoPage));
     }*/
 
-    @Operation(summary = "Pesquisar determinada documento do projeto")
+    @Operation(summary = "Buscar documento do projeto por ID")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Documento de projeto encontrada"),
             @ApiResponse(responseCode = "404", description = "Documento de projeto não encontrada")
@@ -64,45 +83,31 @@ public class DocumentoProjetoController
     @GetMapping("/pesquisar/{id}")
     public ResponseEntity<?> pesguisarDocumentoProjetoById(@PathVariable("id") UUID id)
     {
-        DocumentoProjeto DocumentoProjeto = service.findById(id);
-        DocumentoProjetoResponse response = new DocumentoProjetoResponse();
-        return ResponseEntity.ok(response.convertToDTO(DocumentoProjeto));
+        DocumentoProjetoResponse response = service.buscarPorId(id);
+        return ResponseHttpBuilder.info("Documento recuperado com sucesso.", response);
     }
 
-    @Operation(summary = "Criar um novo documento de projeto")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Documento de projeto criado com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
-    })
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<DocumentoProjetoResponse> criarDocumentoProjeto(@Valid @RequestBody DocumentoProjetoRequest request) {
-        DocumentoProjeto novaDocumentoProjeto = service.save(request.convertToEntity());
-        DocumentoProjetoResponse response = new DocumentoProjetoResponse().convertToDTO(novaDocumentoProjeto);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
-    }
+    
 
-    @Operation(summary = "Atualizar documento de projeto existente")
+    @Operation(summary = "Atualizar documento de projeto")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Documento de projeto atualizado com sucesso"),
             @ApiResponse(responseCode = "404", description = "Documento de projeto não encontrado")
     })
     @PutMapping("/{id}")
     public ResponseEntity<DocumentoProjetoResponse> atualizarDocumentoProjeto(@PathVariable UUID id, @Valid @RequestBody DocumentoProjetoRequest request) {
-        DocumentoProjeto DocumentoProjetoAtualizada = service.update(id, request.convertToEntity());
-        DocumentoProjetoResponse response = new DocumentoProjetoResponse().convertToDTO(DocumentoProjetoAtualizada);
-        return ResponseEntity.ok(response);
+        DocumentoProjetoResponse response = service.atualizar(id, request);
+        return ResponseHttpBuilder.info("Documento atualizado com sucesso.", response);
     }
 
-    @Operation(summary = "Eliminar documento de projeto existente")
+    @Operation(summary = "Eliminar documento de projeto")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Documento de projeto eliminado com sucesso"),
+            @ApiResponse(responseCode = "204", description = "Documento de projeto eliminado com sucesso"),
             @ApiResponse(responseCode = "404", description = "Documento de projeto não encontrado")
     })
-    @PutMapping("/eliminar/{id}")
-    public ResponseEntity<DocumentoProjetoResponse> eliminarDocumentoProjeto(@PathVariable UUID id, @Valid @RequestBody DocumentoProjetoRequest request) {
-        DocumentoProjeto DocumentoProjetoAtualizada = service.update(id, request.convertToEntity());
-        DocumentoProjetoResponse response = new DocumentoProjetoResponse().convertToDTO(DocumentoProjetoAtualizada);
-        return ResponseEntity.ok(response);
+    @DeleteMapping("/eliminar/{id}")
+    public ResponseEntity<DocumentoProjetoResponse> eliminarDocumentoProjeto(@PathVariable UUID id) {
+        service.excluir(id);
+        return ResponseEntity.noContent().build();
     }
 }

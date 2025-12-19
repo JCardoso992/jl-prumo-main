@@ -30,7 +30,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AgenciaController
 {
-    @Autowired
     private AgenciaService service;
 
     // =========================================================================
@@ -60,13 +59,17 @@ public class AgenciaController
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
             @RequestParam(name = "size", defaultValue = "12", required = false) int size
     ) {
-        Pageable pageable = PageRequest.of(page, size);
+         Pageable pageable = PageRequest.of(page, size);
+         Page<AgenciaResponse> result = service.listar(pageable);
 
-        // O método findAll retorna um HashMap com dados paginados
-        //HashMap<String, Object> dadosPaginados = service.findAll(pageable);
+         Map<String, Object> response = new HashMap<>();
+         response.put("content", result.getContent());
+         response.put("page", result.getNumber());
+         response.put("size", result.getSize());
+         response.put("totalElements", result.getTotalElements());
+         response.put("totalPages", result.getTotalPages());
 
-        // Usa o builder para padronizar a resposta HTTP 200 OK
-        return null;//ResponseHttpBuilder.info("Lista de agências recuperada com sucesso.", dadosPaginados);
+         return ResponseHttpBuilder.info("Lista de agências recuperada com sucesso.", response);
     }
 
     // 2. READ (GET) - Buscar por ID
@@ -78,16 +81,15 @@ public class AgenciaController
     })
     @GetMapping("/{id}")
     public ResponseEntity<?> buscarAgenciaPorId(@PathVariable UUID id) {
-        //AgenciaResponse response = service.buscarPorId(id);
-        // Usa o builder para padronizar a resposta HTTP 200 OK
-        return null;//ResponseHttpBuilder.info("Agência recuperada com sucesso.", response);
+        AgenciaResponse response = service.buscarPorId(id);
+        return ResponseHttpBuilder.info("Agência recuperada com sucesso.", response);
     }
 
     // =========================================================================
     // 3. UPDATE (PUT) - Atualizar uma Agência
     // =========================================================================
 
-    @Operation(summary = "Atualizar uma agência existente")
+    @Operation(summary = "Atualizar agencia")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Agência atualizada com sucesso"),
             @ApiResponse(responseCode = "404", description = "Agência não encontrada"),
@@ -104,9 +106,9 @@ public class AgenciaController
     // 4. DELETE (DELETE) - Excluir uma Agência
     // =========================================================================
 
-    @Operation(summary = "Apagar uma agência pelo ID")
+    @Operation(summary = "Eliminar agência")
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Agência apagada com sucesso"),
+            @ApiResponse(responseCode = "204", description = "Agência eliminada com sucesso"),
             @ApiResponse(responseCode = "404", description = "Agência não encontrada")
     })
     @DeleteMapping("/{id}")

@@ -24,85 +24,92 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(Constante.ROUTE + "/contaorganizacao")
-@Tag(name="Conta da Organização", description="Gestão de obras/projetos, conta da organização associadas")
+@RequestMapping(Constante.ROUTE + "/conta-organizacao")
+@Tag(name="ContaOrganizacao", description="Gestão de contas da organização")
 @RequiredArgsConstructor
 public class ContaOrganizacaoController
 {
-    @Autowired
-    private ContaOrganizacaoService service;
+    private final ContaOrganizacaoService service;
 
-    @Operation(summary = "Lista de contas da organização paginadas")
-    @ApiResponse(responseCode = "200", description = "Lista de contas da organização encontradas páginadas")
-    @GetMapping("/pages/{id}")
-    public ResponseEntity<HashMap> listaDeContaOrganizacaos(
-            @RequestParam(name = "page", defaultValue = "0", required = false) int page,
-            @RequestParam(name = "size", defaultValue = "12", required = false) int size,
-            @PathVariable("id") Integer id
-    ){
-        Pageable pageable = PageRequest.of(page, size);
-        Page<ContaOrganizacao> ContaOrganizacaoPage = service.findAll(pageable);
-        ContaOrganizacaoResponse response = new ContaOrganizacaoResponse();
-        return ResponseEntity.ok(response.paginar(ContaOrganizacaoPage));
-    }
-
-    @Operation(summary = "Lista de contas da organização")
-    @ApiResponse(responseCode = "200", description = "Lista de contas da organização encontradas")
-    @GetMapping("/{id}")
-    public ResponseEntity<?> listaDeContaOrganizacaos(@PathVariable("id") UUID id)
-    {
-        List<ContaOrganizacao> ContaOrganizacaoPage = service.findAll();
-        ContaOrganizacaoResponse response = new ContaOrganizacaoResponse();
-        return ResponseEntity.ok(response.listToDTO(ContaOrganizacaoPage));
-    }
-
-    @Operation(summary = "Pesquisar determinada conta da organização")
+    // =========================================================================
+    // CREATE
+    // =========================================================================
+    @Operation(summary = "Criar uma nova conta da organização")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Conta da organização encontrada"),
-            @ApiResponse(responseCode = "404", description = "Conta da organização não encontrada")
-    })
-    @GetMapping("/pesquisar/{id}")
-    public ResponseEntity<?> pesguisarContaOrganizacaoById(@PathVariable("id") UUID id)
-    {
-        ContaOrganizacao ContaOrganizacao = service.findById(id);
-        ContaOrganizacaoResponse response = new ContaOrganizacaoResponse();
-        return ResponseEntity.ok(response.convertToDTO(ContaOrganizacao));
-    }
-
-    @Operation(summary = "Criar uma nova conta para a organização")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Conta da organização criada com sucesso"),
+            @ApiResponse(responseCode = "201", description = "Conta criada com sucesso"),
             @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<ContaOrganizacaoResponse> criarContaOrganizacao(@Valid @RequestBody ContaOrganizacaoRequest request) {
-        ContaOrganizacao novaContaOrganizacao = service.save(request.convertToEntity());
-        ContaOrganizacaoResponse response = new ContaOrganizacaoResponse().convertToDTO(novaContaOrganizacao);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    public ResponseEntity<?> criar(@Valid @RequestBody ContaOrganizacaoRequest request) {
+        ContaOrganizacaoResponse response = service.criarContaOrganizacao(request);
+        return ResponseHttpBuilder.created("Conta da organização criada com sucesso.", response);
     }
 
-    @Operation(summary = "Atualizar conta da organização existente")
+    // =========================================================================
+    // READ - LIST (PAGINADO)
+    // =========================================================================
+    @Operation(summary = "Listar contas da organização (paginado)")
+    @ApiResponse(responseCode = "200", description = "Lista encontrada")
+    @GetMapping
+    public ResponseEntity<?> listar(
+            @RequestParam(name = "page", defaultValue = "0", required = false) int page,
+            @RequestParam(name = "size", defaultValue = "12", required = false) int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ContaOrganizacaoResponse> result = service.listar(pageable);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("content", result.getContent());
+        response.put("page", result.getNumber());
+        response.put("size", result.getSize());
+        response.put("totalElements", result.getTotalElements());
+        response.put("totalPages", result.getTotalPages());
+
+        return ResponseHttpBuilder.info("Lista de contas recuperada com sucesso.", response);
+    }
+
+    // =========================================================================
+    // READ - BY ID
+    // =========================================================================
+    @Operation(summary = "Buscar conta da organização por ID")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Conta da organização atualizada com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Conta da organização não encontrada")
+            @ApiResponse(responseCode = "200", description = "Conta encontrada"),
+            @ApiResponse(responseCode = "404", description = "Conta não encontrada")
+    })
+    @GetMapping("/{id}")
+    public ResponseEntity<?> buscarPorId(@PathVariable UUID id) {
+        ContaOrganizacaoResponse response = service.buscarPorId(id);
+        return ResponseHttpBuilder.info("Conta recuperada com sucesso.", response);
+    }
+
+    // =========================================================================
+    // UPDATE
+    // =========================================================================
+    @Operation(summary = "Atualizar conta da organização")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Conta atualizado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Conta não encontrada"),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<ContaOrganizacaoResponse> atualizarContaOrganizacao(@PathVariable UUID id, @Valid @RequestBody ContaOrganizacaoRequest request) {
-        ContaOrganizacao ContaOrganizacaoAtualizada = service.update(id, request.convertToEntity());
-        ContaOrganizacaoResponse response = new ContaOrganizacaoResponse().convertToDTO(ContaOrganizacaoAtualizada);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<?> atualizar(
+            @PathVariable UUID id,
+            @Valid @RequestBody ContaOrganizacaoRequest request) {
+        ContaOrganizacaoResponse response = service.atualizar(id, request);
+        return ResponseHttpBuilder.info("Conta atualizada com sucesso.", response);
     }
 
-    @Operation(summary = "Eliminar conta da organização existente")
+    // =========================================================================
+    // DELETE
+    // =========================================================================
+    @Operation(summary = "Eliminar conta da organização")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Conta da organização eliminada com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Conta da organização não encontrada")
+            @ApiResponse(responseCode = "204", description = "Conta  eliminada com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Conta não encontrada")
     })
-    @PutMapping("/eliminar/{id}")
-    public ResponseEntity<ContaOrganizacaoResponse> eliminarContaOrganizacao(@PathVariable UUID id, @Valid @RequestBody ContaOrganizacaoRequest request) {
-        ContaOrganizacao ContaOrganizacaoAtualizada = service.update(id, request.convertToEntity());
-        ContaOrganizacaoResponse response = new ContaOrganizacaoResponse().convertToDTO(ContaOrganizacaoAtualizada);
-        return ResponseEntity.ok(response);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> excluir(@PathVariable UUID id) {
+        service.excluir(id);
+        return ResponseEntity.noContent().build();
     }
 }

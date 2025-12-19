@@ -29,80 +29,88 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CargoController
 {
-    @Autowired
     private CargoService service;
 
-    @Operation(summary = "Lista de cargos paginadas")
-    @ApiResponse(responseCode = "200", description = "Lista de cargos encontrados páginados")
-    @GetMapping("/pages/{id}")
-    public ResponseEntity<HashMap> listaDeCargos(
-            @RequestParam(name = "page", defaultValue = "0", required = false) int page,
-            @RequestParam(name = "size", defaultValue = "12", required = false) int size,
-            @PathVariable("id") Integer id
-    ){
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Cargo> CargoPage = service.findAll(pageable);
-        CargoResponse response = new CargoResponse();
-        return ResponseEntity.ok(response.paginar(CargoPage));
-    }
-
-    @Operation(summary = "Lista de cargos")
-    @ApiResponse(responseCode = "200", description = "Lista de cargos encontrados")
-    @GetMapping("/{id}")
-    public ResponseEntity<?> listaDeCargos(@PathVariable("id") UUID id)
-    {
-        List<Cargo> CargoPage = service.findAll();
-        CargoResponse response = new CargoResponse();
-        return ResponseEntity.ok(response.listToDTO(CargoPage));
-    }
-
-    @Operation(summary = "Pesquisar determinado cargo")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Cargo encontrado"),
-            @ApiResponse(responseCode = "404", description = "Cargo não encontrado")
-    })
-    @GetMapping("/cargo/{id}")
-    public ResponseEntity<?> pesguisarCargoById(@PathVariable("id") UUID id)
-    {
-        Cargo Cargo = service.findById(id);
-        CargoResponse response = new CargoResponse();
-        return ResponseEntity.ok(response.convertToDTO(Cargo));
-    }
-
+    // =========================================================================
+    // CREATE
+    // =========================================================================
     @Operation(summary = "Criar um novo cargo")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Cargo criado com sucesso"),
             @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<CargoResponse> criarCargo(@Valid @RequestBody CargoRequest request) {
-        Cargo novaCargo = service.save(request.convertToEntity());
-        CargoResponse response = new CargoResponse().convertToDTO(novaCargo);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    public ResponseEntity<?> criarCargo(@Valid @RequestBody CargoRequest request) {
+        CargoResponse response = service.criarCargo(request);
+        return ResponseHttpBuilder.created("Cargo criado com sucesso.", response);
     }
 
-    @Operation(summary = "Atualizar cargo existente")
+    // =========================================================================
+    // READ - LIST (PAGINADO)
+    // =========================================================================
+    @Operation(summary = "Listar cargos (paginado)")
+    @ApiResponse(responseCode = "200", description = "Lista de cargos encontrada")
+    @GetMapping
+    public ResponseEntity<?> listarCargos(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "12") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<CargoResponse> cargos = service.listarCargos(pageable);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("content", cargos.getContent());
+        response.put("page", cargos.getNumber());
+        response.put("size", cargos.getSize());
+        response.put("totalElements", cargos.getTotalElements());
+        response.put("totalPages", cargos.getTotalPages());
+
+        return ResponseHttpBuilder.info("Lista de cargos recuperada com sucesso.", response);
+    }
+
+    // =========================================================================
+    // READ - BY ID
+    // =========================================================================
+    @Operation(summary = "Buscar cargo por ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Cargo encontrado"),
+            @ApiResponse(responseCode = "404", description = "Cargo não encontrado")
+    })
+    @GetMapping("/{id}")
+    public ResponseEntity<?> buscarCargoPorId(@PathVariable UUID id) {
+        CargoResponse response = service.buscarCargoPorId(id);
+        return ResponseHttpBuilder.info("Cargo recuperado com sucesso.", response);
+    }
+
+    // =========================================================================
+    // UPDATE
+    // =========================================================================
+    @Operation(summary = "Atualizar um cargo existente")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Cargo atualizado com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Cargo não encontrado")
+            @ApiResponse(responseCode = "404", description = "Cargo não encontrado"),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<CargoResponse> atualizarCargo(@PathVariable UUID id, @Valid @RequestBody CargoRequest request) {
-        Cargo CargoAtualizada = service.update(id, request.convertToEntity());
-        CargoResponse response = new CargoResponse().convertToDTO(CargoAtualizada);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<?> atualizarCargo(
+            @PathVariable UUID id,
+            @Valid @RequestBody CargoRequest request) {
+        CargoResponse response = service.alterarCargo(id, request);
+        return ResponseHttpBuilder.info("Cargo atualizado com sucesso.", response);
     }
 
-    @Operation(summary = "Eliminar cargo existente")
+    // =========================================================================
+    // DELETE
+    // =========================================================================
+    @Operation(summary = "Eliminar cargo")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Cargo eliminado com sucesso"),
+            @ApiResponse(responseCode = "204", description = "Cargo eliminado com sucesso"),
             @ApiResponse(responseCode = "404", description = "Cargo não encontrado")
     })
-    @PutMapping("/eliminar/{id}")
-    public ResponseEntity<CargoResponse> eliminarCargo(@PathVariable UUID id, @Valid @RequestBody CargoRequest request) {
-        Cargo CargoAtualizada = service.update(id, request.convertToEntity());
-        CargoResponse response = new CargoResponse().convertToDTO(CargoAtualizada);
-        return ResponseEntity.ok(response);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> excluirCargo(@PathVariable UUID id) {
+        service.excluirCargo(id);
+        return ResponseEntity.noContent().build();
     }
+
 }
