@@ -16,7 +16,7 @@ import java.util.List;
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface  FuncionarioMapper
 {
-   FuncionarioMapper INSTANCE = Mappers.getMapper(FuncionarioMapper.class);
+    //FuncionarioMapper INSTANCE = Mappers.getMapper(FuncionarioMapper.class);
 
     // Mapeamento de Funcionario para FuncionarioResponse
     @Mapping(source = "id", target = "codFuncionario")

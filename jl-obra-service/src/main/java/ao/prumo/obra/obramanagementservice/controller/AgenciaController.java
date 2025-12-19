@@ -113,8 +113,7 @@ public class AgenciaController
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<?> excluirAgencia(@PathVariable UUID id) {
-        service.excluirAgencia(id);
-        // Retorna 204 No Content (sem corpo)
+        service.excluir(id);
         return ResponseEntity.noContent().build();
     }
 }

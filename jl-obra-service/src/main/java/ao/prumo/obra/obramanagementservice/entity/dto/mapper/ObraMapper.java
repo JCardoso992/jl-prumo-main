@@ -19,12 +19,12 @@ import java.util.List;
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface ObraMapper
 {
-    ObraMapper INSTANCE = Mappers.getMapper(ObraMapper.class);
+    //ObraMapper INSTANCE = Mappers.getMapper(ObraMapper.class);
 
     // Mapeamento de Obra para ObraResponse
     @Mapping(source = "id", target = "codObra")
-    @Mapping(source = "pessoaId", target = "codEncarregado", qualifiedByName = "mapEncarregadoToResponse")
-    @Mapping(source = "pessoaId", target = "codVersaoProjeto", qualifiedByName = "mapVersaoProjetoToResponse")
+    @Mapping(source = "encarregadoId", target = "codEncarregado", qualifiedByName = "mapEncarregadoToResponse")
+    @Mapping(source = "versaoProjetoId", target = "codVersaoProjeto", qualifiedByName = "mapVersaoProjetoToResponse")
     ObraResponse toResponse(Obra entity);
 
     // Mapeamento de ObraRequest para Obra

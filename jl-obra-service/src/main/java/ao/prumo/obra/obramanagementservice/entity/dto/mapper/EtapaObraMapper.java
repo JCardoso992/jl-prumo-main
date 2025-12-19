@@ -28,11 +28,12 @@ public interface EtapaObraMapper
 
      // Mapeamento de EtapaObra para EtapaObraResponse
      @Mapping(source = "id", target = "codEtapaObra")
-     @Mapping(source = "pessoaId", target = "codObra", qualifiedByName = "mapObraToResponse")
-     @Mapping(source = "pessoaId", target = "codDespesa", qualifiedByName = "mapDespesaToResponse")
-     @Mapping(source = "pessoaId", target = "codContaOrganizacao", qualifiedByName = "mapContaOrganizacaoToResponse")
-     @Mapping(source = "pessoaId", target = "codPagamentoProjecto", qualifiedByName = "mapPagamentoProjectoToResponse")
+     @Mapping(source = "obraId", target = "codObra", qualifiedByName = "mapObraToResponse")
+     @Mapping(source = "despesaId", target = "codDespesa", qualifiedByName = "mapDespesaToResponse")
+     @Mapping(source = "contaOrganizacaoId", target = "codContaOrganizacao", qualifiedByName = "mapContaOrganizacaoToResponse")
+     @Mapping(source = "pagamentoProjectoId", target = "codPagamentoProjecto", qualifiedByName = "mapPagamentoProjectoToResponse")
      EtapaObraResponse toResponse(EtapaObra entity);
+     
      // Mapeamento de EtapaObraRequest para Cliente
      // Ignorar as propriedades que são gerenciadas pelo JPA/BD
      @Mapping(target = "id", ignore = true)

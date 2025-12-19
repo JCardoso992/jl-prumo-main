@@ -20,7 +20,7 @@ import java.util.List;
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface LogisticaMapper
 {
-    LogisticaMapper INSTANCE = Mappers.getMapper(LogisticaMapper.class);
+    //LogisticaMapper INSTANCE = Mappers.getMapper(LogisticaMapper.class);
 
     // Mapeamento de Logistica para LogisticaResponse
     @Mapping(source = "id", target = "codLogistiga")

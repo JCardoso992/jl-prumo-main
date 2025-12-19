@@ -31,11 +31,21 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class FuncionarioController
 {
-    @Autowired
     private FuncionarioService service;
 
-    @Operation(summary = "Lista de funcionarios paginados")
-    @ApiResponse(responseCode = "200", description = "Lista de funcionarios encontrados páginados")
+    @Operation(summary = "Criar um novo funcionario")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Funcionario criado com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
+    })
+    @PostMapping
+    public ResponseEntity<ResponseHttp> criarFuncionario(@Valid @RequestBody FuncionarioRequest request) {
+        FuncionarioResponse response = service.criarFuncionario(request);
+        return ResponseHttpBuilder.created("Funcionário criado com sucesso.", response);
+    }
+
+     @Operation(summary = "Listar funcionários (paginado)")
+    @ApiResponse(responseCode = "200", description = "Lista de funcionarios encontrados")
     @GetMapping("/pages/{id}")
     public ResponseEntity<HashMap> listaDeFuncionarios(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
@@ -43,21 +53,22 @@ public class FuncionarioController
             @PathVariable("id") Integer id
     ){
         Pageable pageable = PageRequest.of(page, size);
-        Page<Funcionario> funcionarioPage = service.findAll(pageable);
-        FuncionarioResponse response = new FuncionarioResponse();
-        return ResponseEntity.ok(response.paginar(funcionarioPage));
+        Page<FuncionarioResponse> result = service.listar(pageable);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("content", result.getContent());
+        response.put("page", result.getNumber());
+        response.put("size", result.getSize());
+        response.put("totalElements", result.getTotalElements());
+        response.put("totalPages", result.getTotalPages());
+
+        return ResponseHttpBuilder.info("Lista de funcionários recuperada.", response);
     }
 
-    @Operation(summary = "Lista de funcionarios")
-    @ApiResponse(responseCode = "200", description = "Lista de funcionarios encontrados")
-    @GetMapping("/{id}")
-    public ResponseEntity<?> listaDeFuncionarios(@PathVariable("id") UUID id)
-    {
-        List<Funcionario> funcionarioPage = service.findAll();
-        FuncionarioResponse response = new FuncionarioResponse();
-        return ResponseEntity.ok(response.listToDTO(funcionarioPage));
-    }
-
+    // =========================================================================
+    // READ - BY ID
+    // =========================================================================
+    @Operation(summary = "Buscar funcionário por ID")
     @Operation(summary = "Pesquisar determinado funcionario")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Funcionario encontrado"),
@@ -66,43 +77,30 @@ public class FuncionarioController
     @GetMapping("/pesquisar/{id}")
     public ResponseEntity<?> pesguisarFuncionarioById(@PathVariable("id") UUID id)
     {
-        Funcionario funcionario = service.findById(id);
-        FuncionarioResponse response = new FuncionarioResponse();
-        return ResponseEntity.ok(response.convertToDTO(funcionario));
+        ClienteResponse response = service.buscarClientePorId(id);
+        return ResponseHttpBuilder.info("Cliente recuperado com sucesso.", response);
     }
 
-    @Operation(summary = "Criar um novo registro")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Registro criado com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
-    })
-    @PostMapping
-    public ResponseEntity<ResponseHttp> criarFuncionario(@Valid @RequestBody FuncionarioRequest request) {
-        FuncionarioResponse response = service.criarFuncionarioCompleto(request);
-        return ResponseHttpBuilder.created("Registro criado com sucesso!", response);
-    }
-
-  /*  @Operation(summary = "Atualizar funcionario existente")
+    @Operation(summary = "Atualizar funcionario existente")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Funcionario atualizado com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Funcionario não encontrado")
+            @ApiResponse(responseCode = "404", description = "Funcionario não encontrado"),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<FuncionarioResponse> atualizarFuncionario(@PathVariable UUID id, @Valid @RequestBody FuncionarioRequest request) {
-        Funcionario funcionarioAtualizada = service.update(id, request.convertToEntity());
-        FuncionarioResponse response = new FuncionarioResponse().convertToDTO(funcionarioAtualizada);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<?> atualizarFuncionario(@PathVariable UUID id, @Valid @RequestBody FuncionarioRequest request) {
+        FuncionarioResponse response = service.alterarFuncionario(id, request);
+        return ResponseHttpBuilder.info("Funcionario atualizado com sucesso.", response);
     }
 
-    @Operation(summary = "Eliminar funcionario existente")
+    @Operation(summary = "Eliminar funcionario")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Funcionario eliminado com sucesso"),
+            @ApiResponse(responseCode = "204", description = "Funcionario eliminado com sucesso"),
             @ApiResponse(responseCode = "404", description = "Funcionario não encontrado")
     })
-    @PutMapping("/eliminar/{id}")
-    public ResponseEntity<FuncionarioResponse> eliminarFuncionario(@PathVariable UUID id, @Valid @RequestBody FuncionarioRequest request) {
-        Funcionario funcionarioAtualizada = service.update(id, request.convertToEntity());
-        FuncionarioResponse response = new FuncionarioResponse().convertToDTO(funcionarioAtualizada);
-        return ResponseEntity.ok(response);
-    }*/
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> excluirFuncionario(@PathVariable UUID id) {
+        service.excluirFuncionario(id);
+        return ResponseEntity.noContent().build();
+    }
 }

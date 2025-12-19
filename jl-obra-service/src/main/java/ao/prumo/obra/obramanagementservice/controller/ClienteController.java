@@ -54,7 +54,7 @@ public class ClienteController
     // =========================================================================
 
     @Operation(summary = "Listar clientes (paginado)")
-    @ApiResponse(responseCode = "200", description = "Lista de clientes encontrada")
+    @ApiResponse(responseCode = "200", description = "Lista de clientes encontrado")
     @GetMapping
     public ResponseEntity<?> listaDeClientes(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
