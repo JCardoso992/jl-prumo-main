@@ -21,7 +21,7 @@ public interface VersaoProjetoMapper
     VersaoProjetoMapper INSTANCE = Mappers.getMapper(VersaoProjetoMapper.class);
 
     // Mapeamento de VersaoProjeto para VersaoProjetoResponse
-    @Mapping(source = "id", target = "codCliente")
+    @Mapping(source = "id", target = "codVersaoProjeto")
     @Mapping(source = "projetoArquitetonicoId", target = "codProjetoArquitetonico", qualifiedByName = "mapProjetoArquitetonicoToResponse")
     VersaoProjetoResponse toResponse(VersaoProjeto entity);
 

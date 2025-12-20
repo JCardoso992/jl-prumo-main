@@ -29,80 +29,78 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ProjetoArquitetonicoController
 {
-    @Autowired
     private ProjetoArquitetonicoService service;
 
-    @Operation(summary = "Lista de projetos arquitetonicos paginadas")
-    @ApiResponse(responseCode = "200", description = "Lista de projetos arquitetonicos encontrados páginados")
+    @Operation(summary = "Criar uma novo projeto arquitetonico")
+    @ApiResponses({
+        @ApiResponse(responseCode = "201", description = "Projeto arquitetonico criado com sucesso"),
+        @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
+    })
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<ProjetoArquitetonicoResponse> criarProjetoArquitetonico(@Valid @RequestBody ProjetoArquitetonicoRequest request) 
+    {
+        ProjetoArquitetonicoResponse response = service.criar(request);
+        return ResponseHttpBuilder.created("Projeto arquitetônico criado com sucesso.", response);
+    }
+
+    @Operation(summary = "Listar projetos arquitetônicos (paginado)")
+    @ApiResponse(responseCode = "200", description = "Lista de projetos arquitetonicos encontrado")
     @GetMapping("/pages/{id}")
     public ResponseEntity<HashMap> listaDeProjetoArquitetonicos(
-            @RequestParam(name = "page", defaultValue = "0", required = false) int page,
-            @RequestParam(name = "size", defaultValue = "12", required = false) int size,
-            @PathVariable("id") Integer id
+        @RequestParam(name = "page", defaultValue = "0", required = false) int page,
+        @RequestParam(name = "size", defaultValue = "12", required = false) int size,
+        @PathVariable("id") Integer id
     ){
         Pageable pageable = PageRequest.of(page, size);
-        Page<ProjetoArquitetonico> projetoArquitetonicoPage = service.findAll(pageable);
-        ProjetoArquitetonicoResponse response = new ProjetoArquitetonicoResponse();
-        return ResponseEntity.ok(response.paginar(projetoArquitetonicoPage));
+        Page<ProjetoArquitetonicoResponse> result = service.listar(pageable);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("content", result.getContent());
+        response.put("page", result.getNumber());
+        response.put("size", result.getSize());
+        response.put("totalElements", result.getTotalElements());
+        response.put("totalPages", result.getTotalPages());
+
+        return ResponseHttpBuilder.info("Lista de projetos recuperada com sucesso.", response);
     }
 
-    @Operation(summary = "Lista de projetos arquitetonicos")
-    @ApiResponse(responseCode = "200", description = "Lista de projetos arquitetonicos encontrados")
-    @GetMapping("/{id}")
-    public ResponseEntity<?> listaDeProjetoArquitetonicos(@PathVariable("id") UUID id)
-    {
-        List<ProjetoArquitetonico> projetoArquitetonicoPage = service.findAll();
-        ProjetoArquitetonicoResponse response = new ProjetoArquitetonicoResponse();
-        return ResponseEntity.ok(response.listToDTO(projetoArquitetonicoPage));
-    }
-
-    @Operation(summary = "Pesquisar determinada projeto arquitetonico")
+    @Operation(summary = "Buscar projeto arquitetônico por ID")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Projeto arquitetonico encontrado"),
-            @ApiResponse(responseCode = "404", description = "Projeto arquitetonico não encontrado")
+        @ApiResponse(responseCode = "200", description = "Projeto arquitetonico encontrado"),
+        @ApiResponse(responseCode = "404", description = "Projeto arquitetonico não encontrado")
     })
     @GetMapping("/pesquisar/{id}")
     public ResponseEntity<?> pesguisarProjetoArquitetonicoById(@PathVariable("id") UUID id)
     {
-        ProjetoArquitetonico projetoArquitetonico = service.findById(id);
-        ProjetoArquitetonicoResponse response = new ProjetoArquitetonicoResponse();
-        return ResponseEntity.ok(response.convertToDTO(projetoArquitetonico));
+       ProjetoArquitetonicoResponse response = service.buscarPorId(id);
+       return ResponseHttpBuilder.info("Projeto arquitetônico recuperado com sucesso.", response);
     }
 
-    @Operation(summary = "Criar uma novo projeto arquitetonico")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Projeto arquitetonico criado com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
-    })
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<ProjetoArquitetonicoResponse> criarProjetoArquitetonico(@Valid @RequestBody ProjetoArquitetonicoRequest request) {
-        ProjetoArquitetonico novaProjetoArquitetonico = service.save(request.convertToEntity());
-        ProjetoArquitetonicoResponse response = new ProjetoArquitetonicoResponse().convertToDTO(novaProjetoArquitetonico);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
-    }
+    
 
-    @Operation(summary = "Atualizar Projeto arquitetonico existente")
+    @Operation(summary = "Atualizar Projeto arquitetonico")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Projeto arquitetonico atualizado com sucesso"),
-            @ApiResponse(responseCode = "404", description = "Projeto arquitetonico não encontrado")
+        @ApiResponse(responseCode = "200", description = "Projeto arquitetonico atualizado com sucesso"),
+        @ApiResponse(responseCode = "404", description = "Projeto arquitetonico não encontrado"),
+        @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<ProjetoArquitetonicoResponse> atualizarProjetoArquitetonico(@PathVariable UUID id, @Valid @RequestBody ProjetoArquitetonicoRequest request) {
-        ProjetoArquitetonico projetoArquitetonicoAtualizada = service.update(id, request.convertToEntity());
-        ProjetoArquitetonicoResponse response = new ProjetoArquitetonicoResponse().convertToDTO(projetoArquitetonicoAtualizada);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<ProjetoArquitetonicoResponse> atualizarProjetoArquitetonico(@PathVariable UUID id, @Valid @RequestBody ProjetoArquitetonicoRequest request) 
+    {
+        ProjetoArquitetonicoResponse response = service.atualizar(id, request);
+        return ResponseHttpBuilder.info("Projeto arquitetônico atualizado com sucesso.", response);
     }
 
-    @Operation(summary = "Eliminar Projeto arquitetonico existente")
+    @Operation(summary = "Eliminar Projeto arquitetonico")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Projeto arquitetonico eliminado com sucesso"),
+            @ApiResponse(responseCode = "204", description = "Projeto arquitetonico eliminado com sucesso"),
             @ApiResponse(responseCode = "404", description = "Projeto arquitetonico não encontrado")
     })
     @PutMapping("/eliminar/{id}")
-    public ResponseEntity<ProjetoArquitetonicoResponse> eliminarprojetoArquitetonico(@PathVariable UUID id, @Valid @RequestBody ProjetoArquitetonicoRequest request) {
-        ProjetoArquitetonico projetoArquitetonicoAtualizada = service.update(id, request.convertToEntity());
-        ProjetoArquitetonicoResponse response = new ProjetoArquitetonicoResponse().convertToDTO(projetoArquitetonicoAtualizada);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<ProjetoArquitetonicoResponse> eliminarprojetoArquitetonico(@PathVariable UUID id, @Valid @RequestBody ProjetoArquitetonicoRequest request) 
+    {
+        service.excluir(id);
+        return ResponseEntity.noContent().build();
     }
 }

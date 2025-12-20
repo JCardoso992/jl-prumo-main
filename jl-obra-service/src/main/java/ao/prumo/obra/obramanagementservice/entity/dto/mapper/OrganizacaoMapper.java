@@ -19,14 +19,14 @@ import java.util.List;
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface OrganizacaoMapper
 {
-    OrganizacaoMapper INSTANCE = Mappers.getMapper(OrganizacaoMapper.class);
+    //OrganizacaoMapper INSTANCE = Mappers.getMapper(OrganizacaoMapper.class);
 
     // Mapeamento de Organizacao para OrganizacaoResponse
     @Mapping(source = "adress", target = "codAdress", qualifiedByName = "mapEnderecoToResponse")
     OrganizacaoResponse toResponse(Organizacao entity);
 
     // Mapeamento de OrganizacaoRequest para Organizacao
-    @Mapping(source = "codAdress", target = "adress", qualifiedByName = "mapEnderecoRequestToEntity")
+    //@Mapping(source = "codAdress", target = "adress", qualifiedByName = "mapEnderecoRequestToEntity")
 
     // Ignorar as propriedades que são gerenciadas pelo JPA/BD
     @Mapping(target = "id", ignore = true)
