@@ -10,11 +10,11 @@ import ao.prumo.obra.obramanagementservice.entity.dto.response.ClienteResponse;
 import ao.prumo.obra.obramanagementservice.entity.repository.ClienteRepository;
 import ao.prumo.obra.obramanagementservice.entity.repository.EnderecoRepository;
 import ao.prumo.obra.obramanagementservice.entity.repository.PessoaRepository;
-import ao.prumo.obra.obramanagementservice.utils.base.BaseService;
-import jakarta.persistence.ResourceNotFoundException;
-import lombok.Getter;
+import ao.prumo.obra.obramanagementservice.utils.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,8 +37,7 @@ public class ClienteService
     private final PessoaMapper pessoaMapper;
     private final EnderecoMapper enderecoMapper;
 
-    @Override
-    protected JpaRepository<Cliente, UUID> getRepository() 
+    protected JpaRepository<Cliente, UUID> getRepository()
     {
         return this.repository;
     }
@@ -151,7 +150,7 @@ public class ClienteService
     // READ - LIST (PAGINADO)
     // =========================================================================
     @Transactional(readOnly = true)
-    public Page<ClienteResponse> listarClientes(Pageable pageable) 
+    public Page<ClienteResponse> listarClientes(Pageable pageable)
     {
         log.info("Iniciando a listagem de clientes.");
         return repository.findAll(pageable)

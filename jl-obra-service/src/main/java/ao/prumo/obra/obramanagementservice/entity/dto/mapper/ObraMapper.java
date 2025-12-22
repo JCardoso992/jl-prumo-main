@@ -5,12 +5,12 @@ import ao.prumo.obra.obramanagementservice.entity.Funcionario;
 import ao.prumo.obra.obramanagementservice.entity.VersaoProjeto;
 import ao.prumo.obra.obramanagementservice.entity.dto.request.ObraRequest;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.FuncionarioResponse;
+import ao.prumo.obra.obramanagementservice.entity.dto.response.ObraResponse;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.VersaoProjetoResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.ReportingPolicy;
-import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 

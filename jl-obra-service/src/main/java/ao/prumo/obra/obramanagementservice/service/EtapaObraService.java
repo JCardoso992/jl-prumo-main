@@ -1,12 +1,15 @@
 package ao.prumo.obra.obramanagementservice.service;
 
-import ao.prumo.obra.obramanagementservice.entity.EtapaLogistica;
 import ao.prumo.obra.obramanagementservice.entity.EtapaObra;
+import ao.prumo.obra.obramanagementservice.entity.dto.mapper.EtapaObraMapper;
+import ao.prumo.obra.obramanagementservice.entity.dto.request.EtapaObraRequest;
+import ao.prumo.obra.obramanagementservice.entity.dto.response.EtapaObraResponse;
 import ao.prumo.obra.obramanagementservice.entity.repository.EtapaObraRepository;
-import ao.prumo.obra.obramanagementservice.utils.base.BaseService;
-import lombok.Getter;
+import ao.prumo.obra.obramanagementservice.utils.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,8 +26,7 @@ public class EtapaObraService
     private final EtapaObraRepository repository;
     private final EtapaObraMapper mapper;
 
-    @Override
-    protected JpaRepository<EtapaObra, UUID> getRepository() 
+    protected JpaRepository<EtapaObra, UUID> getRepository()
     {
         return this.repository;
     }
@@ -33,7 +35,7 @@ public class EtapaObraService
     // CREATE
     // =========================================================================
     @Transactional
-    public EtapaObraResponse criar(EtapaObraRequest request) 
+    public EtapaObraResponse criar(EtapaObraRequest request)
     {
         log.info("Iniciando a criação de uma nova Etapa da Obra");
         EtapaObra entity = mapper.toEntity(request);
@@ -44,7 +46,7 @@ public class EtapaObraService
     // READ - LIST (PAGINADO)
     // =========================================================================
     @Transactional(readOnly = true)
-    public Page<EtapaObraResponse> listar(Pageable pageable) 
+    public Page<EtapaObraResponse> listar(Pageable pageable)
     {
         log.info("Iniciando a listagem de etapa da obra.");
         return repository.findAll(pageable).map(mapper::toResponse);
@@ -69,7 +71,7 @@ public class EtapaObraService
     /**
     * Atualiza uma Etapa da Obra existente buscando pelo ID.
     * @param id O UUID da etapa da obra a ser alterada.
-    * @param req O DTO com os novos dados.
+    * @param request O DTO com os novos dados.
     * @return EtapaObraResponse com os dados atualizados.
     * @throws ResourceNotFoundException se a etapa da obra não for encontrada.
     */

@@ -1,12 +1,15 @@
 package ao.prumo.obra.obramanagementservice.service;
 
-import ao.prumo.obra.obramanagementservice.entity.Cliente;
 import ao.prumo.obra.obramanagementservice.entity.ContaOrganizacao;
+import ao.prumo.obra.obramanagementservice.entity.dto.mapper.ContaOrganizacaoMapper;
+import ao.prumo.obra.obramanagementservice.entity.dto.request.ContaOrganizacaoRequest;
+import ao.prumo.obra.obramanagementservice.entity.dto.response.ContaOrganizacaoResponse;
 import ao.prumo.obra.obramanagementservice.entity.repository.ContaOrganizacaoRepository;
-import ao.prumo.obra.obramanagementservice.utils.base.BaseService;
-import lombok.Getter;
+import ao.prumo.obra.obramanagementservice.utils.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,8 +26,7 @@ public class ContaOrganizacaoService
     private final ContaOrganizacaoRepository repository;
     private final ContaOrganizacaoMapper mapper;
 
-    @Override
-    protected JpaRepository<ContaOrganizacao, UUID> getRepository() 
+    protected JpaRepository<ContaOrganizacao, UUID> getRepository()
     {
         return this.repository;
     }
@@ -33,7 +35,7 @@ public class ContaOrganizacaoService
     // CREATE
     // =========================================================================
     @Transactional
-    public ContaOrganizacaoResponse criarContaOrganizacao(ContaOrganizacaoRequest request) 
+    public ContaOrganizacaoResponse criarContaOrganizacao(ContaOrganizacaoRequest request)
     {
         log.info("Iniciando a criação de uma nova ContaOrganizacao.");
         ContaOrganizacao entity = mapper.toEntity(request);
@@ -44,7 +46,7 @@ public class ContaOrganizacaoService
     // READ - LIST (PAGINADO)
     // =========================================================================
     @Transactional(readOnly = true)
-    public Page<ContaOrganizacaoResponse> listar(Pageable pageable) 
+    public Page<ContaOrganizacaoResponse> listar(Pageable pageable)
     {
         log.info("Iniciando a listagem de contas da organizacao.");
         return repository.findAll(pageable)
@@ -70,7 +72,7 @@ public class ContaOrganizacaoService
     /**
      * Atualiza um conta organizacao existente buscando pelo ID.
      * @param id O UUID da conta organizacao a ser alterado.
-     * @param req O DTO com os novos dados.
+     * @param request O DTO com os novos dados.
      * @return ContaOrganizacaoResponse com os dados atualizados.
      * @throws ResourceNotFoundException se a conta organizacao não for encontrada.
      */

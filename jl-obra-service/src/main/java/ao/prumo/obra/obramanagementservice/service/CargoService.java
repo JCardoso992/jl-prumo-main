@@ -5,11 +5,11 @@ import ao.prumo.obra.obramanagementservice.entity.dto.mapper.CargoMapper;
 import ao.prumo.obra.obramanagementservice.entity.dto.request.CargoRequest;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.CargoResponse;
 import ao.prumo.obra.obramanagementservice.entity.repository.CargoRepository;
-import ao.prumo.obra.obramanagementservice.utils.base.BaseService;
-import jakarta.persistence.EntityNotFoundException;
-import lombok.Getter;
+import ao.prumo.obra.obramanagementservice.utils.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,8 +27,7 @@ public class CargoService
 
     private final CargoMapper cargoMapper;
 
-    @Override
-    protected JpaRepository<Cargo, UUID> getRepository() 
+    protected JpaRepository<Cargo, UUID> getRepository()
     {
         return this.repository;
     }
@@ -87,7 +86,7 @@ public class CargoService
 
     
     @Transactional(readOnly = true)
-    public Page<CargoResponse> listarCargos(Pageable pageable) 
+    public Page<CargoResponse> listarCargos(Pageable pageable)
     {
         log.info("Iniciando a listagem de cargos.");
         return repository.findAll(pageable)

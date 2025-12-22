@@ -1,17 +1,16 @@
 package ao.prumo.obra.obramanagementservice.controller;
 
-import ao.prumo.obra.obramanagementservice.entity.DocumentoProjeto;
 import ao.prumo.obra.obramanagementservice.entity.dto.request.DocumentoProjetoRequest;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.DocumentoProjetoResponse;
 import ao.prumo.obra.obramanagementservice.service.DocumentoProjetoService;
 import ao.prumo.obra.obramanagementservice.utils.globalConstantes.Constante;
+import ao.prumo.obra.obramanagementservice.utils.http.ResponseHttpBuilder;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -29,7 +29,7 @@ import java.util.UUID;
 public class DocumentoProjetoController
 {
 
-    private DocumentoProjetoService service;
+    private final DocumentoProjetoService service;
 
     @Operation(summary = "Criar um novo documento de projeto")
     @ApiResponses({
@@ -38,7 +38,7 @@ public class DocumentoProjetoController
     })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<DocumentoProjetoResponse> criarDocumentoProjeto(@Valid @RequestBody DocumentoProjetoRequest request) {
+    public ResponseEntity<?> criarDocumentoProjeto(@Valid @RequestBody DocumentoProjetoRequest request) {
         DocumentoProjetoResponse response = service.criarDocumentoProjeto(request);
         return ResponseHttpBuilder.created("Documento do projeto criado com sucesso.", response);
     }
@@ -46,7 +46,7 @@ public class DocumentoProjetoController
     @Operation(summary = "Listar documentos do projeto (paginado)")
     @ApiResponse(responseCode = "200", description = "Lista encontrada")
     @GetMapping("/pages/{organizacao}/{projeto}")
-    public ResponseEntity<HashMap> listaDeDocumentoProjetos(
+    public ResponseEntity<?> listaDeDocumentoProjetos(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
             @RequestParam(name = "size", defaultValue = "12", required = false) int size,
             @PathVariable("organizacao") Integer organizacao,
@@ -95,7 +95,7 @@ public class DocumentoProjetoController
             @ApiResponse(responseCode = "404", description = "Documento de projeto não encontrado")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<DocumentoProjetoResponse> atualizarDocumentoProjeto(@PathVariable UUID id, @Valid @RequestBody DocumentoProjetoRequest request) {
+    public ResponseEntity<?> atualizarDocumentoProjeto(@PathVariable UUID id, @Valid @RequestBody DocumentoProjetoRequest request) {
         DocumentoProjetoResponse response = service.atualizar(id, request);
         return ResponseHttpBuilder.info("Documento atualizado com sucesso.", response);
     }
@@ -106,7 +106,7 @@ public class DocumentoProjetoController
             @ApiResponse(responseCode = "404", description = "Documento de projeto não encontrado")
     })
     @DeleteMapping("/eliminar/{id}")
-    public ResponseEntity<DocumentoProjetoResponse> eliminarDocumentoProjeto(@PathVariable UUID id) {
+    public ResponseEntity<?> eliminarDocumentoProjeto(@PathVariable UUID id) {
         service.excluir(id);
         return ResponseEntity.noContent().build();
     }

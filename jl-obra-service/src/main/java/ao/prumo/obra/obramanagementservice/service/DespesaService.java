@@ -1,12 +1,15 @@
 package ao.prumo.obra.obramanagementservice.service;
 
-import ao.prumo.obra.obramanagementservice.entity.ContaOrganizacao;
 import ao.prumo.obra.obramanagementservice.entity.Despesa;
+import ao.prumo.obra.obramanagementservice.entity.dto.mapper.DespesaMapper;
+import ao.prumo.obra.obramanagementservice.entity.dto.request.DespesaRequest;
+import ao.prumo.obra.obramanagementservice.entity.dto.response.DespesaResponse;
 import ao.prumo.obra.obramanagementservice.entity.repository.DespesaRepository;
-import ao.prumo.obra.obramanagementservice.utils.base.BaseService;
-import lombok.Getter;
+import ao.prumo.obra.obramanagementservice.utils.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +26,6 @@ public class DespesaService
     private final DespesaRepository repository;
     private final DespesaMapper mapper;
     
-    @Override
     protected JpaRepository<Despesa, UUID> getRepository()
     {
         return this.repository;
@@ -33,7 +35,7 @@ public class DespesaService
     // CREATE
     // =========================================================================
     @Transactional
-    public DespesaResponse criarDespesa(DespesaRequest request) 
+    public DespesaResponse criarDespesa(DespesaRequest request)
     {
         log.info("Iniciando a criação de uma nova despesa.");
         Despesa despesa = mapper.toEntity(request);
@@ -44,7 +46,7 @@ public class DespesaService
     // READ - LIST (PAGINADO)
     // =========================================================================
     @Transactional(readOnly = true)
-    public Page<DespesaResponse> listar(Pageable pageable) 
+    public Page<DespesaResponse> listar(Pageable pageable)
     {
         log.info("Iniciando a listagem de despesas.");
         return repository.findAll(pageable)
@@ -57,7 +59,7 @@ public class DespesaService
     @Transactional(readOnly = true)
     public DespesaResponse buscarPorId(UUID id) 
     {
-        log.info("Iniciando a busca de despesas por ID {}.");
+        log.info("Iniciando a busca de despesas por ID {}.", id);
         Despesa despesa = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Despesa não encontrada"));
         log.info("Despesa com ID {} foi encontrada.", id);
@@ -70,7 +72,7 @@ public class DespesaService
     /**
     * Atualiza uma despesa existente buscando pelo ID.
     * @param id O UUID da despesa a ser alterada.
-    * @param req O DTO com os novos dados.
+    * @param request O DTO com os novos dados.
     * @return DespesaResponse com os dados atualizados.
     * @throws ResourceNotFoundException se a despesa não for encontrada.
     */

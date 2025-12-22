@@ -1,11 +1,15 @@
 package ao.prumo.obra.obramanagementservice.service;
 
 import ao.prumo.obra.obramanagementservice.entity.Logistica;
+import ao.prumo.obra.obramanagementservice.entity.dto.mapper.LogisticaMapper;
+import ao.prumo.obra.obramanagementservice.entity.dto.request.LogisticaRequest;
+import ao.prumo.obra.obramanagementservice.entity.dto.response.LogisticaResponse;
 import ao.prumo.obra.obramanagementservice.entity.repository.LogisticaRepository;
-import ao.prumo.obra.obramanagementservice.utils.base.BaseService;
-import lombok.Getter;
+import ao.prumo.obra.obramanagementservice.utils.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,8 +26,7 @@ public class LogisticaService
     private final LogisticaRepository repository;
     private final LogisticaMapper mapper;
 
-    @Override
-    protected JpaRepository<Logistica, UUID> getRepository() 
+    protected JpaRepository<Logistica, UUID> getRepository()
     {
         return this.repository;
     }
@@ -42,7 +45,7 @@ public class LogisticaService
     // READ - LIST (PAGINADO)
     // =========================================================================
     @Transactional(readOnly = true)
-    public Page<LogisticaResponse> listar(Pageable pageable) 
+    public Page<LogisticaResponse> listar(Pageable pageable)
     {
         log.info("Iniciando a listagem de item de logística.");
         return repository.findAll(pageable)
@@ -68,7 +71,7 @@ public class LogisticaService
     /**
     * Atualiza um item de logística existente buscando pelo ID.
     * @param id O UUID do item de logística a ser alterado.
-    * @param req O DTO com os novos dados.
+    * @param request O DTO com os novos dados.
     * @return LogisticaResponse com os dados atualizados.
     * @throws ResourceNotFoundException se o item de logística não for encontrada.
     */

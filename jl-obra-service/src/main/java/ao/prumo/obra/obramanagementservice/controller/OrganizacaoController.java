@@ -1,4 +1,5 @@
-import ao.prumo.obra.obramanagementservice.entity.Organizacao;
+package ao.prumo.obra.obramanagementservice.controller;
+
 import ao.prumo.obra.obramanagementservice.entity.dto.request.OrganizacaoRequest;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.OrganizacaoResponse;
 import ao.prumo.obra.obramanagementservice.service.OrganizacaoService;
@@ -10,23 +11,21 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
 @RequestMapping(Constante.ROUTE + "/organizacao")
 @Tag(name="Organização", description="Gestão de organizações")
 @RequiredArgsConstructor
-public class OrganizacaoController  
+public class OrganizacaoController
 {
     private final OrganizacaoService service;
 
@@ -39,9 +38,9 @@ public class OrganizacaoController
             @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
     @PostMapping
-    public ResponseEntity<?> criar(@Valid @RequestBody ObraRequest request) 
+    public ResponseEntity<?> criar(@Valid @RequestBody OrganizacaoRequest request)
     {
-        OrganizacaoaResponse response = service.criar(request);
+        OrganizacaoResponse response = service.criar(request);
         return ResponseHttpBuilder.created("Organização criada com sucesso.", response);
     }
 

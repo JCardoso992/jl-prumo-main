@@ -1,12 +1,15 @@
 package ao.prumo.obra.obramanagementservice.service;
 
-import ao.prumo.obra.obramanagementservice.entity.Organizacao;
 import ao.prumo.obra.obramanagementservice.entity.PagamentoProjecto;
+import ao.prumo.obra.obramanagementservice.entity.dto.mapper.PagamentoProjectoMapper;
+import ao.prumo.obra.obramanagementservice.entity.dto.request.PagamentoProjectoRequest;
+import ao.prumo.obra.obramanagementservice.entity.dto.response.PagamentoProjectoResponse;
 import ao.prumo.obra.obramanagementservice.entity.repository.PagamentoProjectoRepository;
-import ao.prumo.obra.obramanagementservice.utils.base.BaseService;
-import lombok.Getter;
+import ao.prumo.obra.obramanagementservice.utils.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,15 +26,15 @@ public class PagamentoProjectoService
     private final PagamentoProjectoRepository repository;
     private final PagamentoProjectoMapper mapper;
 
-    @Override
-    protected JpaRepository<PagamentoProjecto, UUID> getRepository() {
+    protected JpaRepository<PagamentoProjecto, UUID> getRepository()
+    {
         return this.repository;
     }
 
      // =========================================================================
     // CREATE
     // =========================================================================
-    public PagamentoProjectoResponse criar(PagamentoProjectoRequest request) 
+    public PagamentoProjectoResponse criar(PagamentoProjectoRequest request)
     {
         log.info("Iniciando a criação de um pagamento de projecto");
         PagamentoProjecto entity = mapper.toEntity(request);
@@ -42,7 +45,7 @@ public class PagamentoProjectoService
     // READ - LIST
     // =========================================================================
     @Transactional(readOnly = true)
-    public Page<PagamentoProjectoResponse> listar(Pageable pageable) 
+    public Page<PagamentoProjectoResponse> listar(Pageable pageable)
     {
         log.info("Iniciando a listagem de pagamentos do projecto.");
         return repository.findAll(pageable)
@@ -68,7 +71,7 @@ public class PagamentoProjectoService
     /**
     * Atualiza pagamento do projecto existente buscando pelo ID.
     * @param id O UUID do pagamento do projecto a ser alterada.
-    * @param req O DTO com os novos dados.
+    * @param request O DTO com os novos dados.
     * @return PagamentoProjectoResponse com os dados atualizados.
     * @throws ResourceNotFoundException se o pagamento do projecto não for encontrado.
     */

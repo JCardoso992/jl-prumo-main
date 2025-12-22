@@ -1,17 +1,16 @@
 package ao.prumo.obra.obramanagementservice.controller;
 
-import ao.prumo.obra.obramanagementservice.entity.Despesa;
 import ao.prumo.obra.obramanagementservice.entity.dto.request.DespesaRequest;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.DespesaResponse;
 import ao.prumo.obra.obramanagementservice.service.DespesaService;
 import ao.prumo.obra.obramanagementservice.utils.globalConstantes.Constante;
+import ao.prumo.obra.obramanagementservice.utils.http.ResponseHttpBuilder;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -30,7 +29,7 @@ import java.util.UUID;
 public class DespesaController
 {
    
-    private DespesaService service;
+    private final DespesaService service;
 
     @Operation(summary = "Criar uma nova despesa")
     @ApiResponses({
@@ -47,7 +46,7 @@ public class DespesaController
     @Operation(summary = "Listar despesas (paginado)")
     @ApiResponse(responseCode = "200", description = "Lista encontrada")
     @GetMapping("/pages/{id}")
-    public ResponseEntity<HashMap> listaDeDespesas(
+    public ResponseEntity<?> listaDeDespesas(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
             @RequestParam(name = "size", defaultValue = "12", required = false) int size,
             @PathVariable("id") Integer id
@@ -65,7 +64,7 @@ public class DespesaController
         return ResponseHttpBuilder.info("Lista de despesas recuperada com sucesso.", response);
     }
 
-    @Operation(summary = "Lista de despesas")
+ /*   @Operation(summary = "Lista de despesas")
     @ApiResponse(responseCode = "200", description = "Lista de despesas encontradas")
     @GetMapping("/{id}")
     public ResponseEntity<?> listaDeDespesas(@PathVariable("id") UUID id)
@@ -73,7 +72,7 @@ public class DespesaController
         List<Despesa> DespesaPage = service.findAll();
         DespesaResponse response = new DespesaResponse();
         return ResponseEntity.ok(response.listToDTO(DespesaPage));
-    }
+    }*/
 
     // =========================================================================
     // READ - BY ID

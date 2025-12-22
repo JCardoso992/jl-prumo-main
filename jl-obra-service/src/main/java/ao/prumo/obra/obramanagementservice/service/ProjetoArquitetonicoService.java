@@ -1,12 +1,15 @@
 package ao.prumo.obra.obramanagementservice.service;
 
-import ao.prumo.obra.obramanagementservice.entity.Obra;
 import ao.prumo.obra.obramanagementservice.entity.ProjetoArquitetonico;
+import ao.prumo.obra.obramanagementservice.entity.dto.mapper.ProjetoArquitetonicoMapper;
+import ao.prumo.obra.obramanagementservice.entity.dto.request.ProjetoArquitetonicoRequest;
+import ao.prumo.obra.obramanagementservice.entity.dto.response.ProjetoArquitetonicoResponse;
 import ao.prumo.obra.obramanagementservice.entity.repository.ProjetoArquitetonicoRepository;
-import ao.prumo.obra.obramanagementservice.utils.base.BaseService;
-import lombok.Getter;
+import ao.prumo.obra.obramanagementservice.utils.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,10 +24,11 @@ public class ProjetoArquitetonicoService
 {
 
     private final ProjetoArquitetonicoRepository repository;
+
     private final ProjetoArquitetonicoMapper mapper;
 
-    @Override
-    protected JpaRepository<ProjetoArquitetonico, UUID> getRepository() {
+    protected JpaRepository<ProjetoArquitetonico, UUID> getRepository()
+    {
         return this.repository;
     }
 
@@ -32,7 +36,7 @@ public class ProjetoArquitetonicoService
     // CREATE
     // =========================================================================
     @Transactional
-    public ProjetoArquitetonicoResponse criar(ProjetoArquitetonicoRequest request) 
+    public ProjetoArquitetonicoResponse criar(ProjetoArquitetonicoRequest request)
     {
         log.info("Iniciando a criação de uma novo projeto arquitetônico");
         ProjetoArquitetonico entity = mapper.toEntity(request);
@@ -43,7 +47,7 @@ public class ProjetoArquitetonicoService
     // READ - LIST
     // =========================================================================
     @Transactional(readOnly = true)
-    public Page<ProjetoArquitetonicoResponse> listar(Pageable pageable) 
+    public Page<ProjetoArquitetonicoResponse> listar(Pageable pageable)
     {
         log.info("Iniciando a listagem de projetos arquitetônicos.");
         return repository.findAll(pageable)
@@ -69,7 +73,7 @@ public class ProjetoArquitetonicoService
     /**
     * Atualiza projeto arquitetônico existente buscando pelo ID.
     * @param id O UUID do projeto arquitetônico a ser alterada.
-    * @param req O DTO com os novos dados.
+    * @param request O DTO com os novos dados.
     * @return ProjetoArquitetonicoResponse com os dados atualizados.
     * @throws ResourceNotFoundException se o projeto arquitetônico não for encontrado.
     */

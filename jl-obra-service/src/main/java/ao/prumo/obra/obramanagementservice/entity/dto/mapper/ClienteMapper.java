@@ -3,7 +3,6 @@ package ao.prumo.obra.obramanagementservice.entity.dto.mapper;
 import ao.prumo.obra.obramanagementservice.entity.Cliente;
 import ao.prumo.obra.obramanagementservice.entity.Pessoa;
 import ao.prumo.obra.obramanagementservice.entity.dto.request.ClienteRequest;
-import ao.prumo.obra.obramanagementservice.entity.dto.request.PessoaRequest;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.ClienteResponse;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.PessoaResponse;
 import org.mapstruct.Mapper;

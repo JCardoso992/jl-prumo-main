@@ -2,10 +2,13 @@ package ao.prumo.obra.obramanagementservice.entity.dto.mapper;
 
 import ao.prumo.obra.obramanagementservice.entity.*;
 import ao.prumo.obra.obramanagementservice.entity.dto.request.FuncionarioRequest;
-import ao.prumo.obra.obramanagementservice.entity.dto.request.PessoaRequest;
+import ao.prumo.obra.obramanagementservice.entity.dto.response.AgenciaResponse;
+import ao.prumo.obra.obramanagementservice.entity.dto.response.CargoResponse;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.FuncionarioResponse;
+import ao.prumo.obra.obramanagementservice.entity.dto.response.PessoaResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
@@ -14,9 +17,9 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses={PessoaMapper.class, AgenciaMapper.class, CargoMapper.class},
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
-public interface  FuncionarioMapper
+public interface FuncionarioMapper
 {
-    //FuncionarioMapper INSTANCE = Mappers.getMapper(FuncionarioMapper.class);
+    FuncionarioMapper INSTANCE = Mappers.getMapper(FuncionarioMapper.class);
 
     // Mapeamento de Funcionario para FuncionarioResponse
     @Mapping(source = "id", target = "codFuncionario")
@@ -79,7 +82,7 @@ public interface  FuncionarioMapper
     }
 
     @Named("mapAgenciaToResponse")
-    default AgenciaResponse mapAgenciaToResponse(Pessoa entity) {
+    default AgenciaResponse mapAgenciaToResponse(Agencia entity) {
         if (entity == null) {
             return null;
         }
@@ -87,10 +90,10 @@ public interface  FuncionarioMapper
     }
 
     @Named("mapCargoToResponse")
-    default AgenciaResponse mapCargoToResponse(Pessoa entity) {
+    default CargoResponse mapCargoToResponse(Cargo entity) {
         if (entity == null) {
             return null;
         }
-        return ACargoMapper.INSTANCE.toResponse(entity);
+        return CargoMapper.INSTANCE.toResponse(entity);
     }
 }

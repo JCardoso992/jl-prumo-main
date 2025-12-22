@@ -1,6 +1,5 @@
 package ao.prumo.obra.obramanagementservice.controller;
 
-import ao.prumo.obra.obramanagementservice.entity.Funcionario;
 import ao.prumo.obra.obramanagementservice.entity.dto.request.FuncionarioRequest;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.FuncionarioResponse;
 import ao.prumo.obra.obramanagementservice.service.FuncionarioService;
@@ -13,16 +12,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -31,7 +28,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class FuncionarioController
 {
-    private FuncionarioService service;
+     private final FuncionarioService service;
 
     @Operation(summary = "Criar um novo funcionario")
     @ApiResponses({
@@ -47,7 +44,7 @@ public class FuncionarioController
      @Operation(summary = "Listar funcionários (paginado)")
     @ApiResponse(responseCode = "200", description = "Lista de funcionarios encontrados")
     @GetMapping("/pages/{id}")
-    public ResponseEntity<HashMap> listaDeFuncionarios(
+    public ResponseEntity<?> listaDeFuncionarios(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
             @RequestParam(name = "size", defaultValue = "12", required = false) int size,
             @PathVariable("id") Integer id
@@ -69,7 +66,6 @@ public class FuncionarioController
     // READ - BY ID
     // =========================================================================
     @Operation(summary = "Buscar funcionário por ID")
-    @Operation(summary = "Pesquisar determinado funcionario")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Funcionario encontrado"),
             @ApiResponse(responseCode = "404", description = "Funcionario não encontrada")
@@ -77,7 +73,7 @@ public class FuncionarioController
     @GetMapping("/pesquisar/{id}")
     public ResponseEntity<?> pesguisarFuncionarioById(@PathVariable("id") UUID id)
     {
-        ClienteResponse response = service.buscarClientePorId(id);
+        FuncionarioResponse response = service.buscarPorId(id);
         return ResponseHttpBuilder.info("Cliente recuperado com sucesso.", response);
     }
 

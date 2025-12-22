@@ -1,12 +1,15 @@
 package ao.prumo.obra.obramanagementservice.service;
 
-import ao.prumo.obra.obramanagementservice.entity.Obra;
 import ao.prumo.obra.obramanagementservice.entity.Organizacao;
+import ao.prumo.obra.obramanagementservice.entity.dto.mapper.OrganizacaoMapper;
+import ao.prumo.obra.obramanagementservice.entity.dto.request.OrganizacaoRequest;
+import ao.prumo.obra.obramanagementservice.entity.dto.response.OrganizacaoResponse;
 import ao.prumo.obra.obramanagementservice.entity.repository.OrganizacaoRepository;
-import ao.prumo.obra.obramanagementservice.utils.base.BaseService;
-import lombok.Getter;
+import ao.prumo.obra.obramanagementservice.utils.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +26,6 @@ public class OrganizacaoService
     private final OrganizacaoRepository repository;
     private final OrganizacaoMapper mapper;
 
-    @Override
     protected JpaRepository<Organizacao, UUID> getRepository() {
         return this.repository;
     }
@@ -32,7 +34,7 @@ public class OrganizacaoService
     // CREATE
     // =========================================================================
     @Transactional
-    public OrganizacaoResponse criar(OrganizacaoRequest request) 
+    public OrganizacaoResponse criar(OrganizacaoRequest request)
     {
         log.info("Iniciando a criação de uma nova organização");
         Organizacao organizacao = mapper.toEntity(request);
@@ -43,7 +45,7 @@ public class OrganizacaoService
     // READ - LIST
     // =========================================================================
     @Transactional(readOnly = true)
-    public Page<OrganizacaoResponse> listar(Pageable pageable) 
+    public Page<OrganizacaoResponse> listar(Pageable pageable)
     {
         log.info("Iniciando a listagem de organizaçães.");
         return repository.findAll(pageable)
@@ -69,7 +71,7 @@ public class OrganizacaoService
     /**
     * Atualiza uma organização existente buscando pelo ID.
     * @param id O UUID da organização a ser alterada.
-    * @param req O DTO com os novos dados.
+    * @param request O DTO com os novos dados.
     * @return OrganizacaoResponse com os dados atualizados.
     * @throws ResourceNotFoundException se a organização não for encontrada.
     */

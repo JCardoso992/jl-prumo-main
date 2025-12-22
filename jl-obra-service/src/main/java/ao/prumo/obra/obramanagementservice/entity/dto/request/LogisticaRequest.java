@@ -5,7 +5,7 @@ package ao.prumo.obra.obramanagementservice.entity.dto.request;
 @NoArgsConstructor
 @AllArgsConstructor
 
-public class LogistigaRequest
+public class LogisticaRequest
 {
     private UUID codLogistiga;
     private Date dataCriacao;

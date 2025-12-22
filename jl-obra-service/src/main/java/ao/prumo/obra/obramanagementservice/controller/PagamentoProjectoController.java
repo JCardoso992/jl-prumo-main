@@ -1,6 +1,5 @@
 package ao.prumo.obra.obramanagementservice.controller;
 
-import ao.prumo.obra.obramanagementservice.entity.PagamentoProjecto;
 import ao.prumo.obra.obramanagementservice.entity.dto.request.PagamentoProjectoRequest;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.PagamentoProjectoResponse;
 import ao.prumo.obra.obramanagementservice.service.PagamentoProjectoService;
@@ -12,16 +11,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController

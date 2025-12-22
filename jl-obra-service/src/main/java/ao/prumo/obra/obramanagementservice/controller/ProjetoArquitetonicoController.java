@@ -1,17 +1,16 @@
 package ao.prumo.obra.obramanagementservice.controller;
 
-import ao.prumo.obra.obramanagementservice.entity.ProjetoArquitetonico;
 import ao.prumo.obra.obramanagementservice.entity.dto.request.ProjetoArquitetonicoRequest;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.ProjetoArquitetonicoResponse;
 import ao.prumo.obra.obramanagementservice.service.ProjetoArquitetonicoService;
 import ao.prumo.obra.obramanagementservice.utils.globalConstantes.Constante;
+import ao.prumo.obra.obramanagementservice.utils.http.ResponseHttpBuilder;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -29,7 +28,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ProjetoArquitetonicoController
 {
-    private ProjetoArquitetonicoService service;
+    private final ProjetoArquitetonicoService service;
 
     @Operation(summary = "Criar uma novo projeto arquitetonico")
     @ApiResponses({
@@ -38,7 +37,7 @@ public class ProjetoArquitetonicoController
     })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<ProjetoArquitetonicoResponse> criarProjetoArquitetonico(@Valid @RequestBody ProjetoArquitetonicoRequest request) 
+    public ResponseEntity<?> criarProjetoArquitetonico(@Valid @RequestBody ProjetoArquitetonicoRequest request)
     {
         ProjetoArquitetonicoResponse response = service.criar(request);
         return ResponseHttpBuilder.created("Projeto arquitetônico criado com sucesso.", response);
@@ -47,7 +46,7 @@ public class ProjetoArquitetonicoController
     @Operation(summary = "Listar projetos arquitetônicos (paginado)")
     @ApiResponse(responseCode = "200", description = "Lista de projetos arquitetonicos encontrado")
     @GetMapping("/pages/{id}")
-    public ResponseEntity<HashMap> listaDeProjetoArquitetonicos(
+    public ResponseEntity<?> listaDeProjetoArquitetonicos(
         @RequestParam(name = "page", defaultValue = "0", required = false) int page,
         @RequestParam(name = "size", defaultValue = "12", required = false) int size,
         @PathVariable("id") Integer id
@@ -86,7 +85,7 @@ public class ProjetoArquitetonicoController
         @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<ProjetoArquitetonicoResponse> atualizarProjetoArquitetonico(@PathVariable UUID id, @Valid @RequestBody ProjetoArquitetonicoRequest request) 
+    public ResponseEntity<?> atualizarProjetoArquitetonico(@PathVariable UUID id, @Valid @RequestBody ProjetoArquitetonicoRequest request)
     {
         ProjetoArquitetonicoResponse response = service.atualizar(id, request);
         return ResponseHttpBuilder.info("Projeto arquitetônico atualizado com sucesso.", response);
@@ -98,7 +97,7 @@ public class ProjetoArquitetonicoController
             @ApiResponse(responseCode = "404", description = "Projeto arquitetonico não encontrado")
     })
     @PutMapping("/eliminar/{id}")
-    public ResponseEntity<ProjetoArquitetonicoResponse> eliminarprojetoArquitetonico(@PathVariable UUID id, @Valid @RequestBody ProjetoArquitetonicoRequest request) 
+    public ResponseEntity<ProjetoArquitetonicoResponse> eliminarprojetoArquitetonico(@PathVariable UUID id)
     {
         service.excluir(id);
         return ResponseEntity.noContent().build();

@@ -1,6 +1,5 @@
 package ao.prumo.obra.obramanagementservice.service;
 
-import ao.prumo.obra.obramanagementservice.entity.Obra;
 import ao.prumo.obra.obramanagementservice.entity.Pessoa;
 import ao.prumo.obra.obramanagementservice.entity.repository.PessoaRepository;
 import ao.prumo.obra.obramanagementservice.utils.base.BaseService;

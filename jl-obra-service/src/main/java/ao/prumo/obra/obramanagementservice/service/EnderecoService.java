@@ -1,6 +1,5 @@
 package ao.prumo.obra.obramanagementservice.service;
 
-import ao.prumo.obra.obramanagementservice.entity.DocumentoProjeto;
 import ao.prumo.obra.obramanagementservice.entity.Endereco;
 import ao.prumo.obra.obramanagementservice.entity.repository.EnderecoRepository;
 import ao.prumo.obra.obramanagementservice.utils.base.BaseService;

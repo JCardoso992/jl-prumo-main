@@ -2,7 +2,13 @@ package ao.prumo.obra.obramanagementservice.entity.dto.mapper;
 
 import java.util.List;
 
+import ao.prumo.obra.obramanagementservice.entity.DocumentoProjeto;
+import ao.prumo.obra.obramanagementservice.entity.Funcionario;
+import ao.prumo.obra.obramanagementservice.entity.dto.response.DocumentoProjetoResponse;
+import ao.prumo.obra.obramanagementservice.entity.dto.response.FuncionarioResponse;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 import org.mapstruct.ReportingPolicy;
 
 import ao.prumo.obra.obramanagementservice.entity.dto.request.DocumentoProjetoRequest;

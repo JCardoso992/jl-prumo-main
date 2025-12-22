@@ -6,17 +6,15 @@ import ao.prumo.obra.obramanagementservice.entity.dto.mapper.FuncionarioMapper;
 import ao.prumo.obra.obramanagementservice.entity.dto.mapper.PessoaMapper;
 import ao.prumo.obra.obramanagementservice.entity.dto.request.EnderecoRequest;
 import ao.prumo.obra.obramanagementservice.entity.dto.request.FuncionarioRequest;
-import ao.prumo.obra.obramanagementservice.entity.dto.request.PessoaRequest;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.FuncionarioResponse;
 import ao.prumo.obra.obramanagementservice.entity.repository.EnderecoRepository;
 import ao.prumo.obra.obramanagementservice.entity.repository.FuncionarioRepository;
 import ao.prumo.obra.obramanagementservice.entity.repository.PessoaRepository;
-import ao.prumo.obra.obramanagementservice.utils.base.BaseService;
-import lombok.Getter;
+import ao.prumo.obra.obramanagementservice.utils.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +25,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Slf4j
 @Transactional
-public class FuncionarioService extends BaseService<Funcionario, UUID> {
+public class FuncionarioService
+{
 
     private final FuncionarioRepository funcionarioRepository;
     private final PessoaRepository pessoaRepository;
@@ -37,9 +36,8 @@ public class FuncionarioService extends BaseService<Funcionario, UUID> {
     private PessoaMapper pessoaMapper;
     private EnderecoMapper enderecoMapper;
 
-    @Override
     protected JpaRepository<Funcionario, UUID> getRepository() {
-        return this.repository;
+        return this.funcionarioRepository;
     }
     /*
      A anotação @Transactional garante que, se ocorrer um erro em qualquer uma das etapas
@@ -89,13 +87,13 @@ public class FuncionarioService extends BaseService<Funcionario, UUID> {
     {
         log.info("Iniciando a busca de funcionario por ID {}.", id);
         Funcionario funcionario = funcionarioRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Funcionário não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Funcionário não encontrado"));
         log.info("Funcionario com ID {} foi encontrado.", id);
         return funcionarioMapper.toResponse(funcionario);
     }
 
     @Transactional(readOnly = true)
-    public Page<FuncionarioResponse> listar(Pageable pageable) 
+    public Page<FuncionarioResponse> listar(Pageable pageable)
     {
         log.info("Iniciando a listagem de funcionarios.");
         return funcionarioRepository.findAll(pageable)
@@ -114,12 +112,12 @@ public class FuncionarioService extends BaseService<Funcionario, UUID> {
     public FuncionarioResponse alterarFuncionario(UUID id, FuncionarioRequest req) 
     {
          log.info("Iniciando a atualização do funcionario com ID: {}", id);
-         Funcionario funcionarioExistente = repository.findById(id)
+         Funcionario funcionarioExistente = funcionarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Funcionario não encontrado"));
 
         Pessoa pessoaExistente = funcionarioExistente.getPessoaId();
-        Endereco endereco1Existente = funcionarioExistente.getAdress1();
-        Endereco endereco2Existente = funcionarioExistente.getAdress2();
+        Endereco endereco1Existente = funcionarioExistente.getPessoaId().getAdress1();
+        Endereco endereco2Existente = funcionarioExistente.getPessoaId().getAdress2();
 
         // Atualizar Endereço 1
         Endereco endereco1NovosDados = enderecoMapper.toEntity(req.getCodPessoa().getCodAdress1());
@@ -168,7 +166,7 @@ public class FuncionarioService extends BaseService<Funcionario, UUID> {
     {
         log.info("Iniciando a exclusão do funcionario com ID {}.", id);
         Funcionario funcionario = funcionarioRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Funcionário não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Funcionário não encontrado"));
         funcionarioRepository.delete(funcionario);
         log.info("Funcionário com ID {} removido", id);
     }

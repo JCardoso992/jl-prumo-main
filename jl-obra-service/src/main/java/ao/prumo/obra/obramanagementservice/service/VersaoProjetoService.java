@@ -2,11 +2,16 @@ package ao.prumo.obra.obramanagementservice.service;
 
 
 import ao.prumo.obra.obramanagementservice.entity.VersaoProjeto;
+import ao.prumo.obra.obramanagementservice.entity.dto.mapper.VersaoProjetoMapper;
+import ao.prumo.obra.obramanagementservice.entity.dto.request.VersaoProjetoRequest;
+import ao.prumo.obra.obramanagementservice.entity.dto.response.VersaoProjetoResponse;
 import ao.prumo.obra.obramanagementservice.entity.repository.VersaoProjetoRepository;
 import ao.prumo.obra.obramanagementservice.utils.base.BaseService;
-import lombok.Getter;
+import ao.prumo.obra.obramanagementservice.utils.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,11 +24,11 @@ import java.util.UUID;
 @Transactional
 public class VersaoProjetoService extends BaseService<VersaoProjeto, UUID> {
 
-     private final VersaoProjetoRepository repository;
+    private final VersaoProjetoRepository repository;
     private final VersaoProjetoMapper mapper;
 
-    @Override
-    protected JpaRepository<VersaoProjeto, UUID> getRepository() {
+    protected JpaRepository<VersaoProjeto, UUID> getRepository()
+    {
         return this.repository;
     }
 
@@ -31,7 +36,7 @@ public class VersaoProjetoService extends BaseService<VersaoProjeto, UUID> {
     // CREATE
     // =========================================================================
     @Transactional
-    public VersaoProjetoResponse criar(VersaoProjetoRequest request) 
+    public VersaoProjetoResponse criar(VersaoProjetoRequest request)
     {
         log.info("Iniciando a criação de nova versão de projeto");
         VersaoProjeto entity = mapper.toEntity(request);
@@ -42,7 +47,7 @@ public class VersaoProjetoService extends BaseService<VersaoProjeto, UUID> {
     // READ - LIST
     // =========================================================================
     @Transactional(readOnly = true)
-    public Page<VersaoProjetoResponse> listar(Pageable pageable) 
+    public Page<VersaoProjetoResponse> listar(Pageable pageable)
     {
         log.info("Iniciando a listagem de versões de projetos.");
         return repository.findAll(pageable)
@@ -57,7 +62,7 @@ public class VersaoProjetoService extends BaseService<VersaoProjeto, UUID> {
     {
         log.info("Iniciando a busca de versão de projeto por ID.");
         VersaoProjeto versao = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Versão de projeto não encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Versão de projeto não encontrada"));
         log.info("Versão de projeto com ID {} foi encontrada.", id);        
         return mapper.toResponse(versao);
     }
@@ -68,7 +73,7 @@ public class VersaoProjetoService extends BaseService<VersaoProjeto, UUID> {
     /**
     * Atualiza da versão do projeto existente buscando pelo ID.
     * @param id O UUID da versão de projeto a ser alterada.
-    * @param req O DTO com os novos dados.
+    * @param request O DTO com os novos dados.
     * @return VersaoProjetoResponse com os dados atualizados.
     * @throws ResourceNotFoundException se a versão de projeto não for encontrada.
     */
@@ -77,7 +82,7 @@ public class VersaoProjetoService extends BaseService<VersaoProjeto, UUID> {
     {
         log.info("Iniciando a atualização da versão de projeto com ID {}.", id);
         VersaoProjeto existente = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Versão de projeto não encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Versão de projeto não encontrada"));
 
         VersaoProjeto atualizado = mapper.toEntity(request);
         atualizado.setId(existente.getId());
@@ -99,7 +104,7 @@ public class VersaoProjetoService extends BaseService<VersaoProjeto, UUID> {
     {
         log.info("Iniciando a exclusão da versão de projeto com ID {}.", id);
         VersaoProjeto versao = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Versão de projeto não encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Versão de projeto não encontrada"));
         repository.delete(versao);
 
         log.info("Versão de projeto com ID {} removida com sucesso", id);

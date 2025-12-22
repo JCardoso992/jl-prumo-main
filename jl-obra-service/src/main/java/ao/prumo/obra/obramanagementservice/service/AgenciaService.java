@@ -5,10 +5,11 @@ import ao.prumo.obra.obramanagementservice.entity.dto.mapper.AgenciaMapper;
 import ao.prumo.obra.obramanagementservice.entity.dto.request.AgenciaRequest;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.AgenciaResponse;
 import ao.prumo.obra.obramanagementservice.entity.repository.AgenciaRepository;
-import jakarta.persistence.ResourceNotFoundException;
-import lombok.Getter;
+import ao.prumo.obra.obramanagementservice.utils.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +27,8 @@ public class AgenciaService{
    private final AgenciaMapper agenciaMapper;
 
    @Override
-   protected JpaRepository<Agencia, UUID> getRepository() {
+   protected JpaRepository<Agencia, UUID> getRepository()
+   {
       return this.repository;
    }
 
@@ -83,7 +85,7 @@ public class AgenciaService{
    }
 
    @Transactional(readOnly = true)
-   public Page<AgenciaResponse> listar(Pageable pageable) 
+   public Page<AgenciaResponse> listar(Pageable pageable)
    {
       log.info("Iniciando a listagem de agencias.");
       return repository.findAll(pageable)

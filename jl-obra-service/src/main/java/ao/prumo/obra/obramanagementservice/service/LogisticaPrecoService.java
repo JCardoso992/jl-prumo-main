@@ -1,6 +1,5 @@
 package ao.prumo.obra.obramanagementservice.service;
 
-import ao.prumo.obra.obramanagementservice.entity.Funcionario;
 import ao.prumo.obra.obramanagementservice.entity.LogisticaPreco;
 import ao.prumo.obra.obramanagementservice.entity.repository.LogisticaPrecoRepository;
 import ao.prumo.obra.obramanagementservice.utils.base.BaseService;

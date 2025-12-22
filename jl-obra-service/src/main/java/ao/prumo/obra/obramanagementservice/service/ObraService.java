@@ -1,12 +1,16 @@
 package ao.prumo.obra.obramanagementservice.service;
 
-import ao.prumo.obra.obramanagementservice.entity.Logistica;
 import ao.prumo.obra.obramanagementservice.entity.Obra;
+import ao.prumo.obra.obramanagementservice.entity.dto.mapper.ObraMapper;
+import ao.prumo.obra.obramanagementservice.entity.dto.request.ObraRequest;
+import ao.prumo.obra.obramanagementservice.entity.dto.response.ObraResponse;
 import ao.prumo.obra.obramanagementservice.entity.repository.ObraRepository;
 import ao.prumo.obra.obramanagementservice.utils.base.BaseService;
-import lombok.Getter;
+import ao.prumo.obra.obramanagementservice.utils.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,8 +26,7 @@ public class ObraService extends BaseService<Obra, UUID> {
     private final ObraRepository repository;
     private final ObraMapper mapper;
 
-    @Override
-    protected JpaRepository<Obra, UUID> getRepository() 
+    protected JpaRepository<Obra, UUID> getRepository()
     {
         return this.repository;
     }
@@ -32,7 +35,7 @@ public class ObraService extends BaseService<Obra, UUID> {
     // CREATE
     // =========================================================================
     @Transactional
-    public ObraResponse criar(ObraRequest request) 
+    public ObraResponse criar(ObraRequest request)
     {
         log.info("Iniciando a criação de uma nova obra");
         Obra obra = mapper.toEntity(request);
@@ -43,7 +46,7 @@ public class ObraService extends BaseService<Obra, UUID> {
     // READ - LIST
     // =========================================================================
     @Transactional(readOnly = true)
-    public Page<ObraResponse> listar(Pageable pageable) 
+    public Page<ObraResponse> listar(Pageable pageable)
     {
         log.info("Iniciando a listagem de obras.");
         return repository.findAll(pageable)
@@ -69,7 +72,7 @@ public class ObraService extends BaseService<Obra, UUID> {
     /**
      * Atualiza uma obra existente buscando pelo ID.
      * @param id O UUID da obra a ser alterado.
-     * @param req O DTO com os novos dados.
+     * @param request O DTO com os novos dados.
      * @return ObraResponse com os dados atualizados.
      * @throws ResourceNotFoundException se a obra não for encontrada.
      */
