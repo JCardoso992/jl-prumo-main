@@ -1,6 +1,8 @@
 package ao.prumo.obra.obramanagementservice.entity.dto.mapper;
 
+import ao.prumo.obra.obramanagementservice.entity.EtapaLogistica;
 import ao.prumo.obra.obramanagementservice.entity.EtapaObra;
+import ao.prumo.obra.obramanagementservice.entity.dto.response.EtapaLogisticaResponse;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.EtapaObraResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -25,7 +27,7 @@ public interface EtapaLogisticaMapper
         List<EtapaLogisticaResponse> listToResponse(List<EtapaLogistica> etapas_items_stock);
 
         @Named("mapEtapaObraToResponse")
-        default EtapaObraResponse mapEtapaObraToResponse(Pessoa entity) {
+        default EtapaObraResponse mapEtapaObraToResponse(EtapaObra entity) {
         if (entity == null) {
             return null;
         }

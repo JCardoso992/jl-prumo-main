@@ -1,14 +1,10 @@
 package ao.prumo.obra.obramanagementservice.entity.dto.response;
 
-import ao.prumo.obra.obramanagementservice.entity.DocumentoProjeto;
 import ao.prumo.obra.obramanagementservice.entity.enums.Formato;
 import ao.prumo.obra.obramanagementservice.entity.enums.TipoDocumento;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 @Getter

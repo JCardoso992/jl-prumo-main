@@ -7,7 +7,7 @@ import java.util.List;
 
 public abstract class BaseEntityResponse<E, T>
 {
-    public abstract T convertToDTO(E entity);
+    /*public abstract T convertToDTO(E entity);
 
     public abstract List<T> listToDTO(List<E> list);
 
@@ -24,5 +24,5 @@ public abstract class BaseEntityResponse<E, T>
         response.put("page", page.getNumber() );
 
         return response;
-    }
+    }*/
 }

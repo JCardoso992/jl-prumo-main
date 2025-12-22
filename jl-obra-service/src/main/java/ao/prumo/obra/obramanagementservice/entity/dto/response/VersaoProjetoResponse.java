@@ -1,10 +1,7 @@
 package ao.prumo.obra.obramanagementservice.entity.dto.response;
 
-import ao.prumo.obra.obramanagementservice.entity.VersaoProjeto;
 import ao.prumo.obra.obramanagementservice.entity.enums.Status;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Date;
 import java.util.UUID;

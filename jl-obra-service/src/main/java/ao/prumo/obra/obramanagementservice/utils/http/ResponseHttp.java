@@ -11,7 +11,7 @@ import java.util.Date;
 @Getter
 @ToString
 public class ResponseHttp {
-    private  String mensagen;
+    public  String mensagen;
     public HttpStatus status;
     public Integer code;
     public Object data;

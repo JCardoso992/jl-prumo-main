@@ -26,7 +26,6 @@ public class AgenciaService{
 
    private final AgenciaMapper agenciaMapper;
 
-   @Override
    protected JpaRepository<Agencia, UUID> getRepository()
    {
       return this.repository;

@@ -1,6 +1,8 @@
 package ao.prumo.obra.obramanagementservice.entity.dto.mapper;
 
 import ao.prumo.obra.obramanagementservice.entity.Logistica;
+import ao.prumo.obra.obramanagementservice.entity.LogisticaPreco;
+import ao.prumo.obra.obramanagementservice.entity.dto.response.LogisticaPrecoResponse;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.LogisticaResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -10,7 +12,7 @@ import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", uses = {LogistigaMapper.class},
+@Mapper(componentModel = "spring", uses = {LogisticaMapper.class},
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface LogisticaPrecoMapper

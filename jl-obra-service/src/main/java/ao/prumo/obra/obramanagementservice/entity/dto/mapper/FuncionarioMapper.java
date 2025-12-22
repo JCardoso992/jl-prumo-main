@@ -25,7 +25,7 @@ public interface FuncionarioMapper
     @Mapping(source = "id", target = "codFuncionario")
     @Mapping(source = "pessoaId", target = "codPessoa", qualifiedByName = "mapPessoaToResponse")
     @Mapping(source = "agenciaId", target = "codAgencia", qualifiedByName = "mapAgenciaToResponse")
-    @Mapping(source = "cargoId", target = "mapCargoToResponse", qualifiedByName = "mapCargoToResponse")
+    @Mapping(source = "cargoId", target = "codCargo", qualifiedByName = "mapCargoToResponse")
     FuncionarioResponse toResponse(Funcionario entity);
 
     // Mapeamento de FuncionarioRequest para Funcionario

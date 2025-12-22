@@ -1,11 +1,6 @@
 package ao.prumo.obra.obramanagementservice.entity.dto.response;
 
-import ao.prumo.obra.obramanagementservice.entity.ContaOrganizacao;
-import ao.prumo.obra.obramanagementservice.entity.PagamentoProjecto;
-import ao.prumo.obra.obramanagementservice.entity.ProjetoArquitetonico;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Date;
 import java.util.UUID;

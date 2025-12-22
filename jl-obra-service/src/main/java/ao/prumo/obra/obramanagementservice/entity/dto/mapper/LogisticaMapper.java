@@ -3,10 +3,8 @@ package ao.prumo.obra.obramanagementservice.entity.dto.mapper;
 import ao.prumo.obra.obramanagementservice.entity.Logistica;
 import ao.prumo.obra.obramanagementservice.entity.Despesa;
 import ao.prumo.obra.obramanagementservice.entity.dto.request.LogisticaRequest;
-import ao.prumo.obra.obramanagementservice.entity.dto.request.DespesaRequest;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.LogisticaResponse;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.DespesaResponse;
-import org.mapstruct.Mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -20,7 +18,7 @@ import java.util.List;
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface LogisticaMapper
 {
-    //LogisticaMapper INSTANCE = Mappers.getMapper(LogisticaMapper.class);
+    LogisticaMapper INSTANCE = Mappers.getMapper(LogisticaMapper.class);
 
     // Mapeamento de Logistica para LogisticaResponse
     @Mapping(source = "id", target = "codLogistiga")

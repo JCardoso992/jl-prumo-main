@@ -11,6 +11,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.ReportingPolicy;
+import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
@@ -19,7 +20,7 @@ import java.util.List;
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface ObraMapper
 {
-    //ObraMapper INSTANCE = Mappers.getMapper(ObraMapper.class);
+    ObraMapper INSTANCE = Mappers.getMapper(ObraMapper.class);
 
     // Mapeamento de Obra para ObraResponse
     @Mapping(source = "id", target = "codObra")

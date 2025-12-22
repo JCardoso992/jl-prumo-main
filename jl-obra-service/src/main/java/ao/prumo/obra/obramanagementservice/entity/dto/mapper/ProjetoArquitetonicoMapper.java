@@ -22,7 +22,7 @@ import java.util.List;
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface ProjetoArquitetonicoMapper
 {
-    //ProjetoArquitetonicoMapper INSTANCE = Mappers.getMapper(ProjetoArquitetonicoMapper.class);
+    ProjetoArquitetonicoMapper INSTANCE = Mappers.getMapper(ProjetoArquitetonicoMapper.class);
 
     // Mapeamento de ProjetoArquitetonico para ProjetoArquitetonicoResponse
     @Mapping(source = "id", target = "codProjetoArquitetonico")

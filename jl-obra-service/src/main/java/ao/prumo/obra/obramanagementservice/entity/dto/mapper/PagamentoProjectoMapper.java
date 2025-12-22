@@ -20,7 +20,7 @@ import java.util.List;
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface PagamentoProjectoMapper
 {
-    //PagamentoProjectoMapper INSTANCE = Mappers.getMapper(PagamentoProjectoMapper.class);
+    PagamentoProjectoMapper INSTANCE = Mappers.getMapper(PagamentoProjectoMapper.class);
 
     // Mapeamento de PagamentoProjecto para PagamentoProjectoResponse
     @Mapping(source = "id", target = "codPagamento")

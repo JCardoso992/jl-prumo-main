@@ -30,7 +30,7 @@ public interface EtapaObraMapper
      @Mapping(source = "id", target = "codEtapaObra")
      @Mapping(source = "obraId", target = "codObra", qualifiedByName = "mapObraToResponse")
      @Mapping(source = "despesaId", target = "codDespesa", qualifiedByName = "mapDespesaToResponse")
-     @Mapping(source = "contaOrganizacaoId", target = "codContaOrganizacao", qualifiedByName = "mapContaOrganizacaoToResponse")
+     @Mapping(source = "contaOrganizacaoId", target = "codContaOrganizacao", qualifiedByName = "mapContaToResponse")
      @Mapping(source = "pagamentoProjectoId", target = "codPagamentoProjecto", qualifiedByName = "mapPagamentoProjectoToResponse")
      EtapaObraResponse toResponse(EtapaObra entity);
      
@@ -61,8 +61,8 @@ public interface EtapaObraMapper
         return DespesaMapper.INSTANCE.toResponse(entity);
      }
 
-     @Named("mapContaOrganizacaoToResponse")
-     default ContaOrganizacaoResponse mapContaOrganizacaoToResponse(ContaOrganizacao entity) {
+     @Named("mapContaToResponse")
+     default ContaOrganizacaoResponse mapContaToResponse(ContaOrganizacao entity) {
         if (entity == null) {
             return null;
         }
