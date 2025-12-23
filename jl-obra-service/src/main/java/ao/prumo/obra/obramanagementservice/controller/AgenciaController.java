@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,6 +40,7 @@ public class AgenciaController
             @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> criarAgencia(@Valid @RequestBody AgenciaRequest request) {
         AgenciaResponse response = service.criarAgencia(request);
         // Usa o builder para padronizar a resposta HTTP 201 CREATED
@@ -51,10 +53,11 @@ public class AgenciaController
 
     @Operation(summary = "Listar todas as agências (com paginação)")
     @ApiResponse(responseCode = "200", description = "Lista de agências encontrada")
-    @GetMapping
+    @GetMapping("/pages/{id}")
     public ResponseEntity<?> listaDeAgencias(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
-            @RequestParam(name = "size", defaultValue = "12", required = false) int size
+            @RequestParam(name = "size", defaultValue = "12", required = false) int size,
+            @PathVariable("id") Integer id
     ) {
          Pageable pageable = PageRequest.of(page, size);
          Page<AgenciaResponse> result = service.listar(pageable);
@@ -76,7 +79,7 @@ public class AgenciaController
             @ApiResponse(responseCode = "200", description = "Agência encontrada"),
             @ApiResponse(responseCode = "404", description = "Agência não encontrada")
     })
-    @GetMapping("/{id}")
+    @GetMapping("/buscar/{id}")
     public ResponseEntity<?> buscarAgenciaPorId(@PathVariable UUID id) {
         AgenciaResponse response = service.buscarPorId(id);
         return ResponseHttpBuilder.info("Agência recuperada com sucesso.", response);

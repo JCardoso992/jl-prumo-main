@@ -3,6 +3,9 @@ package ao.prumo.obra.obramanagementservice.controller;
 import ao.prumo.obra.obramanagementservice.entity.dto.request.FuncionarioRequest;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.FuncionarioResponse;
 import ao.prumo.obra.obramanagementservice.service.FuncionarioService;
+import ao.prumo.obra.obramanagementservice.entity.dto.request.CargoRequest;
+import ao.prumo.obra.obramanagementservice.entity.dto.response.CargoResponse;
+import ao.prumo.obra.obramanagementservice.service.CargoService;
 import ao.prumo.obra.obramanagementservice.utils.globalConstantes.Constante;
 import ao.prumo.obra.obramanagementservice.utils.http.ResponseHttp;
 import ao.prumo.obra.obramanagementservice.utils.http.ResponseHttpBuilder;
@@ -17,6 +20,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +33,7 @@ import java.util.UUID;
 public class FuncionarioController
 {
      private final FuncionarioService service;
+     private final CargoService serviceCargo;
 
     @Operation(summary = "Criar um novo funcionario")
     @ApiResponses({
@@ -36,18 +41,19 @@ public class FuncionarioController
             @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ResponseHttp> criarFuncionario(@Valid @RequestBody FuncionarioRequest request) {
         FuncionarioResponse response = service.criarFuncionario(request);
         return ResponseHttpBuilder.created("Funcionário criado com sucesso.", response);
     }
 
-     @Operation(summary = "Listar funcionários (paginado)")
+    @Operation(summary = "Listar funcionários (paginado)")
     @ApiResponse(responseCode = "200", description = "Lista de funcionarios encontrados")
     @GetMapping("/pages/{id}")
     public ResponseEntity<?> listaDeFuncionarios(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
             @RequestParam(name = "size", defaultValue = "12", required = false) int size,
-            @PathVariable("id") Integer id
+            @PathVariable("id") UUID id
     ){
         Pageable pageable = PageRequest.of(page, size);
         Page<FuncionarioResponse> result = service.listar(pageable);
@@ -70,7 +76,7 @@ public class FuncionarioController
             @ApiResponse(responseCode = "200", description = "Funcionario encontrado"),
             @ApiResponse(responseCode = "404", description = "Funcionario não encontrada")
     })
-    @GetMapping("/pesquisar/{id}")
+    @GetMapping("/buscar/{id}")
     public ResponseEntity<?> pesguisarFuncionarioById(@PathVariable("id") UUID id)
     {
         FuncionarioResponse response = service.buscarPorId(id);
@@ -97,6 +103,89 @@ public class FuncionarioController
     @DeleteMapping("/{id}")
     public ResponseEntity<?> excluirFuncionario(@PathVariable UUID id) {
         service.excluirFuncionario(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // =========================================================================
+    // CREATE FUNCIONARIO
+    // =========================================================================
+    @Operation(summary = "Criar um novo cargo")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Cargo criado com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
+    })
+    @PostMapping("/cargo")
+    public ResponseEntity<?> criarCargo(@Valid @RequestBody CargoRequest request) {
+        CargoResponse response = serviceCargo.criarCargo(request);
+        return ResponseHttpBuilder.created("Cargo criado com sucesso.", response);
+    }
+
+    // =========================================================================
+    // READ - LIST (PAGINADO)  FUNCIONARIO
+    // =========================================================================
+    @Operation(summary = "Listar cargos (paginado)")
+    @ApiResponse(responseCode = "200", description = "Lista de cargos encontrada")
+    @GetMapping("/cargo/pages/{id}")
+    public ResponseEntity<?> listarCargos(
+            @RequestParam(name = "page", defaultValue = "0", required = false) int page,
+            @RequestParam(name = "size", defaultValue = "12", required = false) int size,
+            @PathVariable("id") UUID id
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<CargoResponse> cargos = serviceCargo.listarCargos(pageable);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("content", cargos.getContent());
+        response.put("page", cargos.getNumber());
+        response.put("size", cargos.getSize());
+        response.put("totalElements", cargos.getTotalElements());
+        response.put("totalPages", cargos.getTotalPages());
+
+        return ResponseHttpBuilder.info("Lista de cargos recuperada com sucesso.", response);
+    }
+
+    // =========================================================================
+    // READ - BY ID  FUNCIONARIO
+    // =========================================================================
+    @Operation(summary = "Buscar cargo por ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Cargo encontrado"),
+            @ApiResponse(responseCode = "404", description = "Cargo não encontrado")
+    })
+    @GetMapping("/cargo/buscar/{id}")
+    public ResponseEntity<?> buscarCargoPorId(@PathVariable UUID id) {
+        CargoResponse response = serviceCargo.buscarCargoPorId(id);
+        return ResponseHttpBuilder.info("Cargo recuperado com sucesso.", response);
+    }
+
+    // =========================================================================
+    // UPDATE  FUNCIONARIO
+    // =========================================================================
+    @Operation(summary = "Atualizar um cargo existente")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Cargo atualizado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Cargo não encontrado"),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
+    })
+    @PutMapping("/cargo/{id}")
+    public ResponseEntity<?> atualizarCargo(
+            @PathVariable UUID id,
+            @Valid @RequestBody CargoRequest request) {
+        CargoResponse response = serviceCargo.alterarCargo(id, request);
+        return ResponseHttpBuilder.info("Cargo atualizado com sucesso.", response);
+    }
+
+    // =========================================================================
+    // DELETE  FUNCIONARIO
+    // =========================================================================
+    @Operation(summary = "Eliminar cargo")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Cargo eliminado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Cargo não encontrado")
+    })
+    @DeleteMapping("/cargo/{id}")
+    public ResponseEntity<?> excluirCargo(@PathVariable UUID id) {
+        serviceCargo.excluirCargo(id);
         return ResponseEntity.noContent().build();
     }
 }

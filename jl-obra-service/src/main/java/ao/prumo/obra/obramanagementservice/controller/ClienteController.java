@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,6 +40,7 @@ public class ClienteController
             @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> criarCliente(@Valid @RequestBody ClienteRequest request) {
         ClienteResponse response = service.criarCliente(request);
         return ResponseHttpBuilder.created("Cliente criado com sucesso.", response);
@@ -50,10 +52,11 @@ public class ClienteController
 
     @Operation(summary = "Listar clientes (paginado)")
     @ApiResponse(responseCode = "200", description = "Lista de clientes encontrado")
-    @GetMapping
+    @GetMapping("/pages/{id}")
     public ResponseEntity<?> listaDeClientes(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
-            @RequestParam(name = "size", defaultValue = "12", required = false) int size
+            @RequestParam(name = "size", defaultValue = "12", required = false) int size,
+            @PathVariable("id") UUID id
     ) {
         Pageable pageable = PageRequest.of(page, size);
         Page<ClienteResponse> clientes = service.listarClientes(pageable);
@@ -77,7 +80,7 @@ public class ClienteController
             @ApiResponse(responseCode = "200", description = "Cliente encontrado"),
             @ApiResponse(responseCode = "404", description = "Cliente não encontrado")
     })
-    @GetMapping("/{id}")
+    @GetMapping("/buscar/{id}")
     public ResponseEntity<?> buscarClientePorId(@PathVariable UUID id) {
         // Você precisará de um método findById ou similar no ClienteService que retorne o DTO.
         // Assumindo que você o implementou:

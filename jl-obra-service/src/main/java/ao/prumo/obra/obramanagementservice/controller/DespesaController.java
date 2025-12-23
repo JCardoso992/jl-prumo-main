@@ -3,6 +3,9 @@ package ao.prumo.obra.obramanagementservice.controller;
 import ao.prumo.obra.obramanagementservice.entity.dto.request.DespesaRequest;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.DespesaResponse;
 import ao.prumo.obra.obramanagementservice.service.DespesaService;
+import ao.prumo.obra.obramanagementservice.entity.dto.request.LogisticaRequest;
+import ao.prumo.obra.obramanagementservice.entity.dto.response.LogisticaResponse;
+import ao.prumo.obra.obramanagementservice.service.LogisticaService;
 import ao.prumo.obra.obramanagementservice.utils.globalConstantes.Constante;
 import ao.prumo.obra.obramanagementservice.utils.http.ResponseHttpBuilder;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,6 +33,11 @@ public class DespesaController
 {
    
     private final DespesaService service;
+    private final LogisticaService serviceLogistica;
+
+     // =========================================================================
+    // CREATE
+    // =========================================================================
 
     @Operation(summary = "Criar uma nova despesa")
     @ApiResponses({
@@ -49,7 +57,7 @@ public class DespesaController
     public ResponseEntity<?> listaDeDespesas(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
             @RequestParam(name = "size", defaultValue = "12", required = false) int size,
-            @PathVariable("id") Integer id
+            @PathVariable("id") UUID id
     ){
         Pageable pageable = PageRequest.of(page, size);
         Page<DespesaResponse> result = service.listar(pageable);
@@ -66,7 +74,7 @@ public class DespesaController
 
  /*   @Operation(summary = "Lista de despesas")
     @ApiResponse(responseCode = "200", description = "Lista de despesas encontradas")
-    @GetMapping("/{id}")
+    @GetMapping("/buscar/{id}")
     public ResponseEntity<?> listaDeDespesas(@PathVariable("id") UUID id)
     {
         List<Despesa> DespesaPage = service.findAll();
@@ -82,7 +90,7 @@ public class DespesaController
             @ApiResponse(responseCode = "200", description = "Despesa encontrada"),
             @ApiResponse(responseCode = "404", description = "Despesa não encontrada")
     })
-    @GetMapping("/{id}")
+    @GetMapping("/buscar/{id}")
     public ResponseEntity<?> buscarPorId(@PathVariable UUID id) {
         DespesaResponse response = service.buscarPorId(id);
         return ResponseHttpBuilder.info("Despesa recuperada com sucesso.", response);
@@ -109,6 +117,90 @@ public class DespesaController
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminarDespesa(@PathVariable UUID id) {
         service.excluir(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // =========================================================================
+    // CREATE LOGISTICA
+    // =========================================================================
+    @Operation(summary = "Criar item de logística")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Item de logística criado com sucesso"),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
+    })
+    @PostMapping("/logistica")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<?> criar(@Valid @RequestBody LogisticaRequest request) {
+        LogisticaResponse response = serviceLogistica.criar(request);
+        return ResponseHttpBuilder.created("Item de logística criado com sucesso.", response);
+    }
+
+    // =========================================================================
+    // READ - LIST
+    // =========================================================================
+    @Operation(summary = "Listar itens de logística (paginado)")
+    @ApiResponse(responseCode = "200", description = "Lista de itens de logística encontrado")
+    @GetMapping("/logistica/pages/{id}")
+    public ResponseEntity<?> listar(
+            @RequestParam(name = "page", defaultValue = "0", required = false) int page,
+            @RequestParam(name = "size", defaultValue = "12", required = false) int size,
+            @PathVariable UUID id
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<LogisticaResponse> result = serviceLogistica.listar(pageable);
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("content", result.getContent());
+        data.put("page", result.getNumber());
+        data.put("size", result.getSize());
+        data.put("totalElements", result.getTotalElements());
+        data.put("totalPages", result.getTotalPages());
+
+        return ResponseHttpBuilder.info("Lista de logística recuperada com sucesso.", data);
+    }
+
+    // =========================================================================
+    // READ - BY ID
+    // =========================================================================
+    @Operation(summary = "Buscar item de logística por ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Item de logística encontrado"),
+            @ApiResponse(responseCode = "404", description = "Item de logística não encontrado")
+    })
+    @GetMapping("/logistica/buscar/{id}")
+    public ResponseEntity<?> buscarLogisticaPorId(@PathVariable UUID id) {
+        LogisticaResponse response = serviceLogistica.buscarPorId(id);
+        return ResponseHttpBuilder.info("Item de logística recuperado com sucesso.", response);
+    }
+
+    // =========================================================================
+    // UPDATE
+    // =========================================================================
+    @Operation(summary = "Atualizar item de logística")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Item de logística atualizado com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Item de logística não encontrado"),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
+    })
+    @PutMapping("/logistica/{id}")
+    public ResponseEntity<?> atualizar(
+            @PathVariable UUID id,
+            @Valid @RequestBody LogisticaRequest request) {
+        LogisticaResponse response = serviceLogistica.atualizar(id, request);
+        return ResponseHttpBuilder.info("Item de logística atualizado com sucesso.", response);
+    }
+
+    // =========================================================================
+    // DELETE
+    // =========================================================================
+    @Operation(summary = "Excluir item de logística")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Item de logística eliminada com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Item de logística não encontrada")
+    })
+    @DeleteMapping("/logistica/{id}")
+    public ResponseEntity<?> excluir(@PathVariable UUID id) {
+        serviceLogistica.excluir(id);
         return ResponseEntity.noContent().build();
     }
 }

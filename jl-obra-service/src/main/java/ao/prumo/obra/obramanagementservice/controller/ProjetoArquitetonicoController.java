@@ -70,7 +70,7 @@ public class ProjetoArquitetonicoController
 
     @Operation(summary = "Listar projetos arquitetônicos (paginado)")
     @ApiResponse(responseCode = "200", description = "Lista de projetos arquitetonicos encontrado")
-    @GetMapping("/{id}")
+    @GetMapping("/pages/{id}")
     public ResponseEntity<?> listaDeProjetoArquitetonicos(
         @RequestParam(name = "page", defaultValue = "0", required = false) int page,
         @RequestParam(name = "size", defaultValue = "12", required = false) int size,
@@ -134,7 +134,8 @@ public class ProjetoArquitetonicoController
         @ApiResponse(responseCode = "201", description = "Pagamento do projecto criado com sucesso"),
         @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
-    @PostMapping("/pagamento")    
+    @PostMapping("/pagamento")
+    @ResponseStatus(HttpStatus.CREATED)    
     public ResponseEntity<?> criar(@Valid @RequestBody PagamentoProjectoRequest request)
     {
         PagamentoProjectoResponse response = servicePagamento.criar(request);
@@ -145,7 +146,7 @@ public class ProjetoArquitetonicoController
     // READ - LIST PAGAMENTO DE PROJECTO
     // =========================================================================
     @Operation(summary = "Listar pagamentos de projectos (paginado)")
-    @GetMapping("/pagamento/{id}")
+    @GetMapping("/pagamento/pages/{id}")
     public ResponseEntity<?> listarPagamento(
         @RequestParam(name = "page", defaultValue = "0", required = false) int page,
         @RequestParam(name = "size", defaultValue = "12", required = false) int size,
@@ -219,6 +220,7 @@ public class ProjetoArquitetonicoController
         @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
     @PostMapping("/obra-projecto")
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> criarObra(@Valid @RequestBody ObraRequest request) {
         ObraResponse response = serviceObra.criar(request);
         return ResponseHttpBuilder.created("Obra criada com sucesso.", response);
@@ -229,7 +231,7 @@ public class ProjetoArquitetonicoController
     // =========================================================================
     @Operation(summary = "Listar obras (paginado)")
     @ApiResponse(responseCode = "200", description = "Lista de obra encontrado")
-    @GetMapping("/obra-projecto/{id}")
+    @GetMapping("/obra-projecto/pages/{id}")
     public ResponseEntity<?> listarObra(
         @RequestParam(name = "page", defaultValue = "0", required = false) int page,
         @RequestParam(name = "size", defaultValue = "12", required = false) int size,
@@ -302,6 +304,7 @@ public class ProjetoArquitetonicoController
             @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
     @PostMapping("/versao-projeto")
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> criar(@Valid @RequestBody VersaoProjetoRequest request) 
     {
         VersaoProjetoResponse response = serviceVersao.criar(request);
