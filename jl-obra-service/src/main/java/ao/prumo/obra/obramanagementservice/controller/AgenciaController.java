@@ -27,7 +27,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AgenciaController
 {
-    private AgenciaService service;
+    private final AgenciaService service;
 
     // =========================================================================
     // 1. CREATE (POST) - Criar uma nova Agência

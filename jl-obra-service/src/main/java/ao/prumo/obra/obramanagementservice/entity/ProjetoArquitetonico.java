@@ -17,7 +17,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "projeto_arquitetonico")
 public class ProjetoArquitetonico  extends BaseAuditingEntity
-{
+{ 
     @Id
     @GeneratedValue
     @Column(name = "id")
