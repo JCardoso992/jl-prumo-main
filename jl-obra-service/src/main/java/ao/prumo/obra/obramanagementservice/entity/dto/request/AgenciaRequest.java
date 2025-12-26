@@ -18,7 +18,5 @@ public class AgenciaRequest
     @NotNull(message = "[descricao] é um campo é obrigatório.")
     @NotBlank(message = "[descricao], este campo não pode ficar em branco.")
     private String descricao;
-    private Boolean status;
-    private String arquivoPath;
 
 }

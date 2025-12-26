@@ -5,14 +5,19 @@ import ao.prumo.obra.obramanagementservice.entity.dto.mapper.AgenciaMapper;
 import ao.prumo.obra.obramanagementservice.entity.dto.request.AgenciaRequest;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.AgenciaResponse;
 import ao.prumo.obra.obramanagementservice.entity.repository.AgenciaRepository;
+import ao.prumo.obra.obramanagementservice.file.FileStorageService;
 import ao.prumo.obra.obramanagementservice.utils.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
@@ -26,18 +31,24 @@ public class AgenciaService{
 
    private final AgenciaMapper agenciaMapper;
 
+   private final FileStorageService fileService;
+
    protected JpaRepository<Agencia, UUID> getRepository()
    {
       return this.repository;
    }
 
    @Transactional
-   public AgenciaResponse criarAgencia(AgenciaRequest req)
+   @CacheEvict(value = "buscar-agencias", allEntries = true)
+   public AgenciaResponse criarAgencia(AgenciaRequest req, MultipartFile file)
    {
       log.info("Iniciando a criação de uma nova agência.");
       // Mapper converte o DTO para Entidade -> Service salva a Entidade
       // -> Mapper converte a Entidade salva para DTO de Resposta
-      return agenciaMapper.toResponse(repository.save(agenciaMapper.toEntity(req)));
+      Agencia entity = agenciaMapper.toEntity(req);
+      final String filePath = fileService.saveFile(file, req.getAbreviacao(), "Agencia");
+      entity.setArquivoPath(filePath);
+      return agenciaMapper.toResponse(repository.save(entity));
    }
 
    /**
@@ -48,7 +59,11 @@ public class AgenciaService{
     * @throws ResourceNotFoundException se a agência não for encontrada.
     */
    @Transactional
-   public AgenciaResponse alterarAgencia(UUID id, AgenciaRequest req)
+   @Caching(evict = {
+           @CacheEvict(value = "buscar-agencias", allEntries = true),
+           @CacheEvict(value = "buscar-agencia-por-id", key = "#id")
+   })
+   public AgenciaResponse alterarAgencia(UUID id, AgenciaRequest req, MultipartFile file)
    {
       log.info("Iniciando a atualização da agencia com ID {}.", id);
       // 1. Verifica se a agência existe pelo ID
@@ -58,6 +73,14 @@ public class AgenciaService{
       Agencia agenciaAtualizada = agenciaMapper.toEntity(req);
       agenciaAtualizada.setId(agenciaExistente.getId()); // Garante que o ID original seja mantido
       // 3. Persiste a atualização no banco de dados
+      if(file != null)
+      {
+         final String filePath = fileService.saveFile(file, req.getAbreviacao(), "Agencia");
+         agenciaAtualizada.setArquivoPath(filePath);
+      }else{
+         agenciaAtualizada.setArquivoPath(agenciaExistente.getArquivoPath());
+      }
+
       Agencia agenciaSalva = this.repository.save(agenciaAtualizada); // herdado do BaseService
       log.info("Agência com ID {} alterada com sucesso.", id);
       // 4. Converte e retorna o DTO de resposta
@@ -70,6 +93,10 @@ public class AgenciaService{
     * @throws ResourceNotFoundException se a agência não for encontrada.
     */
    @Transactional
+   @Caching(evict = {
+           @CacheEvict(value = "buscar-agencias", allEntries = true),
+           @CacheEvict(value = "buscar-agencia-por-id", key = "#id")
+   })
    public void excluirAgencia(UUID id) throws ResourceNotFoundException 
    {
       log.info("Iniciando a exclusão da agencia com ID {}.", id);
@@ -84,6 +111,7 @@ public class AgenciaService{
    }
 
    @Transactional(readOnly = true)
+   @Cacheable("buscar-agencias")
    public Page<AgenciaResponse> listar(Pageable pageable)
    {
       log.info("Iniciando a listagem de agencias.");
@@ -92,6 +120,7 @@ public class AgenciaService{
    }
 
    @Transactional(readOnly = true)
+   @Cacheable("buscar-agencia-por-id")
    public AgenciaResponse buscarPorId(UUID id) 
    {
       log.info("Iniciando a busca de agencia por ID {}.", id);

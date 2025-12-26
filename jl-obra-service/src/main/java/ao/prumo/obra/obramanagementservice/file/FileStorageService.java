@@ -3,6 +3,7 @@ package ao.prumo.obra.obramanagementservice.file;
 import jakarta.annotation.Nonnull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,14 +21,15 @@ import static java.lang.System.currentTimeMillis;
 @RequiredArgsConstructor
 public class FileStorageService {
 
-
+    @Value("${app.banco-imagem.storage.path}")
     private String fileUploadPath;
 
     public String saveFile(
             @Nonnull MultipartFile sourceFile,
-            @Nonnull String projeto
+            @Nonnull String projeto,
+            @Nonnull String funcionalidade
     ) {
-        final String fileUploadSubPath = "versao" + separator + projeto;
+        final String fileUploadSubPath = funcionalidade + separator + projeto;
         return uploadFile(sourceFile, fileUploadSubPath);
     }
 

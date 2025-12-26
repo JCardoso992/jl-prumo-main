@@ -19,6 +19,5 @@ public class CargoRequest
     @NotNull(message = "[abreviacao] é um campo é obrigatório.")
     @NotBlank(message = "[abreviacao], este campo não pode ficar em branco.")
     private String descricao;
-    private Boolean status;
 
 }

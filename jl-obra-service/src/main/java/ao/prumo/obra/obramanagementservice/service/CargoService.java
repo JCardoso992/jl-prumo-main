@@ -8,6 +8,9 @@ import ao.prumo.obra.obramanagementservice.entity.repository.CargoRepository;
 import ao.prumo.obra.obramanagementservice.utils.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -33,12 +36,15 @@ public class CargoService
     }
 
     @Transactional
+    @CacheEvict(value = "buscar-agencias", allEntries = true)
     public CargoResponse criarCargo(CargoRequest req)
     {
         log.info("Iniciando a criação de uma novo Cargo.");
         // Mapper converte o DTO para Entidade -> Service salva a Entidade
         // -> Mapper converte a Entidade salva para DTO de Resposta
-        return cargoMapper.toResponse(repository.save(cargoMapper.toEntity(req)));
+        Cargo entity = cargoMapper.toEntity(req);
+        entity.setStatus(Boolean.TRUE);
+        return cargoMapper.toResponse(repository.save(entity));
     }
 
     /**
@@ -49,6 +55,10 @@ public class CargoService
      * @throws ResourceNotFoundException se o cargo não for encontrada.
      */
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "buscar-cargos", allEntries = true),
+            @CacheEvict(value = "buscar-cargos-por-id", key = "#id")
+    })
     public CargoResponse alterarCargo(UUID id, CargoRequest req)
     {
         log.info("Iniciando a atualização do cargo com ID {}.", id);
@@ -71,21 +81,27 @@ public class CargoService
      * @throws ResourceNotFoundException se o cargo não for encontrado.
      */
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "buscar-cargos", allEntries = true),
+            @CacheEvict(value = "buscar-cargos-por-id", key = "#id")
+    })
     public void excluirCargo(UUID id) throws ResourceNotFoundException 
     {
         log.info("Iniciando a exclusão do cargo com ID {}.", id);
         // 1. Verificar se o cargo existe.
         // O método findById() é herdado do BaseService e já lança ResourceNotFoundException se não encontrar.
-        this.repository.findById(id)
+        Cargo cargoExistente =  this.repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cargo Não Existe"));
         // 2. Se a cargo foi encontrada, prosseguir com a exclusão.
-        this.repository.deleteById(id);
+        cargoExistente.setStatus(Boolean.FALSE);
+        this.repository.save(cargoExistente);
 
         log.info("Cargo com ID {} excluída com sucesso.", id);
     }
 
     
     @Transactional(readOnly = true)
+    @Cacheable("buscar-cargos")
     public Page<CargoResponse> listarCargos(Pageable pageable)
     {
         log.info("Iniciando a listagem de cargos.");
@@ -95,6 +111,7 @@ public class CargoService
 
     
     @Transactional(readOnly = true)
+    @Cacheable("buscar-cargos-por-id")
     public CargoResponse buscarCargoPorId(UUID id) 
     {
         log.info("Iniciando a listagem do cargo por ID {}.", id);

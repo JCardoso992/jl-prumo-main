@@ -2,7 +2,7 @@
 <configuration>
 
     <property name="LOGS_HOME" value="./logs" />
-    <property name="LOG_FILE_NAME" value="seu-projeto-agencia" />
+    <property name="LOG_FILE_NAME" value="server-jc" />
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>

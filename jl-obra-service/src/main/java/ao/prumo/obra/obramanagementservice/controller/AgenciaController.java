@@ -14,9 +14,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,18 +34,24 @@ public class AgenciaController
 
     // =========================================================================
     // 1. CREATE (POST) - Criar uma nova Agência
+    // 1.1. Swagger UI (OpenAPI)
+    // @Operation(summary = "Criar uma nova agência", requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @io.swagger.v3.oas.annotations.media.Content(encoding = @io.swagger.v3.oas.annotations.media.Encoding(name = "request", contentType = "application/json"))))
+    //  @PostMapping(value="/criar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    //  1.2. Postman
+    //  @PostMapping(value="/criar", consumes = "multipart/form-data")
     // =========================================================================
 
-    @Operation(summary = "Criar uma nova agência")
+    @Operation(summary = "Criar uma nova agência", requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @io.swagger.v3.oas.annotations.media.Content(encoding = @io.swagger.v3.oas.annotations.media.Encoding(name = "request", contentType = "application/json"))))
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Agência criada com sucesso"),
             @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
-    @PostMapping
+    @PostMapping(value="/criar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> criarAgencia(@Valid @RequestBody AgenciaRequest request) {
-        AgenciaResponse response = service.criarAgencia(request);
-        // Usa o builder para padronizar a resposta HTTP 201 CREATED
+    public ResponseEntity<?> criarAgencia(@Valid @RequestPart("request") AgenciaRequest request,
+         @RequestPart("file") MultipartFile file )
+    {
+        AgenciaResponse response = service.criarAgencia(request, file);
         return ResponseHttpBuilder.created("Agência criada com sucesso.", response);
     }
 
@@ -53,11 +61,10 @@ public class AgenciaController
 
     @Operation(summary = "Listar todas as agências (com paginação)")
     @ApiResponse(responseCode = "200", description = "Lista de agências encontrada")
-    @GetMapping("/pages/{id}")
+    @GetMapping("/pages")
     public ResponseEntity<?> listaDeAgencias(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
-            @RequestParam(name = "size", defaultValue = "12", required = false) int size,
-            @PathVariable("id") Integer id
+            @RequestParam(name = "size", defaultValue = "12", required = false) int size
     ) {
          Pageable pageable = PageRequest.of(page, size);
          Page<AgenciaResponse> result = service.listar(pageable);
@@ -89,15 +96,17 @@ public class AgenciaController
     // 3. UPDATE (PUT) - Atualizar uma Agência
     // =========================================================================
 
-    @Operation(summary = "Atualizar agencia")
+    @Operation(summary = "Atualizar agencia", requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @io.swagger.v3.oas.annotations.media.Content(encoding = @io.swagger.v3.oas.annotations.media.Encoding(name = "request", contentType = "application/json"))))
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Agência atualizada com sucesso"),
             @ApiResponse(responseCode = "404", description = "Agência não encontrada"),
             @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
-    @PutMapping("/{id}")
-    public ResponseEntity<?> atualizarAgencia(@PathVariable UUID id, @Valid @RequestBody AgenciaRequest request) {
-        AgenciaResponse response = service.alterarAgencia(id, request);
+    @PutMapping(value="/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> atualizarAgencia(@PathVariable UUID id, @Valid @RequestPart("request") AgenciaRequest request,
+                                              @RequestPart("file") MultipartFile file )
+    {
+        AgenciaResponse response = service.alterarAgencia(id, request, file);
         // Usa o builder para padronizar a resposta HTTP 200 OK
         return ResponseHttpBuilder.info("Agência atualizada com sucesso.", response);
     }
