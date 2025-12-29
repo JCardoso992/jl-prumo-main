@@ -986,3 +986,472 @@ org.springframework.web.HttpMediaTypeNotSupportedException: Content-Type 'multip
 2025-12-29 11:39:04.946 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
 2025-12-29 11:39:04.951 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
 2025-12-29 11:39:04.952 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-12-29 13:22:12.100 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.2.Final
+2025-12-29 13:22:12.157 [restartedMain] INFO  a.p.o.o.ObraManagementServiceApplication - Starting ObraManagementServiceApplication using Java 21.0.5 with PID 5528 (/workspaces/jl-prumo-main/jl-obra-service/target/classes started by codespace in /workspaces/jl-prumo-main/jl-obra-service)
+2025-12-29 13:22:12.161 [restartedMain] INFO  a.p.o.o.ObraManagementServiceApplication - The following 1 profile is active: "dev"
+2025-12-29 13:22:12.225 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-12-29 13:22:12.225 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-12-29 13:22:13.766 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-12-29 13:22:13.768 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JDBC repositories in DEFAULT mode.
+2025-12-29 13:22:13.802 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.AgenciaRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:22:13.803 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.CargoRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:22:13.804 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.ClienteRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:22:13.804 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.ContaOrganizacaoRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:22:13.805 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.DespesaRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:22:13.806 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.DocumentoProjetoRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:22:13.807 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.EnderecoRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:22:13.808 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.EtapaLogisticaRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:22:13.809 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.EtapaObraRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:22:13.810 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.FuncionarioRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:22:13.813 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.LogisticaPrecoRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:22:13.813 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.LogisticaRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:22:13.814 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.ObraRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:22:13.815 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.OrganizacaoRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:22:13.817 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.PagamentoProjectoRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:22:13.818 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.PessoaRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:22:13.819 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.ProjetoArquitetonicoRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:22:13.819 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.VersaoProjetoRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:22:13.820 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 47 ms. Found 0 JDBC repository interfaces.
+2025-12-29 13:22:13.833 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-12-29 13:22:13.834 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-12-29 13:22:13.887 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 50 ms. Found 18 JPA repository interfaces.
+2025-12-29 13:22:14.541 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 9093 (http)
+2025-12-29 13:22:14.554 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-9093"]
+2025-12-29 13:22:14.557 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-12-29 13:22:14.557 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.42]
+2025-12-29 13:22:14.591 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-12-29 13:22:14.592 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2365 ms
+2025-12-29 13:22:14.825 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-12-29 13:22:14.889 [restartedMain] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.18.Final
+2025-12-29 13:22:14.959 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-12-29 13:22:15.319 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-12-29 13:22:15.348 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-12-29 13:22:15.593 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@74f088c7
+2025-12-29 13:22:15.594 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-12-29 13:22:15.637 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-12-29 13:22:15.654 [restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 16.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-12-29 13:22:16.844 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-12-29 13:22:18.123 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-12-29 13:22:18.861 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-12-29 13:22:19.639 [restartedMain] INFO  o.s.w.s.a.s.AnnotationActionEndpointMapping - Supporting [WS-Addressing August 2004, WS-Addressing 1.0]
+2025-12-29 13:22:19.667 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-12-29 13:22:19.675 [restartedMain] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint beneath base path '/actuator'
+2025-12-29 13:22:19.741 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-9093"]
+2025-12-29 13:22:19.752 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 9093 (http) with context path '/'
+2025-12-29 13:22:19.767 [restartedMain] INFO  a.p.o.o.ObraManagementServiceApplication - Started ObraManagementServiceApplication in 8.186 seconds (process running for 8.752)
+2025-12-29 13:35:04.403 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-12-29 13:35:04.407 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-12-29 13:35:04.415 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-12-29 13:35:04.418 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-12-29 13:35:04.419 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-12-29 13:35:21.776 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.2.Final
+2025-12-29 13:35:21.830 [restartedMain] INFO  a.p.o.o.ObraManagementServiceApplication - Starting ObraManagementServiceApplication using Java 21.0.5 with PID 11907 (/workspaces/jl-prumo-main/jl-obra-service/target/classes started by codespace in /workspaces/jl-prumo-main/jl-obra-service)
+2025-12-29 13:35:21.834 [restartedMain] INFO  a.p.o.o.ObraManagementServiceApplication - The following 1 profile is active: "dev"
+2025-12-29 13:35:21.901 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-12-29 13:35:21.903 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-12-29 13:35:23.010 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-12-29 13:35:23.011 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JDBC repositories in DEFAULT mode.
+2025-12-29 13:35:23.044 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.AgenciaRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:35:23.045 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.CargoRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:35:23.046 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.ClienteRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:35:23.047 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.ContaOrganizacaoRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:35:23.047 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.DespesaRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:35:23.048 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.DocumentoProjetoRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:35:23.049 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.EnderecoRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:35:23.050 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.EtapaLogisticaRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:35:23.051 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.EtapaObraRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:35:23.052 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.FuncionarioRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:35:23.053 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.LogisticaPrecoRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:35:23.054 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.LogisticaRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:35:23.054 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.ObraRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:35:23.055 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.OrganizacaoRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:35:23.057 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.PagamentoProjectoRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:35:23.058 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.PessoaRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:35:23.059 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.ProjetoArquitetonicoRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:35:23.060 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.VersaoProjetoRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:35:23.061 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 45 ms. Found 0 JDBC repository interfaces.
+2025-12-29 13:35:23.069 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-12-29 13:35:23.070 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-12-29 13:35:23.116 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 43 ms. Found 18 JPA repository interfaces.
+2025-12-29 13:35:23.710 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 9093 (http)
+2025-12-29 13:35:23.723 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-9093"]
+2025-12-29 13:35:23.726 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-12-29 13:35:23.732 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.42]
+2025-12-29 13:35:23.790 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-12-29 13:35:23.791 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1885 ms
+2025-12-29 13:35:24.004 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-12-29 13:35:24.032 [restartedMain] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.18.Final
+2025-12-29 13:35:24.052 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-12-29 13:35:24.230 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-12-29 13:35:24.249 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-12-29 13:35:24.380 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@1b4cfaa1
+2025-12-29 13:35:24.381 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-12-29 13:35:24.401 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-12-29 13:35:24.417 [restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 16.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-12-29 13:35:25.527 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-12-29 13:35:26.790 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-12-29 13:35:27.531 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-12-29 13:35:28.094 [restartedMain] INFO  o.s.w.s.a.s.AnnotationActionEndpointMapping - Supporting [WS-Addressing August 2004, WS-Addressing 1.0]
+2025-12-29 13:35:28.119 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-12-29 13:35:28.128 [restartedMain] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint beneath base path '/actuator'
+2025-12-29 13:35:28.193 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-9093"]
+2025-12-29 13:35:28.203 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 9093 (http) with context path '/'
+2025-12-29 13:35:28.216 [restartedMain] INFO  a.p.o.o.ObraManagementServiceApplication - Started ObraManagementServiceApplication in 6.88 seconds (process running for 7.36)
+2025-12-29 13:35:55.883 [http-nio-9093-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-12-29 13:35:55.883 [http-nio-9093-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-12-29 13:35:55.886 [http-nio-9093-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2025-12-29 13:36:03.379 [http-nio-9093-exec-4] INFO  o.s.api.AbstractOpenApiResource - Init duration for springdoc-openapi is: 818 ms
+2025-12-29 13:40:49.639 [http-nio-9093-exec-8] ERROR a.p.o.o.u.e.RestExceptionHandler - Erro inesperado na URI: /api/obra/cliente. Detalhe: HV000030: No validator could be found for constraint 'jakarta.validation.constraints.NotBlank' validating type 'java.util.Date'. Check configuration for 'codPessoa.validoAte'
+jakarta.validation.UnexpectedTypeException: HV000030: No validator could be found for constraint 'jakarta.validation.constraints.NotBlank' validating type 'java.util.Date'. Check configuration for 'codPessoa.validoAte'
+	at org.hibernate.validator.internal.engine.constraintvalidation.ConstraintTree.getExceptionForNullValidator(ConstraintTree.java:116)
+	at org.hibernate.validator.internal.engine.constraintvalidation.ConstraintTree.getInitializedConstraintValidator(ConstraintTree.java:162)
+	at org.hibernate.validator.internal.engine.constraintvalidation.SimpleConstraintTree.validateConstraints(SimpleConstraintTree.java:58)
+	at org.hibernate.validator.internal.engine.constraintvalidation.ConstraintTree.validateConstraints(ConstraintTree.java:75)
+	at org.hibernate.validator.internal.metadata.core.MetaConstraint.doValidateConstraint(MetaConstraint.java:130)
+	at org.hibernate.validator.internal.metadata.core.MetaConstraint.validateConstraint(MetaConstraint.java:123)
+	at org.hibernate.validator.internal.engine.ValidatorImpl.validateMetaConstraint(ValidatorImpl.java:555)
+	at org.hibernate.validator.internal.engine.ValidatorImpl.validateConstraintsForSingleDefaultGroupElement(ValidatorImpl.java:518)
+	at org.hibernate.validator.internal.engine.ValidatorImpl.validateConstraintsForDefaultGroup(ValidatorImpl.java:488)
+	at org.hibernate.validator.internal.engine.ValidatorImpl.validateConstraintsForCurrentGroup(ValidatorImpl.java:450)
+	at org.hibernate.validator.internal.engine.ValidatorImpl.validateInContext(ValidatorImpl.java:400)
+	at org.hibernate.validator.internal.engine.ValidatorImpl.validateCascadedAnnotatedObjectForCurrentGroup(ValidatorImpl.java:629)
+	at org.hibernate.validator.internal.engine.ValidatorImpl.validateCascadedConstraints(ValidatorImpl.java:590)
+	at org.hibernate.validator.internal.engine.ValidatorImpl.validateInContext(ValidatorImpl.java:409)
+	at org.hibernate.validator.internal.engine.ValidatorImpl.validate(ValidatorImpl.java:172)
+	at org.springframework.validation.beanvalidation.SpringValidatorAdapter.validate(SpringValidatorAdapter.java:105)
+	at org.springframework.boot.autoconfigure.validation.ValidatorAdapter.validate(ValidatorAdapter.java:67)
+	at org.springframework.validation.DataBinder.validate(DataBinder.java:1431)
+	at org.springframework.web.servlet.mvc.method.annotation.AbstractMessageConverterMethodArgumentResolver.validateIfApplicable(AbstractMessageConverterMethodArgumentResolver.java:291)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor.resolveArgument(RequestResponseBodyMethodProcessor.java:157)
+	at org.springframework.web.method.support.HandlerMethodArgumentResolverComposite.resolveArgument(HandlerMethodArgumentResolverComposite.java:122)
+	at org.springframework.web.method.support.InvocableHandlerMethod.getMethodArgumentValues(InvocableHandlerMethod.java:227)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:181)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:986)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:891)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:195)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.ServerHttpObservationFilter.doFilterInternal(ServerHttpObservationFilter.java:114)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:483)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:116)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:398)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1769)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1189)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:658)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+2025-12-29 13:40:49.650 [http-nio-9093-exec-8] WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [jakarta.validation.UnexpectedTypeException: HV000030: No validator could be found for constraint 'jakarta.validation.constraints.NotBlank' validating type 'java.util.Date'. Check configuration for 'codPessoa.validoAte']
+2025-12-29 13:42:42.636 [http-nio-9093-exec-9] ERROR a.p.o.o.u.e.RestExceptionHandler - Erro inesperado na URI: /api/obra/cliente. Detalhe: HV000030: No validator could be found for constraint 'jakarta.validation.constraints.NotBlank' validating type 'java.util.Date'. Check configuration for 'codPessoa.validoAte'
+jakarta.validation.UnexpectedTypeException: HV000030: No validator could be found for constraint 'jakarta.validation.constraints.NotBlank' validating type 'java.util.Date'. Check configuration for 'codPessoa.validoAte'
+	at org.hibernate.validator.internal.engine.constraintvalidation.ConstraintTree.getExceptionForNullValidator(ConstraintTree.java:116)
+	at org.hibernate.validator.internal.engine.constraintvalidation.ConstraintTree.getInitializedConstraintValidator(ConstraintTree.java:162)
+	at org.hibernate.validator.internal.engine.constraintvalidation.SimpleConstraintTree.validateConstraints(SimpleConstraintTree.java:58)
+	at org.hibernate.validator.internal.engine.constraintvalidation.ConstraintTree.validateConstraints(ConstraintTree.java:75)
+	at org.hibernate.validator.internal.metadata.core.MetaConstraint.doValidateConstraint(MetaConstraint.java:130)
+	at org.hibernate.validator.internal.metadata.core.MetaConstraint.validateConstraint(MetaConstraint.java:123)
+	at org.hibernate.validator.internal.engine.ValidatorImpl.validateMetaConstraint(ValidatorImpl.java:555)
+	at org.hibernate.validator.internal.engine.ValidatorImpl.validateConstraintsForSingleDefaultGroupElement(ValidatorImpl.java:518)
+	at org.hibernate.validator.internal.engine.ValidatorImpl.validateConstraintsForDefaultGroup(ValidatorImpl.java:488)
+	at org.hibernate.validator.internal.engine.ValidatorImpl.validateConstraintsForCurrentGroup(ValidatorImpl.java:450)
+	at org.hibernate.validator.internal.engine.ValidatorImpl.validateInContext(ValidatorImpl.java:400)
+	at org.hibernate.validator.internal.engine.ValidatorImpl.validateCascadedAnnotatedObjectForCurrentGroup(ValidatorImpl.java:629)
+	at org.hibernate.validator.internal.engine.ValidatorImpl.validateCascadedConstraints(ValidatorImpl.java:590)
+	at org.hibernate.validator.internal.engine.ValidatorImpl.validateInContext(ValidatorImpl.java:409)
+	at org.hibernate.validator.internal.engine.ValidatorImpl.validate(ValidatorImpl.java:172)
+	at org.springframework.validation.beanvalidation.SpringValidatorAdapter.validate(SpringValidatorAdapter.java:105)
+	at org.springframework.boot.autoconfigure.validation.ValidatorAdapter.validate(ValidatorAdapter.java:67)
+	at org.springframework.validation.DataBinder.validate(DataBinder.java:1431)
+	at org.springframework.web.servlet.mvc.method.annotation.AbstractMessageConverterMethodArgumentResolver.validateIfApplicable(AbstractMessageConverterMethodArgumentResolver.java:291)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestResponseBodyMethodProcessor.resolveArgument(RequestResponseBodyMethodProcessor.java:157)
+	at org.springframework.web.method.support.HandlerMethodArgumentResolverComposite.resolveArgument(HandlerMethodArgumentResolverComposite.java:122)
+	at org.springframework.web.method.support.InvocableHandlerMethod.getMethodArgumentValues(InvocableHandlerMethod.java:227)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:181)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:986)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:891)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:195)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.ServerHttpObservationFilter.doFilterInternal(ServerHttpObservationFilter.java:114)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:164)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:140)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:167)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:90)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:483)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:116)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:93)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:74)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:344)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:398)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1769)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1189)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:658)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+2025-12-29 13:42:42.638 [http-nio-9093-exec-9] WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [jakarta.validation.UnexpectedTypeException: HV000030: No validator could be found for constraint 'jakarta.validation.constraints.NotBlank' validating type 'java.util.Date'. Check configuration for 'codPessoa.validoAte']
+2025-12-29 13:49:06.412 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-12-29 13:49:06.416 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-12-29 13:49:06.426 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-12-29 13:49:06.430 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-12-29 13:49:06.433 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2025-12-29 13:49:22.442 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.2.Final
+2025-12-29 13:49:22.488 [restartedMain] INFO  a.p.o.o.ObraManagementServiceApplication - Starting ObraManagementServiceApplication using Java 21.0.5 with PID 18363 (/workspaces/jl-prumo-main/jl-obra-service/target/classes started by codespace in /workspaces/jl-prumo-main/jl-obra-service)
+2025-12-29 13:49:22.489 [restartedMain] INFO  a.p.o.o.ObraManagementServiceApplication - The following 1 profile is active: "dev"
+2025-12-29 13:49:22.547 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-12-29 13:49:22.548 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-12-29 13:49:23.707 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-12-29 13:49:23.708 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JDBC repositories in DEFAULT mode.
+2025-12-29 13:49:23.760 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.AgenciaRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:49:23.761 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.CargoRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:49:23.762 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.ClienteRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:49:23.763 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.ContaOrganizacaoRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:49:23.764 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.DespesaRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:49:23.765 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.DocumentoProjetoRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:49:23.765 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.EnderecoRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:49:23.766 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.EtapaLogisticaRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:49:23.767 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.EtapaObraRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:49:23.768 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.FuncionarioRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:49:23.769 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.LogisticaPrecoRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:49:23.770 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.LogisticaRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:49:23.771 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.ObraRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:49:23.773 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.OrganizacaoRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:49:23.773 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.PagamentoProjectoRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:49:23.774 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.PessoaRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:49:23.775 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.ProjetoArquitetonicoRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:49:23.776 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationExtensionSupport - Spring Data JDBC - Could not safely identify store assignment for repository candidate interface ao.prumo.obra.obramanagementservice.entity.repository.VersaoProjetoRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2025-12-29 13:49:23.777 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 62 ms. Found 0 JDBC repository interfaces.
+2025-12-29 13:49:23.786 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-12-29 13:49:23.787 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-12-29 13:49:23.836 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 46 ms. Found 18 JPA repository interfaces.
+2025-12-29 13:49:24.420 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 9093 (http)
+2025-12-29 13:49:24.439 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-9093"]
+2025-12-29 13:49:24.441 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2025-12-29 13:49:24.442 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.42]
+2025-12-29 13:49:24.484 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2025-12-29 13:49:24.486 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1937 ms
+2025-12-29 13:49:24.712 [restartedMain] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-12-29 13:49:24.740 [restartedMain] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.18.Final
+2025-12-29 13:49:24.761 [restartedMain] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2025-12-29 13:49:25.015 [restartedMain] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-12-29 13:49:25.037 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2025-12-29 13:49:25.146 [restartedMain] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@7d7f1c32
+2025-12-29 13:49:25.147 [restartedMain] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2025-12-29 13:49:25.168 [restartedMain] WARN  org.hibernate.orm.deprecation - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-12-29 13:49:25.183 [restartedMain] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 16.3
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2025-12-29 13:49:26.266 [restartedMain] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-12-29 13:49:27.459 [restartedMain] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-12-29 13:49:28.166 [restartedMain] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-12-29 13:49:28.824 [restartedMain] INFO  o.s.w.s.a.s.AnnotationActionEndpointMapping - Supporting [WS-Addressing August 2004, WS-Addressing 1.0]
+2025-12-29 13:49:28.857 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2025-12-29 13:49:28.864 [restartedMain] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint beneath base path '/actuator'
+2025-12-29 13:49:28.926 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-9093"]
+2025-12-29 13:49:28.936 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 9093 (http) with context path '/'
+2025-12-29 13:49:28.951 [restartedMain] INFO  a.p.o.o.ObraManagementServiceApplication - Started ObraManagementServiceApplication in 7.048 seconds (process running for 7.583)
+2025-12-29 13:49:53.488 [http-nio-9093-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-12-29 13:49:53.488 [http-nio-9093-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2025-12-29 13:49:53.491 [http-nio-9093-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 3 ms
+2025-12-29 13:49:53.637 [http-nio-9093-exec-1] INFO  a.p.o.o.service.ClienteService - Iniciando a criação de uma novo cliente.
+2025-12-29 13:49:53.676 [http-nio-9093-exec-1] INFO  a.p.o.o.service.ClienteService - Cliente criado com sucesso.
+2025-12-29 13:49:53.689 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:DOUBLE) <- [0.1]
+2025-12-29 13:49:53.689 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (2:VARCHAR) <- [df]
+2025-12-29 13:49:53.690 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (3:VARCHAR) <- [df]
+2025-12-29 13:49:53.690 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (4:UUID) <- [00000000-0000-0000-0000-000000000000]
+2025-12-29 13:49:53.690 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (5:TIMESTAMP) <- [2025-12-29T13:49:53.659104562]
+2025-12-29 13:49:53.690 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (6:VARCHAR) <- [df]
+2025-12-29 13:49:53.691 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (7:DOUBLE) <- [0.1]
+2025-12-29 13:49:53.691 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (8:DOUBLE) <- [0.1]
+2025-12-29 13:49:53.691 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (9:VARCHAR) <- [df]
+2025-12-29 13:49:53.691 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (10:VARCHAR) <- [df]
+2025-12-29 13:49:53.691 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (11:BOOLEAN) <- [null]
+2025-12-29 13:49:53.691 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (12:UUID) <- [a3855933-1292-4893-83a7-4075de45811c]
+2025-12-29 13:49:53.696 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:DOUBLE) <- [0.1]
+2025-12-29 13:49:53.696 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (2:VARCHAR) <- [string]
+2025-12-29 13:49:53.696 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (3:VARCHAR) <- [string]
+2025-12-29 13:49:53.697 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (4:UUID) <- [00000000-0000-0000-0000-000000000000]
+2025-12-29 13:49:53.697 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (5:TIMESTAMP) <- [2025-12-29T13:49:53.668610033]
+2025-12-29 13:49:53.697 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (6:VARCHAR) <- [string]
+2025-12-29 13:49:53.697 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (7:DOUBLE) <- [0.1]
+2025-12-29 13:49:53.697 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (8:DOUBLE) <- [0.1]
+2025-12-29 13:49:53.697 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (9:VARCHAR) <- [string]
+2025-12-29 13:49:53.697 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (10:VARCHAR) <- [string]
+2025-12-29 13:49:53.697 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (11:BOOLEAN) <- [null]
+2025-12-29 13:49:53.697 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (12:UUID) <- [b71455ed-514a-40c6-a9cb-6c2dc22fe658]
+2025-12-29 13:49:53.699 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:UUID) <- [a3855933-1292-4893-83a7-4075de45811c]
+2025-12-29 13:49:53.699 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (2:UUID) <- [b71455ed-514a-40c6-a9cb-6c2dc22fe658]
+2025-12-29 13:49:53.699 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (3:DOUBLE) <- [0.1]
+2025-12-29 13:49:53.699 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (4:UUID) <- [00000000-0000-0000-0000-000000000000]
+2025-12-29 13:49:53.699 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (5:TIMESTAMP) <- [2025-12-29T13:49:53.672209781]
+2025-12-29 13:49:53.700 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (6:TIMESTAMP) <- [2024-12-29 13:39:05.646]
+2025-12-29 13:49:53.700 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (7:VARCHAR) <- [BILHETE]
+2025-12-29 13:49:53.700 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (8:TIMESTAMP) <- [2025-12-29 13:39:05.646]
+2025-12-29 13:49:53.700 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (9:VARCHAR) <- [SOLTEIRO]
+2025-12-29 13:49:53.700 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (10:VARCHAR) <- [qqqq]
+2025-12-29 13:49:53.700 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (11:VARCHAR) <- [qwer]
+2025-12-29 13:49:53.700 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (12:VARCHAR) <- [aaaa]
+2025-12-29 13:49:53.700 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (13:VARCHAR) <- [qwdsa]
+2025-12-29 13:49:53.700 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (14:UUID) <- [null]
+2025-12-29 13:49:53.701 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (15:VARCHAR) <- [MASCULINO]
+2025-12-29 13:49:53.701 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (16:BOOLEAN) <- [true]
+2025-12-29 13:49:53.702 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (17:TIMESTAMP) <- [2026-12-29 13:39:05.646]
+2025-12-29 13:49:53.702 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (18:UUID) <- [54d0ecb7-26cb-446b-be26-fe16565627af]
+2025-12-29 13:49:53.715 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:VARCHAR) <- [qwe]
+2025-12-29 13:49:53.715 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (2:UUID) <- [00000000-0000-0000-0000-000000000000]
+2025-12-29 13:49:53.715 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (3:TIMESTAMP) <- [2025-12-29T13:49:53.676392823]
+2025-12-29 13:49:53.715 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (4:VARCHAR) <- [jc@gmail.com]
+2025-12-29 13:49:53.715 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (5:VARCHAR) <- [qwer]
+2025-12-29 13:49:53.715 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (6:VARCHAR) <- [JURIDICO]
+2025-12-29 13:49:53.716 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (7:VARCHAR) <- [12345]
+2025-12-29 13:49:53.716 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (8:UUID) <- [null]
+2025-12-29 13:49:53.716 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (9:UUID) <- [54d0ecb7-26cb-446b-be26-fe16565627af]
+2025-12-29 13:49:53.716 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (10:BOOLEAN) <- [true]
+2025-12-29 13:49:53.716 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (11:VARCHAR) <- [12345]
+2025-12-29 13:49:53.716 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (12:VARCHAR) <- [12345]
+2025-12-29 13:49:53.716 [http-nio-9093-exec-1] TRACE org.hibernate.orm.jdbc.bind - binding parameter (13:UUID) <- [86e0be25-b9d0-4001-8cd1-9dadf10e7bfd]
+2025-12-29 13:52:50.127 [http-nio-9093-exec-3] INFO  a.p.o.o.service.ClienteService - Iniciando a criação de uma novo cliente.
+2025-12-29 13:52:50.129 [http-nio-9093-exec-3] INFO  a.p.o.o.service.ClienteService - Cliente criado com sucesso.
+2025-12-29 13:52:50.130 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:DOUBLE) <- [0.1]
+2025-12-29 13:52:50.130 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (2:VARCHAR) <- [ad]
+2025-12-29 13:52:50.130 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (3:VARCHAR) <- [ad]
+2025-12-29 13:52:50.130 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (4:UUID) <- [00000000-0000-0000-0000-000000000000]
+2025-12-29 13:52:50.130 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (5:TIMESTAMP) <- [2025-12-29T13:52:50.127987020]
+2025-12-29 13:52:50.130 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (6:VARCHAR) <- [ade]
+2025-12-29 13:52:50.130 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (7:DOUBLE) <- [0.1]
+2025-12-29 13:52:50.130 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (8:DOUBLE) <- [0.1]
+2025-12-29 13:52:50.131 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (9:VARCHAR) <- [ad]
+2025-12-29 13:52:50.131 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (10:VARCHAR) <- [ad]
+2025-12-29 13:52:50.131 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (11:BOOLEAN) <- [null]
+2025-12-29 13:52:50.131 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (12:UUID) <- [e55687d9-e01e-4133-9c61-e8840951b074]
+2025-12-29 13:52:50.132 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:DOUBLE) <- [0.1]
+2025-12-29 13:52:50.132 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (2:VARCHAR) <- [ad]
+2025-12-29 13:52:50.132 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (3:VARCHAR) <- [ad]
+2025-12-29 13:52:50.132 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (4:UUID) <- [00000000-0000-0000-0000-000000000000]
+2025-12-29 13:52:50.132 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (5:TIMESTAMP) <- [2025-12-29T13:52:50.128448133]
+2025-12-29 13:52:50.132 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (6:VARCHAR) <- [ad]
+2025-12-29 13:52:50.133 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (7:DOUBLE) <- [0.1]
+2025-12-29 13:52:50.133 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (8:DOUBLE) <- [0.1]
+2025-12-29 13:52:50.133 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (9:VARCHAR) <- [ad]
+2025-12-29 13:52:50.133 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (10:VARCHAR) <- [ad]
+2025-12-29 13:52:50.133 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (11:BOOLEAN) <- [null]
+2025-12-29 13:52:50.133 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (12:UUID) <- [aab7fd54-48b5-4690-ab2c-cd2ef8a95ab9]
+2025-12-29 13:52:50.134 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:UUID) <- [e55687d9-e01e-4133-9c61-e8840951b074]
+2025-12-29 13:52:50.134 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (2:UUID) <- [aab7fd54-48b5-4690-ab2c-cd2ef8a95ab9]
+2025-12-29 13:52:50.134 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (3:DOUBLE) <- [0.1]
+2025-12-29 13:52:50.134 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (4:UUID) <- [00000000-0000-0000-0000-000000000000]
+2025-12-29 13:52:50.135 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (5:TIMESTAMP) <- [2025-12-29T13:52:50.128777432]
+2025-12-29 13:52:50.135 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (6:TIMESTAMP) <- [2024-12-29 13:39:05.646]
+2025-12-29 13:52:50.135 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (7:VARCHAR) <- [BILHETE]
+2025-12-29 13:52:50.135 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (8:TIMESTAMP) <- [2025-12-29 13:39:05.646]
+2025-12-29 13:52:50.135 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (9:VARCHAR) <- [SOLTEIRO]
+2025-12-29 13:52:50.135 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (10:VARCHAR) <- [ad]
+2025-12-29 13:52:50.135 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (11:VARCHAR) <- [adf]
+2025-12-29 13:52:50.135 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (12:VARCHAR) <- [ad]
+2025-12-29 13:52:50.136 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (13:VARCHAR) <- [ad]
+2025-12-29 13:52:50.136 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (14:UUID) <- [null]
+2025-12-29 13:52:50.136 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (15:VARCHAR) <- [MASCULINO]
+2025-12-29 13:52:50.136 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (16:BOOLEAN) <- [true]
+2025-12-29 13:52:50.136 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (17:TIMESTAMP) <- [2026-12-29 13:39:05.646]
+2025-12-29 13:52:50.136 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (18:UUID) <- [990c3e87-98cd-4785-99dd-a2ecba43cec7]
+2025-12-29 13:52:50.138 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:VARCHAR) <- [ad]
+2025-12-29 13:52:50.138 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (2:UUID) <- [00000000-0000-0000-0000-000000000000]
+2025-12-29 13:52:50.138 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (3:TIMESTAMP) <- [2025-12-29T13:52:50.129181012]
+2025-12-29 13:52:50.138 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (4:VARCHAR) <- [ad@gmail.com]
+2025-12-29 13:52:50.138 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (5:VARCHAR) <- [ad]
+2025-12-29 13:52:50.138 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (6:VARCHAR) <- [JURIDICO]
+2025-12-29 13:52:50.139 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (7:VARCHAR) <- [12345]
+2025-12-29 13:52:50.139 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (8:UUID) <- [null]
+2025-12-29 13:52:50.139 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (9:UUID) <- [990c3e87-98cd-4785-99dd-a2ecba43cec7]
+2025-12-29 13:52:50.139 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (10:BOOLEAN) <- [true]
+2025-12-29 13:52:50.139 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (11:VARCHAR) <- [12345]
+2025-12-29 13:52:50.139 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (12:VARCHAR) <- [12345]
+2025-12-29 13:52:50.140 [http-nio-9093-exec-3] TRACE org.hibernate.orm.jdbc.bind - binding parameter (13:UUID) <- [aa67a9bf-4810-4559-aea1-cf10b74dcc29]
+2025-12-29 13:55:13.605 [http-nio-9093-exec-5] INFO  a.p.o.o.service.ClienteService - Iniciando a listagem de clientes.
+2025-12-29 13:55:13.678 [http-nio-9093-exec-5] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:INTEGER) <- [0]
+2025-12-29 13:55:13.679 [http-nio-9093-exec-5] TRACE org.hibernate.orm.jdbc.bind - binding parameter (2:INTEGER) <- [12]
+2025-12-29 13:55:13.701 [http-nio-9093-exec-5] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:UUID) <- [54d0ecb7-26cb-446b-be26-fe16565627af]
+2025-12-29 13:55:13.707 [http-nio-9093-exec-5] TRACE org.hibernate.orm.jdbc.bind - binding parameter (1:UUID) <- [990c3e87-98cd-4785-99dd-a2ecba43cec7]
+2025-12-29 13:56:34.460 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2025-12-29 13:56:34.462 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2025-12-29 13:56:34.472 [SpringApplicationShutdownHook] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-12-29 13:56:34.475 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2025-12-29 13:56:34.476 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.

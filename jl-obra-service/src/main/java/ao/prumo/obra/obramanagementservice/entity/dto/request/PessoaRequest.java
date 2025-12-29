@@ -27,19 +27,18 @@ public class PessoaRequest
     @NotBlank(message = "[nif], este campo não pode ficar em branco.")
     private String nif;
     private Double altura;
-    private Boolean status;
-    @NotBlank(message = "[dateOfBird], este campo não pode ficar em branco.")
+    @NotNull(message = "[dateOfBird], este campo não pode ficar em branco.")
     private Date dateOfBird;
-    @NotBlank(message = "[emitidoEm], este campo não pode ficar em branco.")
+    @NotNull(message = "[emitidoEm], este campo não pode ficar em branco.")
     private Date emitidoEm;
-    @NotBlank(message = "[validoAte], este campo não pode ficar em branco.")
+    @NotNull(message = "[validoAte], este campo não pode ficar em branco.")
     private Date validoAte;
 
-    @NotBlank(message = "[sexo], este campo não pode ficar em branco.")
+    @NotNull(message = "[sexo], este campo não pode ficar em branco.")
     private Sexo sexo;
-    @NotBlank(message = "[estadoCivil], este campo não pode ficar em branco.")
+    @NotNull(message = "[estadoCivil], este campo não pode ficar em branco.")
     private EstadoCivil estadoCivil;
-    @NotBlank(message = "[documentoIdentificacao], este campo não pode ficar em branco.")
+    @NotNull(message = "[documentoIdentificacao], este campo não pode ficar em branco.")
     private Identificacao documentoIdentificacao;
 
     // Objeto aninhado para criar uma nova Pessoa junto com o Funcionário

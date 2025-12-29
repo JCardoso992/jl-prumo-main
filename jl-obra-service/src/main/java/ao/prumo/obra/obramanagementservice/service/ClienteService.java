@@ -66,12 +66,16 @@ public class ClienteService
         Pessoa pessoa = pessoaMapper.toEntity(req.getCodPessoa());
         pessoa.setAdress1(endereco1Salvo);
         pessoa.setAdress2(endereco2Salvo);
+        pessoa.setStatus(Boolean.TRUE);
         Pessoa pessoaSalva = pessoaRepository.save(pessoa);
 
         // 4. Cliente
         Cliente cliente = clienteMapper.toEntity(req);
         cliente.setPessoaId(pessoaSalva); // Associa a pessoa recém-criada
-        return clienteMapper.toResponse(repository.save(cliente));
+        cliente.setStatus(Boolean.TRUE);
+        Cliente clienteSalvo = repository.save(cliente);
+        log.info("Cliente criado com sucesso.");
+        return clienteMapper.toResponse(clienteSalvo);
     }
 
     /**

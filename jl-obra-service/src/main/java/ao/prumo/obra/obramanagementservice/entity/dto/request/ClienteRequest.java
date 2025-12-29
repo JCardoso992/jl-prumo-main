@@ -32,7 +32,6 @@ public class ClienteRequest
     private String fax;
     private String arquivoPath;
     private String enderecoWeb;
-    private Boolean status;
     private EstadoCliente estadoCliente;
 
     // Objeto aninhado para criar uma nova Pessoa junto com o Funcionário
