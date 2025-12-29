@@ -48,7 +48,9 @@ public class AgenciaService{
       Agencia entity = agenciaMapper.toEntity(req);
       final String filePath = fileService.saveFile(file, req.getAbreviacao(), "Agencia");
       entity.setArquivoPath(filePath);
-      return agenciaMapper.toResponse(repository.save(entity));
+      Agencia entitySalva = repository.save(entity);
+      log.info("Agência criada com sucesso.");
+      return agenciaMapper.toResponse(entitySalva);
    }
 
    /**

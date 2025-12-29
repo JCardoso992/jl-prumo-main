@@ -29,9 +29,9 @@ public class OrganizacaoRequest
     private String numMatricula;
     private String firma;
     private String razaoSocial;
-    @NotNull(message = "[logotipo] é um campo é obrigatório.")
-    @NotBlank(message = "[logotipo], este campo não pode ficar em branco.")
-    private String arquivoPath;
+    //@NotNull(message = "[logotipo] é um campo é obrigatório.")
+    //@NotBlank(message = "[logotipo], este campo não pode ficar em branco.")
+    //private String arquivoPath;
     private String webPage;
     private String regime;
     private Boolean status;

@@ -8,6 +8,7 @@ import ao.prumo.obra.obramanagementservice.entity.dto.response.EnderecoResponse;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.OrganizacaoResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
 import org.mapstruct.Named;
 import org.mapstruct.ReportingPolicy;
 
@@ -18,9 +19,10 @@ import java.util.List;
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface OrganizacaoMapper
 {
-    //OrganizacaoMapper INSTANCE = Mappers.getMapper(OrganizacaoMapper.class);
+    OrganizacaoMapper INSTANCE = Mappers.getMapper(OrganizacaoMapper.class);
 
     // Mapeamento de Organizacao para OrganizacaoResponse
+    @Mapping(source = "id", target = "codOrganizacao")
     @Mapping(source = "adress", target = "codAdress", qualifiedByName = "mapEnderecoToResponse")
     OrganizacaoResponse toResponse(Organizacao entity);
 

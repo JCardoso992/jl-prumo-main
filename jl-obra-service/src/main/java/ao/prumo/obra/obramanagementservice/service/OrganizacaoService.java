@@ -1,18 +1,28 @@
 package ao.prumo.obra.obramanagementservice.service;
 
+import ao.prumo.obra.obramanagementservice.entity.Endereco;
 import ao.prumo.obra.obramanagementservice.entity.Organizacao;
 import ao.prumo.obra.obramanagementservice.entity.dto.mapper.OrganizacaoMapper;
+import ao.prumo.obra.obramanagementservice.entity.dto.mapper.EnderecoMapper;
 import ao.prumo.obra.obramanagementservice.entity.dto.request.OrganizacaoRequest;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.OrganizacaoResponse;
 import ao.prumo.obra.obramanagementservice.entity.repository.OrganizacaoRepository;
+import ao.prumo.obra.obramanagementservice.entity.repository.EnderecoRepository;
+import ao.prumo.obra.obramanagementservice.entity.dto.request.EnderecoRequest;
+import ao.prumo.obra.obramanagementservice.entity.dto.request.FuncionarioRequest;
+import ao.prumo.obra.obramanagementservice.file.FileStorageService;
 import ao.prumo.obra.obramanagementservice.utils.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
@@ -24,7 +34,12 @@ public class OrganizacaoService
 {
 
     private final OrganizacaoRepository repository;
+    private final EnderecoRepository enderecoRepository;
+
     private final OrganizacaoMapper mapper;
+    private final EnderecoMapper enderecoMapper;
+
+    private final FileStorageService fileService;
 
     protected JpaRepository<Organizacao, UUID> getRepository() {
         return this.repository;
@@ -34,17 +49,31 @@ public class OrganizacaoService
     // CREATE
     // =========================================================================
     @Transactional
-    public OrganizacaoResponse criar(OrganizacaoRequest request)
+    @CacheEvict(value = "buscar-organizacao", allEntries = true)
+    public OrganizacaoResponse criar(OrganizacaoRequest request, MultipartFile file)
     {
         log.info("Iniciando a criação de uma nova organização");
+        // 1. Endereço 1 (obrigatório)
+        EnderecoRequest endRequest = request.getCodAdress();
+        Endereco endereco = enderecoMapper.toEntity(endRequest);
+        Endereco enderecoSalvo = enderecoRepository.save(endereco);
+
+        
         Organizacao organizacao = mapper.toEntity(request);
-        return mapper.toResponse(repository.save(organizacao));
+        final String filePath = fileService.saveFile(file, request.getFirma(), "Organizacao");
+        organizacao.setArquivoPath(filePath);
+        organizacao.setAdress(enderecoSalvo);
+
+        Organizacao organizacaoCriada = repository.save(organizacao);
+        log.info("Organização criada com sucesso.");
+        return mapper.toResponse(organizacaoCriada);
     }
 
     // =========================================================================
     // READ - LIST
     // =========================================================================
     @Transactional(readOnly = true)
+    @Cacheable(value = "buscar-organizacao")
     public Page<OrganizacaoResponse> listar(Pageable pageable)
     {
         log.info("Iniciando a listagem de organizaçães.");
@@ -56,6 +85,7 @@ public class OrganizacaoService
     // READ - BY ID
     // =========================================================================
     @Transactional(readOnly = true)
+    @Cacheable(value = "buscar-organizacao-por-id", key = "#id")
     public OrganizacaoResponse buscarPorId(UUID id) 
     {
         log.info("Iniciando a busca de organização por ID {}.", id);
@@ -76,7 +106,11 @@ public class OrganizacaoService
     * @throws ResourceNotFoundException se a organização não for encontrada.
     */
     @Transactional
-    public OrganizacaoResponse atualizar(UUID id, OrganizacaoRequest request) 
+    @Caching(evict = {
+           @CacheEvict(value = "buscar-organizacao", allEntries = true),
+           @CacheEvict(value = "buscar-organizacao-por-id", key = "#id")
+    })
+    public OrganizacaoResponse atualizar(UUID id, OrganizacaoRequest request, MultipartFile file) 
     {
         log.info("Iniciando a atualização da organização com ID {}.", id);
         Organizacao existente = repository.findById(id)
@@ -84,6 +118,13 @@ public class OrganizacaoService
 
         Organizacao atualizado = mapper.toEntity(request);
         atualizado.setId(existente.getId());
+        if(file != null)
+        {
+          final String filePath = fileService.saveFile(file, request.getFirma(), "Organizacao");
+          atualizado.setArquivoPath(filePath);
+        }else{
+          atualizado.setArquivoPath(existente.getArquivoPath());
+        }
         Organizacao atualizadoOrganizacao = repository.save(atualizado);
         log.info("Organização com ID {} alterada com sucesso.", id);
         return mapper.toResponse(atualizadoOrganizacao);
@@ -98,6 +139,10 @@ public class OrganizacaoService
     * @throws ResourceNotFoundException se a organização não for encontrada.
     */
     @Transactional
+    @Caching(evict = {
+           @CacheEvict(value = "buscar-organizacao", allEntries = true),
+           @CacheEvict(value = "buscar-organizacao-por-id", key = "#id")
+    })
     public void excluir(UUID id) 
     {
         log.info("Iniciando a exclusão da organização com ID {}.", id);

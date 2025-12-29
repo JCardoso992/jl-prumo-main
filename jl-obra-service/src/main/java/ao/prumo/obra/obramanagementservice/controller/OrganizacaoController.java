@@ -17,9 +17,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.multipart.MultipartFile;
 
 
 import java.util.HashMap;
@@ -38,17 +40,23 @@ public class OrganizacaoController
 
     // =========================================================================
     // CREATE
+     // 1.1. Swagger UI (OpenAPI)
+    // @Operation(summary = "Criar uma nova agência", requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @io.swagger.v3.oas.annotations.media.Content(encoding = @io.swagger.v3.oas.annotations.media.Encoding(name = "request", contentType = "application/json"))))
+    //  @PostMapping(value="/criar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    //  1.2. Postman
+    //  @PostMapping(value="/criar", consumes = "multipart/form-data")
     // =========================================================================
-    @Operation(summary = "Criar uma nova organização")
+    @Operation(summary = "Criar uma nova organização", requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @io.swagger.v3.oas.annotations.media.Content(encoding = @io.swagger.v3.oas.annotations.media.Encoding(name = "request", contentType = "application/json"))))
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Organização criada com sucesso"),
             @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
-    @PostMapping
+    @PostMapping(value="/criar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> criar(@Valid @RequestBody OrganizacaoRequest request)
+    public ResponseEntity<?> criar(@Valid @RequestPart("request")  OrganizacaoRequest request,
+        @RequestPart("file") MultipartFile file )
     {
-        OrganizacaoResponse response = service.criar(request);
+        OrganizacaoResponse response = service.criar(request, file);
         return ResponseHttpBuilder.created("Organização criada com sucesso.", response);
     }
 
@@ -57,11 +65,10 @@ public class OrganizacaoController
     // =========================================================================
     @Operation(summary = "Listar organizações (paginado)")
     @ApiResponse(responseCode = "200", description = "Lista de organização encontrado")
-    @GetMapping("/pages/{id}")
+    @GetMapping("/pages")
     public ResponseEntity<?> listar(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
-            @RequestParam(name = "size", defaultValue = "12", required = false) int size,
-            @PathVariable UUID id
+            @RequestParam(name = "size", defaultValue = "12", required = false) int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
         Page<OrganizacaoResponse> result = service.listar(pageable);
@@ -94,18 +101,18 @@ public class OrganizacaoController
     // =========================================================================
     // UPDATE
     // =========================================================================
-    @Operation(summary = "Atualizar organização")
+    @Operation(summary = "Atualizar organização", requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @io.swagger.v3.oas.annotations.media.Content(encoding = @io.swagger.v3.oas.annotations.media.Encoding(name = "request", contentType = "application/json"))))
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Organização atualizado com sucesso"),
             @ApiResponse(responseCode = "404", description = "Organização não encontrada"),
             @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
-    @PutMapping("/{id}")
+    @PutMapping(value="/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> atualizar(
         @PathVariable UUID id,
-        @Valid @RequestBody OrganizacaoRequest request) 
+        @Valid @RequestBody OrganizacaoRequest request, @RequestPart("file") MultipartFile file )
     {
-        OrganizacaoResponse response = service.atualizar(id, request);
+        OrganizacaoResponse response = service.atualizar(id, request, file);
         return ResponseHttpBuilder.info("Organização atualizada com sucesso.", response);
     }
 
