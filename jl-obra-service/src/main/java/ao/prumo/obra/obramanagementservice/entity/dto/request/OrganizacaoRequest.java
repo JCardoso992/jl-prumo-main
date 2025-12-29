@@ -34,7 +34,6 @@ public class OrganizacaoRequest
     //private String arquivoPath;
     private String webPage;
     private String regime;
-    private Boolean status;
     //KeyCloak
     private UUID keycloak_realm_id;
 

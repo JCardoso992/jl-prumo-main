@@ -53,7 +53,7 @@ public class OrganizacaoController
     })
     @PostMapping(value="/criar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> criar(@Valid @RequestPart("request")  OrganizacaoRequest request,
+    public ResponseEntity<?> criar(@Valid @RequestPart("request") OrganizacaoRequest request,
         @RequestPart("file") MultipartFile file )
     {
         OrganizacaoResponse response = service.criar(request, file);
@@ -109,8 +109,7 @@ public class OrganizacaoController
     })
     @PutMapping(value="/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> atualizar(
-        @PathVariable UUID id,
-        @Valid @RequestBody OrganizacaoRequest request, @RequestPart("file") MultipartFile file )
+        @PathVariable UUID id, @Valid @RequestPart("request") OrganizacaoRequest request, @RequestPart("file") MultipartFile file )
     {
         OrganizacaoResponse response = service.atualizar(id, request, file);
         return ResponseHttpBuilder.info("Organização atualizada com sucesso.", response);

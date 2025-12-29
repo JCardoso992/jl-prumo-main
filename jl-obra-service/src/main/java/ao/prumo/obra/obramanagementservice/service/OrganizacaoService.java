@@ -56,12 +56,14 @@ public class OrganizacaoService
         // 1. Endereço 1 (obrigatório)
         EnderecoRequest endRequest = request.getCodAdress();
         Endereco endereco = enderecoMapper.toEntity(endRequest);
+        endereco.setStatus(Boolean.TRUE);
         Endereco enderecoSalvo = enderecoRepository.save(endereco);
 
         
         Organizacao organizacao = mapper.toEntity(request);
         final String filePath = fileService.saveFile(file, request.getFirma(), "Organizacao");
         organizacao.setArquivoPath(filePath);
+        organizacao.setStatus(Boolean.TRUE);
         organizacao.setAdress(enderecoSalvo);
 
         Organizacao organizacaoCriada = repository.save(organizacao);
@@ -116,8 +118,16 @@ public class OrganizacaoService
         Organizacao existente = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Organização não encontrada"));
 
+        Endereco enderecoExistente = existente.getAdress();
+
+        // Atualizar Endereço 1
+        Endereco enderecoNovosDados = enderecoMapper.toEntity(request.getCodAdress());
+        enderecoNovosDados.setId(enderecoExistente.getId());
+        enderecoRepository.save(enderecoNovosDados);        
+
         Organizacao atualizado = mapper.toEntity(request);
         atualizado.setId(existente.getId());
+        atualizado.setAdress(enderecoExistente);
         if(file != null)
         {
           final String filePath = fileService.saveFile(file, request.getFirma(), "Organizacao");

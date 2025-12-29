@@ -11,7 +11,6 @@ public class EnderecoRequest
 {
 
     // Campos específicos do Endereco
-    private UUID id;
     private String endereco;
     private String cidade;
     private String provincia;
@@ -20,6 +19,5 @@ public class EnderecoRequest
     private Double latitude;
     private Double longitude;
     private Double altitude;
-    private Boolean status;
 
 }

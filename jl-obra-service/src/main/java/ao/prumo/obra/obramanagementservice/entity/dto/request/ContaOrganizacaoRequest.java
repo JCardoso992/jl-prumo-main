@@ -23,6 +23,5 @@ public class ContaOrganizacaoRequest
     private BigDecimal saldoGasto;
     private BigDecimal saldoRemanescente;
     private UUID codAgencia;
-    private Boolean status;
 
 }
