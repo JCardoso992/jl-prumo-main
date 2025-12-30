@@ -27,8 +27,6 @@ public class PessoaResponse
     private Sexo sexo;
     private EstadoCivil estadoCivil;
     private Identificacao documentoIdentificacao;
-    // IDs para entidades que já devem existir
-    private UUID codOrganizacao;
 
     private EnderecoResponse codAdress1;
     private EnderecoResponse codAdress2;
