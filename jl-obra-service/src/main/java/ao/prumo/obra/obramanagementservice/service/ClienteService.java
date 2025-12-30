@@ -10,14 +10,19 @@ import ao.prumo.obra.obramanagementservice.entity.dto.response.ClienteResponse;
 import ao.prumo.obra.obramanagementservice.entity.repository.ClienteRepository;
 import ao.prumo.obra.obramanagementservice.entity.repository.EnderecoRepository;
 import ao.prumo.obra.obramanagementservice.entity.repository.PessoaRepository;
+import ao.prumo.obra.obramanagementservice.file.FileStorageService;
 import ao.prumo.obra.obramanagementservice.utils.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
@@ -37,13 +42,16 @@ public class ClienteService
     private final PessoaMapper pessoaMapper;
     private final EnderecoMapper enderecoMapper;
 
+    private final FileStorageService fileService;
+
     protected JpaRepository<Cliente, UUID> getRepository()
     {
         return this.repository;
     }
 
     @Transactional
-    public ClienteResponse criarCliente(ClienteRequest req)
+    @CacheEvict(value = "buscar-clientes", allEntries = true)
+    public ClienteResponse criarCliente(ClienteRequest req, MultipartFile file)
     {
         log.info("Iniciando a criação de uma novo cliente.");
         // Mapper converte o DTO para Entidade -> Service salva a Entidade
@@ -67,10 +75,17 @@ public class ClienteService
         pessoa.setAdress1(endereco1Salvo);
         pessoa.setAdress2(endereco2Salvo);
         pessoa.setStatus(Boolean.TRUE);
+        pessoa.setOrganizacaoId(new Organizacao(UUID.fromString("bb1827b3-57b9-49ec-a775-a7f5a91b8297")));
         Pessoa pessoaSalva = pessoaRepository.save(pessoa);
 
         // 4. Cliente
         Cliente cliente = clienteMapper.toEntity(req);
+        // idOrganização= bb1827b3-57b9-49ec-a775-a7f5a91b8297
+        if (file != null && !file.isEmpty()) {
+            final String filePath = fileService.saveFile(file, pessoa.getNome(), "Cliente");
+            cliente.setArquivoPath(filePath);
+        }
+        cliente.setOrganizacaoId(new Organizacao(UUID.fromString("bb1827b3-57b9-49ec-a775-a7f5a91b8297")));
         cliente.setPessoaId(pessoaSalva); // Associa a pessoa recém-criada
         cliente.setStatus(Boolean.TRUE);
         Cliente clienteSalvo = repository.save(cliente);
@@ -86,7 +101,11 @@ public class ClienteService
      * @throws ResourceNotFoundException se o cliente não for encontrada.
      */
     @Transactional
-    public ClienteResponse alterarCliente(UUID id, ClienteRequest req) 
+    @Caching(evict = {
+           @CacheEvict(value = "buscar-clientes", allEntries = true),
+           @CacheEvict(value = "buscar-cliente-por-id", key = "#id")
+    })
+    public ClienteResponse alterarCliente(UUID id, ClienteRequest req, MultipartFile file)
     {
         log.info("Iniciando a atualização do cliente com ID: {}", id);
 
@@ -119,10 +138,19 @@ public class ClienteService
         pessoaAtualizada.setId(pessoaExistente.getId());
         pessoaAtualizada.setAdress1(endereco1Existente);
         pessoaAtualizada.setAdress2(endereco2Salvo);
+        pessoaAtualizada.setOrganizacaoId(pessoaExistente.getOrganizacaoId());
         pessoaAtualizada = pessoaRepository.save(pessoaAtualizada);
 
         // Atualizar Cliente
         Cliente clienteAtualizado = clienteMapper.toEntity(req);
+        if(file != null)
+        {
+          final String filePath = fileService.saveFile(file, pessoaExistente.getNome(), "Cliente");
+          clienteAtualizado.setArquivoPath(filePath);
+        }else{
+          clienteAtualizado.setArquivoPath(clienteExistente.getArquivoPath());
+        }
+        clienteAtualizado.setOrganizacaoId(clienteExistente.getOrganizacaoId());
         clienteAtualizado.setId(clienteExistente.getId());
         clienteAtualizado.setPessoaId(pessoaAtualizada);
 
@@ -138,6 +166,10 @@ public class ClienteService
      * @throws ResourceNotFoundException se a cliente não for encontrado.
      */
     @Transactional
+    @Caching(evict = {
+           @CacheEvict(value = "buscar-clientes", allEntries = true),
+           @CacheEvict(value = "buscar-cliente-por-id", key = "#id")
+    })
     public void excluirCliente(UUID id) throws ResourceNotFoundException 
     {
         log.info("Iniciando a exclusão do cliente com ID {}.", id);

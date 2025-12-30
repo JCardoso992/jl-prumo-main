@@ -30,7 +30,6 @@ public class ClienteRequest
     private String telefone2;
     private String email;
     private String fax;
-    private String arquivoPath;
     private String enderecoWeb;
     private EstadoCliente estadoCliente;
 

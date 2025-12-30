@@ -150,11 +150,10 @@ public class OrganizacaoController
     // =========================================================================
     @Operation(summary = "Listar contas da organização (paginado)")
     @ApiResponse(responseCode = "200", description = "Lista encontrada")
-    @GetMapping("/conta/pages/{id}")
+    @GetMapping("/conta/pages")
     public ResponseEntity<?> listarConta(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
-            @RequestParam(name = "size", defaultValue = "12", required = false) int size,
-            @PathVariable("id") UUID id
+            @RequestParam(name = "size", defaultValue = "12", required = false) int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
         Page<ContaOrganizacaoResponse> result = serviceConta.listar(pageable);

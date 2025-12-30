@@ -15,7 +15,6 @@ import java.util.UUID;
 public class ContaOrganizacaoRequest
 {
 
-    private UUID codContaOrganizacao;
     @NotNull(message = "Saldo é obrigatório")
     @DecimalMin(value = "0.0", inclusive = false, message = "Saldo deve ser maior que zero")
     @Digits(integer = 10, fraction = 2, message = "Saldo deve ter no máximo 2 casas decimais")

@@ -46,8 +46,11 @@ public class AgenciaService{
       // Mapper converte o DTO para Entidade -> Service salva a Entidade
       // -> Mapper converte a Entidade salva para DTO de Resposta
       Agencia entity = agenciaMapper.toEntity(req);
-      final String filePath = fileService.saveFile(file, req.getAbreviacao(), "Agencia");
-      entity.setArquivoPath(filePath);
+      if(file != null && !file.isEmpty())
+      {
+        final String filePath = fileService.saveFile(file, req.getAbreviacao(), "Agencia");
+        entity.setArquivoPath(filePath);
+      }
       Agencia entitySalva = repository.save(entity);
       log.info("Agência criada com sucesso.");
       return agenciaMapper.toResponse(entitySalva);
