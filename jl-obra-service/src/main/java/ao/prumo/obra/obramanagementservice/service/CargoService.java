@@ -36,7 +36,7 @@ public class CargoService
     }
 
     @Transactional
-    @CacheEvict(value = "buscar-agencias", allEntries = true)
+    @CacheEvict(value = "buscar-cargos", allEntries = true)
     public CargoResponse criarCargo(CargoRequest req)
     {
         log.info("Iniciando a criação de uma novo Cargo.");
@@ -68,6 +68,7 @@ public class CargoService
         // 2. Mapeia os dados do Request para a Entidade, ignorando o ID (pois o ID é imutável)
         Cargo cargoAtualizada = cargoMapper.toEntity(req);
         cargoAtualizada.setId(cargoExistente.getId()); // Garante que o ID original seja mantido
+        cargoAtualizada.setStatus(Boolean.TRUE);
         // 3. Persiste a atualização no banco de dados
         Cargo cargoSalva = this.repository.save(cargoAtualizada); // herdado do BaseService
         log.info("Cargo com ID {} alterada com sucesso.", id);
@@ -83,7 +84,7 @@ public class CargoService
     @Transactional
     @Caching(evict = {
             @CacheEvict(value = "buscar-cargos", allEntries = true),
-            @CacheEvict(value = "buscar-cargos-por-id", key = "#id")
+            @CacheEvict(value = "buscar-cargo-por-id", key = "#id")
     })
     public void excluirCargo(UUID id) throws ResourceNotFoundException 
     {
@@ -111,7 +112,7 @@ public class CargoService
 
     
     @Transactional(readOnly = true)
-    @Cacheable("buscar-cargos-por-id")
+    @Cacheable("buscar-cargo-por-id")
     public CargoResponse buscarCargoPorId(UUID id) 
     {
         log.info("Iniciando a listagem do cargo por ID {}.", id);

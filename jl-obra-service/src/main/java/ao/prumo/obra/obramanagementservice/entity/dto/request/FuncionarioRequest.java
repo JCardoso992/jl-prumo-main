@@ -33,10 +33,6 @@ public class FuncionarioRequest
     @NotBlank(message = "[email], este campo não pode ficar em branco.")
     private String email;
     private BigDecimal salario;
-    private Boolean status;
-    @NotNull(message = "[arquivoPath] é um campo é obrigatório.")
-    @NotBlank(message = "[arquivoPath], este campo não pode ficar em branco.")
-    private String arquivoPath;
     private TipoContrato tipoContrato;
     private EstadoUtilizador estadoUtilizador;
 

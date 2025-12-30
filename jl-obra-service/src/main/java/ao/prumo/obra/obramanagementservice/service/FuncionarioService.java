@@ -10,14 +10,19 @@ import ao.prumo.obra.obramanagementservice.entity.dto.response.FuncionarioRespon
 import ao.prumo.obra.obramanagementservice.entity.repository.EnderecoRepository;
 import ao.prumo.obra.obramanagementservice.entity.repository.FuncionarioRepository;
 import ao.prumo.obra.obramanagementservice.entity.repository.PessoaRepository;
+import ao.prumo.obra.obramanagementservice.file.FileStorageService;
 import ao.prumo.obra.obramanagementservice.utils.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
@@ -32,9 +37,11 @@ public class FuncionarioService
     private final PessoaRepository pessoaRepository;
     private final EnderecoRepository enderecoRepository;
 
-    private FuncionarioMapper funcionarioMapper;
-    private PessoaMapper pessoaMapper;
-    private EnderecoMapper enderecoMapper;
+    private final FuncionarioMapper funcionarioMapper;
+    private final PessoaMapper pessoaMapper;
+    private final EnderecoMapper enderecoMapper;  
+
+    private final FileStorageService fileService;
 
     protected JpaRepository<Funcionario, UUID> getRepository() {
         return this.funcionarioRepository;
@@ -49,18 +56,20 @@ public class FuncionarioService
      que gera o código de mapeamento em tempo de compilação, sendo muito mais performático.
     * */
     @Transactional
-    public FuncionarioResponse criarFuncionario(FuncionarioRequest request) 
+    @CacheEvict(value = "buscar-funcionarios", allEntries = true)
+    public FuncionarioResponse criarFuncionario(FuncionarioRequest request, MultipartFile file)
     {
         log.info("Iniciando a criação de uma novo funcionario.");
         // 1. Endereço 1 (obrigatório)
-        EnderecoRequest endRequest1 = request.getCodPessoa().getCodAdress1();
+        EnderecoRequest endRequest1, endRequest2;
+        endRequest1 = request.getCodPessoa().getCodAdress1();
         Endereco endereco1 = enderecoMapper.toEntity(endRequest1);
         Endereco endereco1Salvo = enderecoRepository.save(endereco1);
 
          // 2. Endereço 2 (opcional)
         Endereco endereco2Salvo = null;
         if (request.getCodPessoa().getCodAdress2() != null) {
-            EnderecoRequest endRequest2 = request.getCodPessoa().getCodAdress2();
+            endRequest2 = request.getCodPessoa().getCodAdress2();
             Endereco endereco2 = enderecoMapper.toEntity(endRequest2);
             endereco2Salvo = enderecoRepository.save(endereco2);
         }
@@ -73,7 +82,14 @@ public class FuncionarioService
 
         // 4. Funcionário
         Funcionario funcionario = funcionarioMapper.toEntity(request);
+        // idOrganização= bb1827b3-57b9-49ec-a775-a7f5a91b8297
+        if (file != null && !file.isEmpty()) {
+            final String filePath = fileService.saveFile(file, pessoa.getNome(), "Funcionario");
+            funcionario.setArquivoPath(filePath);
+        }
+        funcionario.setOrganizacaoId(new Organizacao(UUID.fromString("bb1827b3-57b9-49ec-a775-a7f5a91b8297")));
         funcionario.setPessoaId(pessoaSalva);
+        funcionario.setStatus(Boolean.TRUE);
         Funcionario salvo = funcionarioRepository.save(funcionario);
         log.info("Funcionario criado com sucesso.");
         return funcionarioMapper.toResponse(salvo);
@@ -109,7 +125,11 @@ public class FuncionarioService
      * @throws ResourceNotFoundException se o funcionario não for encontrada.
      */
     @Transactional
-    public FuncionarioResponse alterarFuncionario(UUID id, FuncionarioRequest req) 
+    @Caching(evict = {
+           @CacheEvict(value = "buscar-funcionarios", allEntries = true),
+           @CacheEvict(value = "buscar-funcionario-por-id", key = "#id")
+    })
+    public FuncionarioResponse alterarFuncionario(UUID id, FuncionarioRequest req, MultipartFile file)
     {
          log.info("Iniciando a atualização do funcionario com ID: {}", id);
          Funcionario funcionarioExistente = funcionarioRepository.findById(id)
@@ -145,7 +165,16 @@ public class FuncionarioService
 
         // 4. Funcionário
         Funcionario funcionarioAtualizado = funcionarioMapper.toEntity(req);
+        if(file != null)
+        {
+          final String filePath = fileService.saveFile(file, pessoaExistente.getNome(), "Funcionario");
+          funcionarioAtualizado.setArquivoPath(filePath);
+        }else{
+          funcionarioAtualizado.setArquivoPath(funcionarioExistente.getArquivoPath());
+        }
+        funcionarioAtualizado.setOrganizacaoId(funcionarioExistente.getOrganizacaoId());
         funcionarioAtualizado.setId(funcionarioExistente.getId());
+        funcionarioAtualizado.setStatus(Boolean.TRUE);
         funcionarioAtualizado.setPessoaId(pessoaAtualizada);
 
         Funcionario funcionarioSalvo = funcionarioRepository.save(funcionarioAtualizado);
@@ -162,6 +191,10 @@ public class FuncionarioService
      * @throws ResourceNotFoundException se o funcionario não for encontrado.
      */
     @Transactional
+    @Caching(evict = {
+           @CacheEvict(value = "buscar-funcionarios", allEntries = true),
+           @CacheEvict(value = "buscar-funcionario-por-id", key = "#id")
+    })
     public void excluirFuncionario(UUID id) 
     {
         log.info("Iniciando a exclusão do funcionario com ID {}.", id);

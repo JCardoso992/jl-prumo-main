@@ -104,7 +104,7 @@ public class AgenciaController
     })
     @PutMapping(value="/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> atualizarAgencia(@PathVariable UUID id, @Valid @RequestPart("request") AgenciaRequest request,
-                                              @RequestPart("file") MultipartFile file )
+        @RequestPart("file") MultipartFile file )
     {
         AgenciaResponse response = service.alterarAgencia(id, request, file);
         // Usa o builder para padronizar a resposta HTTP 200 OK

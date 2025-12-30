@@ -18,9 +18,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,25 +37,24 @@ public class FuncionarioController
      private final FuncionarioService service;
      private final CargoService serviceCargo;
 
-    @Operation(summary = "Criar um novo funcionario")
+    @Operation(summary = "Criar um novo funcionario", requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @io.swagger.v3.oas.annotations.media.Content(encoding = @io.swagger.v3.oas.annotations.media.Encoding(name = "request", contentType = "application/json"))))
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Funcionario criado com sucesso"),
             @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
-    @PostMapping
+    @PostMapping(value="/criar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<ResponseHttp> criarFuncionario(@Valid @RequestBody FuncionarioRequest request) {
-        FuncionarioResponse response = service.criarFuncionario(request);
+    public ResponseEntity<ResponseHttp> criarFuncionario(@Valid @RequestPart("request") FuncionarioRequest request, @RequestPart("file") MultipartFile file ) 
+    {
+        FuncionarioResponse response = service.criarFuncionario(request, file);
         return ResponseHttpBuilder.created("Funcionário criado com sucesso.", response);
     }
 
     @Operation(summary = "Listar funcionários (paginado)")
     @ApiResponse(responseCode = "200", description = "Lista de funcionarios encontrados")
-    @GetMapping("/pages/{id}")
-    public ResponseEntity<?> listaDeFuncionarios(
-            @RequestParam(name = "page", defaultValue = "0", required = false) int page,
-            @RequestParam(name = "size", defaultValue = "12", required = false) int size,
-            @PathVariable("id") UUID id
+    @GetMapping("/pages")
+    public ResponseEntity<?> listaDeFuncionarios( @RequestParam(name = "page", defaultValue = "0", required = false) int page,
+        @RequestParam(name = "size", defaultValue = "12", required = false) int size
     ){
         Pageable pageable = PageRequest.of(page, size);
         Page<FuncionarioResponse> result = service.listar(pageable);
@@ -83,15 +84,16 @@ public class FuncionarioController
         return ResponseHttpBuilder.info("Cliente recuperado com sucesso.", response);
     }
 
-    @Operation(summary = "Atualizar funcionario existente")
+    @Operation(summary = "Atualizar funcionario existente", requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(content = @io.swagger.v3.oas.annotations.media.Content(encoding = @io.swagger.v3.oas.annotations.media.Encoding(name = "request", contentType = "application/json"))))
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Funcionario atualizado com sucesso"),
             @ApiResponse(responseCode = "404", description = "Funcionario não encontrado"),
             @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
-    @PutMapping("/{id}")
-    public ResponseEntity<?> atualizarFuncionario(@PathVariable UUID id, @Valid @RequestBody FuncionarioRequest request) {
-        FuncionarioResponse response = service.alterarFuncionario(id, request);
+    @PutMapping(value="/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> atualizarFuncionario(@PathVariable UUID id, @Valid @RequestPart("request") FuncionarioRequest request, @RequestPart("file") MultipartFile file ) 
+    {
+        FuncionarioResponse response = service.alterarFuncionario(id, request, file);
         return ResponseHttpBuilder.info("Funcionario atualizado com sucesso.", response);
     }
 
@@ -125,11 +127,10 @@ public class FuncionarioController
     // =========================================================================
     @Operation(summary = "Listar cargos (paginado)")
     @ApiResponse(responseCode = "200", description = "Lista de cargos encontrada")
-    @GetMapping("/cargo/pages/{id}")
+    @GetMapping("/cargo/pages")
     public ResponseEntity<?> listarCargos(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
-            @RequestParam(name = "size", defaultValue = "12", required = false) int size,
-            @PathVariable("id") UUID id
+            @RequestParam(name = "size", defaultValue = "12", required = false) int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
         Page<CargoResponse> cargos = serviceCargo.listarCargos(pageable);
@@ -145,7 +146,7 @@ public class FuncionarioController
     }
 
     // =========================================================================
-    // READ - BY ID  FUNCIONARIO
+    // READ - BY ID  Cargo
     // =========================================================================
     @Operation(summary = "Buscar cargo por ID")
     @ApiResponses({
@@ -159,7 +160,7 @@ public class FuncionarioController
     }
 
     // =========================================================================
-    // UPDATE  FUNCIONARIO
+    // UPDATE  Cargo
     // =========================================================================
     @Operation(summary = "Atualizar um cargo existente")
     @ApiResponses({
@@ -168,15 +169,14 @@ public class FuncionarioController
             @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
     @PutMapping("/cargo/{id}")
-    public ResponseEntity<?> atualizarCargo(
-            @PathVariable UUID id,
-            @Valid @RequestBody CargoRequest request) {
+    public ResponseEntity<?> atualizarCargo(@PathVariable UUID id, @Valid @RequestBody CargoRequest request) 
+    {
         CargoResponse response = serviceCargo.alterarCargo(id, request);
         return ResponseHttpBuilder.info("Cargo atualizado com sucesso.", response);
     }
 
     // =========================================================================
-    // DELETE  FUNCIONARIO
+    // DELETE  Cargo
     // =========================================================================
     @Operation(summary = "Eliminar cargo")
     @ApiResponses({
