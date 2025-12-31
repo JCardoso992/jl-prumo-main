@@ -19,7 +19,5 @@ public class DespesaRequest
     @NotBlank(message = "[descricao], este campo não pode ficar em branco.")
     private String descricao;
     private UUID codDespesaPai;
-    private Boolean status;
-    private UUID codOrganizacao;
 
 }

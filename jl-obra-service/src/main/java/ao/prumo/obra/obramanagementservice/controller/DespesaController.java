@@ -53,11 +53,10 @@ public class DespesaController
 
     @Operation(summary = "Listar despesas (paginado)")
     @ApiResponse(responseCode = "200", description = "Lista encontrada")
-    @GetMapping("/pages/{id}")
+    @GetMapping("/pages")
     public ResponseEntity<?> listaDeDespesas(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
-            @RequestParam(name = "size", defaultValue = "12", required = false) int size,
-            @PathVariable("id") UUID id
+            @RequestParam(name = "size", defaultValue = "12", required = false) int size
     ){
         Pageable pageable = PageRequest.of(page, size);
         Page<DespesaResponse> result = service.listar(pageable);
@@ -140,11 +139,10 @@ public class DespesaController
     // =========================================================================
     @Operation(summary = "Listar itens de logística (paginado)")
     @ApiResponse(responseCode = "200", description = "Lista de itens de logística encontrado")
-    @GetMapping("/logistica/pages/{id}")
+    @GetMapping("/logistica/pages")
     public ResponseEntity<?> listar(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
-            @RequestParam(name = "size", defaultValue = "12", required = false) int size,
-            @PathVariable UUID id
+            @RequestParam(name = "size", defaultValue = "12", required = false) int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
         Page<LogisticaResponse> result = serviceLogistica.listar(pageable);

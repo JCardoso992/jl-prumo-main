@@ -1,6 +1,7 @@
 package ao.prumo.obra.obramanagementservice.service;
 
 import ao.prumo.obra.obramanagementservice.entity.Cargo;
+import ao.prumo.obra.obramanagementservice.entity.Organizacao;
 import ao.prumo.obra.obramanagementservice.entity.dto.mapper.CargoMapper;
 import ao.prumo.obra.obramanagementservice.entity.dto.request.CargoRequest;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.CargoResponse;
@@ -44,7 +45,11 @@ public class CargoService
         // -> Mapper converte a Entidade salva para DTO de Resposta
         Cargo entity = cargoMapper.toEntity(req);
         entity.setStatus(Boolean.TRUE);
-        return cargoMapper.toResponse(repository.save(entity));
+        // idOrganização= bb1827b3-57b9-49ec-a775-a7f5a91b8297
+        entity.setOrganizacaoId(new Organizacao(UUID.fromString("bb1827b3-57b9-49ec-a775-a7f5a91b8297")));
+        Cargo entitySalva = repository.save(entity);
+        log.info("Cargo criada com sucesso.");
+        return cargoMapper.toResponse(entitySalva);
     }
 
     /**
@@ -69,6 +74,7 @@ public class CargoService
         Cargo cargoAtualizada = cargoMapper.toEntity(req);
         cargoAtualizada.setId(cargoExistente.getId()); // Garante que o ID original seja mantido
         cargoAtualizada.setStatus(Boolean.TRUE);
+        cargoAtualizada.setOrganizacaoId(cargoExistente.getOrganizacaoId());
         // 3. Persiste a atualização no banco de dados
         Cargo cargoSalva = this.repository.save(cargoAtualizada); // herdado do BaseService
         log.info("Cargo com ID {} alterada com sucesso.", id);

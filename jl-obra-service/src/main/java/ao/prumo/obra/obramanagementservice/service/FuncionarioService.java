@@ -90,6 +90,8 @@ public class FuncionarioService
         funcionario.setOrganizacaoId(new Organizacao(UUID.fromString("bb1827b3-57b9-49ec-a775-a7f5a91b8297")));
         funcionario.setPessoaId(pessoaSalva);
         funcionario.setStatus(Boolean.TRUE);
+        funcionario.setCargoId(new Cargo(request.getCodCargo()));
+        funcionario.setAgenciaId(new Agencia(request.getCodAgencia()));
         Funcionario salvo = funcionarioRepository.save(funcionario);
         log.info("Funcionario criado com sucesso.");
         return funcionarioMapper.toResponse(salvo);
@@ -175,6 +177,8 @@ public class FuncionarioService
         funcionarioAtualizado.setOrganizacaoId(funcionarioExistente.getOrganizacaoId());
         funcionarioAtualizado.setId(funcionarioExistente.getId());
         funcionarioAtualizado.setStatus(Boolean.TRUE);
+        funcionarioAtualizado.setCargoId(new Cargo(funcionarioExistente.getCargoId().getId()));
+        funcionarioAtualizado.setAgenciaId(new Agencia(funcionarioExistente.getAgenciaId().getId()));
         funcionarioAtualizado.setPessoaId(pessoaAtualizada);
 
         Funcionario funcionarioSalvo = funcionarioRepository.save(funcionarioAtualizado);

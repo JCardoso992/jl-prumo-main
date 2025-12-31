@@ -15,8 +15,6 @@ import java.util.UUID;
 
 public class LogisticaRequest
 {
-    private UUID codLogistiga;
-    private Date dataCriacao;
     private Integer quantiaTotal;
     private Integer quantiaDisponivel;
     private UUID codMercadoria;

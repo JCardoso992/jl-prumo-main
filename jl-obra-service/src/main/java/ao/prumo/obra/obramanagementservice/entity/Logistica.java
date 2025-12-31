@@ -24,8 +24,6 @@ public class Logistica extends BaseAuditingEntity
     @GeneratedValue
     @Column(name = "id")
     private UUID id;
-    @Column(name = "data_criacao")
-    private Date dataCriacao;
     @Column(name = "quantia_total")
     private Integer quantiaTotal;
     @Column(name = "quantia_disponivel")
