@@ -35,10 +35,10 @@ public class VersaoProjeto extends BaseAuditingEntity
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY) // Lazy é melhor para performance
     @JoinColumn(name = "organizacao_id", referencedColumnName = "id")
     private Organizacao organizacaoId;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY) // Lazy é melhor para performance
     @JoinColumn(name = "projeto_arquitetonico_id", referencedColumnName = "id")
     private ProjetoArquitetonico projetoArquitetonicoId;
 

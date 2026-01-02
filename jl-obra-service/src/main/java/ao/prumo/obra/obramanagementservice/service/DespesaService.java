@@ -18,6 +18,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -45,8 +46,8 @@ public class DespesaService
         log.info("Iniciando a criação de uma nova despesa.");
         Despesa despesa = mapper.toEntity(request);
         despesa.setStatus(Boolean.TRUE);
-        // idOrganização= bb1827b3-57b9-49ec-a775-a7f5a91b8297
-        despesa.setOrganizacaoId(new Organizacao(UUID.fromString("bb1827b3-57b9-49ec-a775-a7f5a91b8297")));
+        // idOrganização= 1beae78b-d4a3-48b3-a0c3-a651c1980b82
+        despesa.setOrganizacaoId(new Organizacao(UUID.fromString("1beae78b-d4a3-48b3-a0c3-a651c1980b82")));
         log.info("Despesa criada com sucesso.");
         return mapper.toResponse(repository.save(despesa));
     }
@@ -97,12 +98,15 @@ public class DespesaService
         log.info("Iniciando a atualização da despesas com ID {}.", id);
         Despesa existente = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Despesa não encontrada"));
-
-        Despesa atualizada = mapper.toEntity(request);
-        atualizada.setId(existente.getId());
-        atualizada.setStatus(Boolean.TRUE);
-        atualizada.setOrganizacaoId(existente.getOrganizacaoId());
-        Despesa atualizadaDespesa = repository.save(atualizada);
+        // 2. Preserva campos que não devem mudar (Ex: Despesa Pai original se o request for nulo)
+        // O MapStruct fará o merge dos campos de texto (abreviação, descrição)
+        mapper.updateEntityFromDto(request, existente);
+        // 3. Lógica para Despesa Pai (Somente se vier no request)
+        Optional.ofNullable(request.getCodDespesaPai())
+                .map(Despesa::new) // Cria nova instância de referência
+                .ifPresent(existente:: setDespesaPaiId);
+        // 4. Persistência
+        Despesa atualizadaDespesa = repository.save(existente);
         log.info("Despesa com ID {} alterada com sucesso.", id);
         return mapper.toResponse(atualizadaDespesa);
     }

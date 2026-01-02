@@ -41,10 +41,10 @@ public class Cliente extends BaseAuditingEntity
     @Enumerated(EnumType.STRING)
     private EstadoCliente estadoCliente;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY) // Lazy é melhor para performance
     @JoinColumn(name = "organizacao_id", referencedColumnName = "id")
     private Organizacao organizacaoId;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY) // Lazy é melhor para performance
     @JoinColumn(name = "pessoa_id", referencedColumnName = "id")
     private Pessoa pessoaId;
 

@@ -32,10 +32,10 @@ public class ContaOrganizacao extends BaseAuditingEntity
     @Column(name = "status")
     private Boolean status;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY) // Lazy é melhor para performance
     @JoinColumn(name = "agencia_id", referencedColumnName = "id")
     private Agencia agenciaId;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY) // Lazy é melhor para performance
     @JoinColumn(name = "organizacao_id", referencedColumnName = "id")
     private Organizacao organicacaoId;
 

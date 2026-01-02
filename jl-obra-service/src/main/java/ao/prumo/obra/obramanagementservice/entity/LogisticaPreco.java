@@ -28,10 +28,10 @@ public class LogisticaPreco  extends BaseAuditingEntity
     @Column(name = "data_criacao")
     private Date dataCriacao;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY) // Lazy é melhor para performance
     @JoinColumn(name = "logistiga_id", referencedColumnName = "id")
     private Logistica logistigaId;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY) // Lazy é melhor para performance
     @JoinColumn(name = "organizacao_id", referencedColumnName = "id")
     private Organizacao organizacaoId;
 }

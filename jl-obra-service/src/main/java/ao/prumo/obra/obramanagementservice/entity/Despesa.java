@@ -29,10 +29,10 @@ public class Despesa extends BaseAuditingEntity
     @Column(name = "status")
     private Boolean status;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY) // Lazy é melhor para performance
     @JoinColumn(name = "organizacao_id", referencedColumnName = "id")
     private Organizacao organizacaoId;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY) // Lazy é melhor para performance
     @JoinColumn(name = "despesa_pai_id", referencedColumnName = "id")
     private Despesa despesaPaiId;
 

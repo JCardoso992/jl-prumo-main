@@ -5,6 +5,7 @@ import ao.prumo.obra.obramanagementservice.entity.Despesa;
 import ao.prumo.obra.obramanagementservice.entity.dto.request.LogisticaRequest;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.LogisticaResponse;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.DespesaResponse;
+import ao.prumo.obra.obramanagementservice.utils.base.BaseMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -12,20 +13,22 @@ import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;
+import java.util.UUID;
 
 @Mapper(componentModel = "spring", uses = {DespesaMapper.class},
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
-public interface LogisticaMapper
+public interface LogisticaMapper  extends BaseMapper<Logistica, LogisticaRequest, LogisticaResponse>
 {
     LogisticaMapper INSTANCE = Mappers.getMapper(LogisticaMapper.class);
 
     // Mapeamento de Logistica para LogisticaResponse
     @Mapping(source = "id", target = "codLogistiga")
-    @Mapping(source = "mercadoriaId", target = "codMercadoria", qualifiedByName = "mapDespesaToResponse")
+    @Mapping(source = "mercadoriaId", target = "codMercadoria", qualifiedByName = "mapDespesaToResponse")//
     LogisticaResponse toResponse(Logistica entity);
 
     // Mapeamento de LogisticaRequest para Logistica
+    //@Mapping(source = "codMercadoria", target = "mercadoriaId", qualifiedByName = "mapIdToDespesa")//
     // Ignorar as propriedades que são gerenciadas pelo JPA/BD
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdDate", ignore = true)
@@ -36,13 +39,19 @@ public interface LogisticaMapper
 
     List<LogisticaResponse> listToResponse(List<Logistica> itens);
 
+    // Método para mapear LogisticaRequest para Logistica (usado nos mapeamentos acima)
+  /*  @Named("mapIdToDespesa")
+    default Despesa mapIdToDespesa(UUID id)
+    {
+        return DespesaMapper.INSTANCE.mapIdToDespesa(id);//id == null ? null : new Despesa(id);
+    }*/
+
     // Método para mapear Despesa para DespesaResponse (usado nos mapeamentos acima)
-    @Named("mapDespesaToResponse")
+   @Named("mapDespesaToResponse")
     default DespesaResponse mapDespesaToResponse(Despesa entity) {
         if (entity == null) {
             return null;
         }
         return DespesaMapper.INSTANCE.toResponse(entity);
     }
-
 }        

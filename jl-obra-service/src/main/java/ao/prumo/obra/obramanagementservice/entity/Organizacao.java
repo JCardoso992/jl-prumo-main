@@ -50,7 +50,7 @@ public class Organizacao extends BaseAuditingEntity
     //KeyCloak
     private UUID keycloak_realm_id;
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY) // Lazy é melhor para performance
     @JoinColumn(name = "adress", referencedColumnName = "id")
     private Endereco adress;
 

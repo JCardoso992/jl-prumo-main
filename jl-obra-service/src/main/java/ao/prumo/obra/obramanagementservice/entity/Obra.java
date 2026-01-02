@@ -28,13 +28,13 @@ public class Obra extends BaseAuditingEntity
     @Column(name = "status")
     private Boolean status;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY) // Lazy é melhor para performance
     @JoinColumn(name = "encarregado_id", referencedColumnName = "id")
     private Funcionario encarregadoId;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY) // Lazy é melhor para performance
     @JoinColumn(name = "versao_projeto_id", referencedColumnName = "id")
     private VersaoProjeto versaoProjetoId;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY) // Lazy é melhor para performance
     @JoinColumn(name = "organizacao_id", referencedColumnName = "id")
     private Organizacao organizacaoId;
 

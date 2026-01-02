@@ -58,7 +58,7 @@ public class Pessoa extends BaseAuditingEntity
     @OneToOne
     @JoinColumn(name = "adress2", referencedColumnName = "id")
     private Endereco adress2;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY) // Lazy é melhor para performance
     @JoinColumn(name = "organizacao_id", referencedColumnName = "id")
     private Organizacao organizacaoId;
 

@@ -12,7 +12,6 @@ import java.util.UUID;
 public class LogisticaResponse
 {
     private UUID codLogistiga;
-    private Date dataCriacao;
     private Integer quantiaTotal;
     private Integer quantiaDisponivel;
     private DespesaResponse codMercadoria;

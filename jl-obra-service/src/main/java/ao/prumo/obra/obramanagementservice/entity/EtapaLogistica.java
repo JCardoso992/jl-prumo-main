@@ -29,13 +29,13 @@ public class EtapaLogistica extends BaseAuditingEntity
     @Enumerated(EnumType.STRING)
     private LogisticaEstado logisticaEstado;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY) // Lazy é melhor para performance
     @JoinColumn(name = "organizacao_id", referencedColumnName = "id")
     private Organizacao organizacaoId;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY) // Lazy é melhor para performance
     @JoinColumn(name = "etapa_obra_id", referencedColumnName = "id")
     private EtapaObra etapaObraId;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY) // Lazy é melhor para performance
     @JoinColumn(name = "logistiga_id", referencedColumnName = "id")
     private Logistica logistigaId;
 }

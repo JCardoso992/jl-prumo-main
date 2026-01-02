@@ -38,19 +38,19 @@ public class EtapaObra extends BaseAuditingEntity
     @Enumerated(EnumType.STRING)
     private TipoPagamento tipoPagamento;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY) // Lazy é melhor para performance
     @JoinColumn(name = "organizacao_id", referencedColumnName = "id")
     private Organizacao organizacaoId;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY) // Lazy é melhor para performance
     @JoinColumn(name = "obra_id", referencedColumnName = "id")
     private Obra obraId;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY) // Lazy é melhor para performance
     @JoinColumn(name = "despesa_id", referencedColumnName = "id")
     private Despesa despesaId;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY) // Lazy é melhor para performance
     @JoinColumn(name = "conta_organizacao_id", referencedColumnName = "id")
     private ContaOrganizacao contaOrganizacaoId;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY) // Lazy é melhor para performance
     @JoinColumn(name = "pagamento_projecto_id", referencedColumnName = "id")
     private PagamentoProjecto pagamentoProjectoId;
 

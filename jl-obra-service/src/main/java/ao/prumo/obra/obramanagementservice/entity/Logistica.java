@@ -29,10 +29,14 @@ public class Logistica extends BaseAuditingEntity
     @Column(name = "quantia_disponivel")
     private Integer quantiaDisponivel;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY) // Lazy é melhor para performance
     @JoinColumn(name = "mercadoria_id", referencedColumnName = "id")
     private Despesa mercadoriaId;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY) // Lazy é melhor para performance
     @JoinColumn(name = "organizacao_id", referencedColumnName = "id")
     private Organizacao organizacaoId;
+
+    public Logistica(UUID id) {
+        this.id = id;
+    }
 }

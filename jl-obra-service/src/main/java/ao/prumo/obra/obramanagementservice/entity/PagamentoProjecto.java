@@ -35,13 +35,13 @@ public class PagamentoProjecto extends BaseAuditingEntity
     @Column(name = "status")
     private Boolean status;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY) // Lazy é melhor para performance
     @JoinColumn(name = "projeto_arquitetonico_id", referencedColumnName = "id")
     private ProjetoArquitetonico projetoArquitetonicoId;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY) // Lazy é melhor para performance
     @JoinColumn(name = "conta_organizacao_id", referencedColumnName = "id")
     private ContaOrganizacao contaOrganizacaoId;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY) // Lazy é melhor para performance
     @JoinColumn(name = "organizacao_id", referencedColumnName = "id")
     private Organizacao organizacaoId;
 

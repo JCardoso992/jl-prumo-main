@@ -1,5 +1,6 @@
 package ao.prumo.obra.obramanagementservice.service;
 
+import ao.prumo.obra.obramanagementservice.entity.Organizacao;
 import ao.prumo.obra.obramanagementservice.entity.ProjetoArquitetonico;
 import ao.prumo.obra.obramanagementservice.entity.dto.mapper.ProjetoArquitetonicoMapper;
 import ao.prumo.obra.obramanagementservice.entity.dto.request.ProjetoArquitetonicoRequest;
@@ -8,6 +9,7 @@ import ao.prumo.obra.obramanagementservice.entity.repository.ProjetoArquitetonic
 import ao.prumo.obra.obramanagementservice.utils.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -36,10 +38,15 @@ public class ProjetoArquitetonicoService
     // CREATE
     // =========================================================================
     @Transactional
+    @CacheEvict(value = "buscar-projeto-arquitetônicos", allEntries = true)
     public ProjetoArquitetonicoResponse criar(ProjetoArquitetonicoRequest request)
     {
         log.info("Iniciando a criação de uma novo projeto arquitetônico");
         ProjetoArquitetonico entity = mapper.toEntity(request);
+        entity.setStatus(Boolean.TRUE);
+        // idOrganização= bb1827b3-57b9-49ec-a775-a7f5a91b8297
+        entity.setOrganizacaoId(new Organizacao(UUID.fromString("bb1827b3-57b9-49ec-a775-a7f5a91b8297")));
+        
         return mapper.toResponse(repository.save(entity));
     }
 

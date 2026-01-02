@@ -19,6 +19,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -44,8 +45,8 @@ public class LogisticaService
     public LogisticaResponse criar(LogisticaRequest request) {
         log.info("Iniciando a criação de um novo item de logística");
         Logistica entity = mapper.toEntity(request);
-        // idOrganização= bb1827b3-57b9-49ec-a775-a7f5a91b8297
-        entity.setOrganizacaoId(new Organizacao(UUID.fromString("bb1827b3-57b9-49ec-a775-a7f5a91b8297")));
+        // idOrganização= "1beae78b-d4a3-48b3-a0c3-a651c1980b82"
+        entity.setOrganizacaoId(new Organizacao(UUID.fromString("1beae78b-d4a3-48b3-a0c3-a651c1980b82")));
         entity.setMercadoriaId(new Despesa(request.getCodMercadoria()));
         Logistica entitySalva = repository.save(entity);
         log.info("Item de logística criado com sucesso.");
@@ -98,12 +99,13 @@ public class LogisticaService
         log.info("Iniciando a atualização do item de logística com ID {}.", id);
         Logistica existente = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Item de logística não encontrado"));
+        mapper.updateEntityFromDto(request, existente);
 
-        Logistica atualizado = mapper.toEntity(request);
-        atualizado.setId(existente.getId());
-        atualizado.setOrganizacaoId(existente.getOrganizacaoId());
-        atualizado.setMercadoriaId(existente.getMercadoriaId());
-        Logistica atualizadoSalvo = repository.save(atualizado);
+        Optional.ofNullable(request.getCodMercadoria())
+                .map(Despesa::new) // Cria nova instância de referência
+                .ifPresent(existente:: setMercadoriaId);
+
+        Logistica atualizadoSalvo = repository.save(existente);
         log.info("Item de logística com ID {} alterado com sucesso.", id);
         return mapper.toResponse(atualizadoSalvo);
     }
