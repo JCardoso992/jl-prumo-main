@@ -6,6 +6,7 @@ import ao.prumo.obra.obramanagementservice.entity.dto.request.EnderecoRequest;
 import ao.prumo.obra.obramanagementservice.entity.dto.request.PessoaRequest;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.EnderecoResponse;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.PessoaResponse;
+import ao.prumo.obra.obramanagementservice.utils.base.BaseMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -20,7 +21,7 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = {EnderecoMapper.class},
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
-public interface PessoaMapper
+public interface PessoaMapper extends BaseMapper<Pessoa, PessoaRequest, PessoaResponse>
 {
 
     PessoaMapper INSTANCE = Mappers.getMapper(PessoaMapper.class);

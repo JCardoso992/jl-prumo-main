@@ -5,6 +5,7 @@ import ao.prumo.obra.obramanagementservice.entity.ContaOrganizacao;
 import ao.prumo.obra.obramanagementservice.entity.dto.request.ContaOrganizacaoRequest;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.AgenciaResponse;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.ContaOrganizacaoResponse;
+import ao.prumo.obra.obramanagementservice.utils.base.BaseMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -17,7 +18,7 @@ import java.util.UUID;
 @Mapper(componentModel = "spring", uses = {AgenciaMapper.class},
        unmappedTargetPolicy = ReportingPolicy.IGNORE,
        unmappedSourcePolicy = ReportingPolicy.IGNORE)
-public interface ContaOrganizacaoMapper
+public interface ContaOrganizacaoMapper extends BaseMapper<ContaOrganizacao, ContaOrganizacaoRequest, ContaOrganizacaoResponse>
 {
     ContaOrganizacaoMapper INSTANCE = Mappers.getMapper(ContaOrganizacaoMapper.class);
 

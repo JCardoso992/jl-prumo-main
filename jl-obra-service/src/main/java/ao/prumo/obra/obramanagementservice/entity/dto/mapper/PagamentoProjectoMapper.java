@@ -7,6 +7,7 @@ import ao.prumo.obra.obramanagementservice.entity.dto.request.PagamentoProjectoR
 import ao.prumo.obra.obramanagementservice.entity.dto.response.PagamentoProjectoResponse;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.ProjetoArquitetonicoResponse;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.ContaOrganizacaoResponse;
+import ao.prumo.obra.obramanagementservice.utils.base.BaseMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -18,7 +19,7 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = {ProjetoArquitetonicoMapper.class, ContaOrganizacaoMapper.class},
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
-public interface PagamentoProjectoMapper
+public interface PagamentoProjectoMapper extends BaseMapper<PagamentoProjecto, PagamentoProjectoRequest, PagamentoProjectoResponse>
 {
     PagamentoProjectoMapper INSTANCE = Mappers.getMapper(PagamentoProjectoMapper.class);
 

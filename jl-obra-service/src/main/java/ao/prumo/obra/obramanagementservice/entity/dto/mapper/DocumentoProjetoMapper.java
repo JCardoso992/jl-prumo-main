@@ -5,18 +5,19 @@ import java.util.List;
 import ao.prumo.obra.obramanagementservice.entity.DocumentoProjeto;
 import ao.prumo.obra.obramanagementservice.entity.Funcionario;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.DocumentoProjetoResponse;
+import ao.prumo.obra.obramanagementservice.entity.dto.request.DocumentoProjetoRequest;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.FuncionarioResponse;
+import ao.prumo.obra.obramanagementservice.utils.base.BaseMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.ReportingPolicy;
 
-import ao.prumo.obra.obramanagementservice.entity.dto.request.DocumentoProjetoRequest;
 
 @Mapper(componentModel = "spring", uses = {FuncionarioMapper.class},
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
-public interface DocumentoProjetoMapper 
+public interface DocumentoProjetoMapper extends BaseMapper<DocumentoProjeto, DocumentoProjetoRequest, DocumentoProjetoResponse> 
 {
         // Mapeamento de DocumentoProjeto para DocumentoProjetoResponse
         @Mapping(source = "id", target = "codDocumentoProjeto")

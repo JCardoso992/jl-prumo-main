@@ -25,14 +25,14 @@ public class ObraManagementServiceApplication {
 
 
     // 1. Configura o Swagger para usar o URL do Codespaces em vez de localhost
-   /* @Bean
+    @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .servers(List.of(
                     new Server().url("https://miniature-space-carnival-97q7xvpgv4g92pvj4-9093.app.github.dev")
                                 .description("Ambiente remoto Codespaces")
                 ));
-    }*/
+    }
 
     // 2. Libera o CORS para que o Swagger (navegador) possa falar com a API
     @Bean

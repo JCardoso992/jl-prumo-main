@@ -3,6 +3,7 @@ package ao.prumo.obra.obramanagementservice.entity.dto.mapper;
 import ao.prumo.obra.obramanagementservice.entity.Cargo;
 import ao.prumo.obra.obramanagementservice.entity.dto.request.CargoRequest;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.CargoResponse;
+import ao.prumo.obra.obramanagementservice.utils.base.BaseMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
@@ -13,7 +14,7 @@ import java.util.List;
 @Mapper(componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
-public interface CargoMapper
+public interface CargoMapper extends BaseMapper<Cargo, CargoRequest, CargoResponse>
 {
     CargoMapper INSTANCE = Mappers.getMapper(CargoMapper.class);
 

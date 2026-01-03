@@ -5,6 +5,7 @@ import ao.prumo.obra.obramanagementservice.entity.Pessoa;
 import ao.prumo.obra.obramanagementservice.entity.dto.request.ClienteRequest;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.ClienteResponse;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.PessoaResponse;
+import ao.prumo.obra.obramanagementservice.utils.base.BaseMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -16,7 +17,7 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = {PessoaMapper.class},
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
-public interface ClienteMapper
+public interface ClienteMapper extends BaseMapper<Cliente, ClienteRequest, ClienteResponse>
 {
     ClienteMapper INSTANCE = Mappers.getMapper(ClienteMapper.class);
 

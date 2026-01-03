@@ -70,11 +70,10 @@ public class ProjetoArquitetonicoController
 
     @Operation(summary = "Listar projetos arquitetônicos (paginado)")
     @ApiResponse(responseCode = "200", description = "Lista de projetos arquitetonicos encontrado")
-    @GetMapping("/pages/{id}")
+    @GetMapping("/pages")
     public ResponseEntity<?> listaDeProjetoArquitetonicos(
         @RequestParam(name = "page", defaultValue = "0", required = false) int page,
-        @RequestParam(name = "size", defaultValue = "12", required = false) int size,
-        @PathVariable("id") Integer id
+        @RequestParam(name = "size", defaultValue = "12", required = false) int size
     ){
         Pageable pageable = PageRequest.of(page, size);
         Page<ProjetoArquitetonicoResponse> result = service.listar(pageable);

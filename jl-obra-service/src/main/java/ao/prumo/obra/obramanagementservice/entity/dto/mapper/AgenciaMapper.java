@@ -3,6 +3,7 @@ package ao.prumo.obra.obramanagementservice.entity.dto.mapper;
 import ao.prumo.obra.obramanagementservice.entity.Agencia;
 import ao.prumo.obra.obramanagementservice.entity.dto.request.AgenciaRequest;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.AgenciaResponse;
+import ao.prumo.obra.obramanagementservice.utils.base.BaseMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
@@ -13,7 +14,7 @@ import java.util.List;
 @Mapper(componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
-public interface AgenciaMapper
+public interface AgenciaMapper extends BaseMapper<Agencia, AgenciaRequest, AgenciaResponse>
 {
     AgenciaMapper INSTANCE = Mappers.getMapper(AgenciaMapper.class);
 

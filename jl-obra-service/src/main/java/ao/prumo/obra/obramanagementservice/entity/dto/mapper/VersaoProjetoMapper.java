@@ -5,6 +5,7 @@ import ao.prumo.obra.obramanagementservice.entity.ProjetoArquitetonico;
 import ao.prumo.obra.obramanagementservice.entity.dto.request.VersaoProjetoRequest;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.VersaoProjetoResponse;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.ProjetoArquitetonicoResponse;
+import ao.prumo.obra.obramanagementservice.utils.base.BaseMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -16,7 +17,7 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = {ProjetoArquitetonicoMapper.class},
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
-public interface VersaoProjetoMapper
+public interface VersaoProjetoMapper extends BaseMapper<VersaoProjeto, VersaoProjetoRequest, VersaoProjetoResponse>
 {
     VersaoProjetoMapper INSTANCE = Mappers.getMapper(VersaoProjetoMapper.class);
 

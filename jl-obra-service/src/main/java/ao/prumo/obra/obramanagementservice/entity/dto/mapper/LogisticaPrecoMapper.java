@@ -4,6 +4,7 @@ import ao.prumo.obra.obramanagementservice.entity.Logistica;
 import ao.prumo.obra.obramanagementservice.entity.LogisticaPreco;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.LogisticaPrecoResponse;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.LogisticaResponse;
+import ao.prumo.obra.obramanagementservice.utils.base.BaseMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -15,7 +16,7 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = {LogisticaMapper.class},
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
-public interface LogisticaPrecoMapper
+public interface LogisticaPrecoMapper extends BaseMapper<LogisticaPreco, LogisticaPrecoResponse, LogisticaPrecoResponse>
 {
       LogisticaPrecoMapper INSTANCE = Mappers.getMapper(LogisticaPrecoMapper.class);
 

@@ -7,6 +7,7 @@ import ao.prumo.obra.obramanagementservice.entity.dto.request.ObraRequest;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.FuncionarioResponse;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.ObraResponse;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.VersaoProjetoResponse;
+import ao.prumo.obra.obramanagementservice.utils.base.BaseMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -18,7 +19,7 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = {FuncionarioMapper.class, VersaoProjetoMapper.class},
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
-public interface ObraMapper
+public interface ObraMapper extends BaseMapper<Obra, ObraRequest, ObraResponse>
 {
     ObraMapper INSTANCE = Mappers.getMapper(ObraMapper.class);
 
