@@ -20,6 +20,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,9 +47,11 @@ public class FuncionarioController
     })
     @PostMapping(value="/criar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<ResponseHttp> criarFuncionario(@Valid @RequestPart("request") FuncionarioRequest request, @RequestPart("file") MultipartFile file ) 
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ResponseHttp> criarFuncionario(@Valid @RequestPart("request") FuncionarioRequest request, @RequestPart("file") MultipartFile file ,
+                                                         @AuthenticationPrincipal Jwt jwt)
     {
-        FuncionarioResponse response = service.criarFuncionario(request, file);
+        FuncionarioResponse response = service.criarFuncionario(request, file, jwt);
         return ResponseHttpBuilder.created("Funcionário criado com sucesso.", response);
     }
 
@@ -103,6 +108,7 @@ public class FuncionarioController
             @ApiResponse(responseCode = "404", description = "Funcionario não encontrado")
     })
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> excluirFuncionario(@PathVariable UUID id) {
         service.excluirFuncionario(id);
         return ResponseEntity.noContent().build();

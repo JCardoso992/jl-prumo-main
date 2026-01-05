@@ -20,6 +20,8 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,6 +43,9 @@ public class OrganizacaoService
 
     private final FileStorageService fileService;
 
+    // Adicione o JdbcTemplate para interagir com a tabela de perfis do Supabase
+    private final JdbcTemplate jdbcTemplate;
+
     protected JpaRepository<Organizacao, UUID> getRepository() {
         return this.repository;
     }
@@ -50,7 +55,7 @@ public class OrganizacaoService
     // =========================================================================
     @Transactional
     @CacheEvict(value = "buscar-organizacao", allEntries = true)
-    public OrganizacaoResponse criar(OrganizacaoRequest request, MultipartFile file)
+    public OrganizacaoResponse criar(OrganizacaoRequest request, MultipartFile file, Jwt jwt)
     {
         log.info("Iniciando a criação de uma nova organização");
         // 1. Endereço 1 (obrigatório)
@@ -67,6 +72,12 @@ public class OrganizacaoService
         organizacao.setAdress(enderecoSalvo);
 
         Organizacao organizacaoCriada = repository.save(organizacao);
+        // 2. VINCULAR O UTILIZADOR À ORGANIZAÇÃO NO SUPABASE
+        UUID usuarioSub = UUID.fromString(jwt.getSubject());
+        jdbcTemplate.update(
+                "UPDATE public.perfis SET organizacao_id = ?, role = 'ADMIN', acesso_liberado = true WHERE id = ?",
+                organizacaoCriada.getId(), usuarioSub
+        );
         log.info("Organização criada com sucesso.");
         return mapper.toResponse(organizacaoCriada);
     }

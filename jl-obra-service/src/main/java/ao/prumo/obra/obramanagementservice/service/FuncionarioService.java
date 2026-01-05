@@ -20,10 +20,13 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -57,9 +60,17 @@ public class FuncionarioService
     * */
     @Transactional
     @CacheEvict(value = "buscar-funcionarios", allEntries = true)
-    public FuncionarioResponse criarFuncionario(FuncionarioRequest request, MultipartFile file)
+    public FuncionarioResponse criarFuncionario(FuncionarioRequest request, MultipartFile file, Jwt jwt)
     {
         log.info("Iniciando a criação de uma novo funcionario.");
+        // 1. Extrair o ID da organização do TOKEN
+        Map<String, Object> appMetadata = jwt.getClaimAsMap("app_metadata");
+        String orgIdToken = (String) appMetadata.get("org_id");
+
+        if (orgIdToken == null) {
+            throw new AccessDeniedException("Utilizador não vinculado a uma organização.");
+        }
+        UUID organizacaoId = UUID.fromString(orgIdToken);
         // 1. Endereço 1 (obrigatório)
         EnderecoRequest endRequest1, endRequest2;
         endRequest1 = request.getCodPessoa().getCodAdress1();
@@ -87,7 +98,7 @@ public class FuncionarioService
             final String filePath = fileService.saveFile(file, pessoa.getNome(), "Funcionario");
             funcionario.setArquivoPath(filePath);
         }
-        funcionario.setOrganizacaoId(new Organizacao(UUID.fromString("bb1827b3-57b9-49ec-a775-a7f5a91b8297")));
+        funcionario.setOrganizacaoId(new Organizacao(organizacaoId));
         funcionario.setPessoaId(pessoaSalva);
         funcionario.setStatus(Boolean.TRUE);
         funcionario.setCargoId(new Cargo(request.getCodCargo()));
