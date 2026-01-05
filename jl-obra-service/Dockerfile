@@ -1,15 +1,18 @@
-# Usa uma imagem base para Java
-FROM openjdk:17-jdk-slim
-
-# Define o diretório de trabalho dentro do contêiner
+# Estágio 1: Build (Compilação)
+FROM maven:3.8.5-openjdk-17 AS build
 WORKDIR /app
+# Copia apenas os ficheiros de configuração do Maven primeiro para aproveitar a cache
+COPY pom.xml .
+RUN mvn dependency:go-offline
+# Copia o código fonte e gera o JAR
+COPY src ./src
+RUN mvn clean package -DskipTests
 
-# Copia o arquivo JAR do seu projeto para o contêiner
-# Assumindo que o arquivo JAR se chama 'seu-backend.jar'
-COPY target/seu-backend.jar /app/app.jar
-
-# Expõe a porta que o Spring Boot usa (geralmente 8080)
-EXPOSE 8080
-
-# Comando para rodar a aplicação quando o contêiner iniciar
+# Estágio 2: Runtime (Execução)
+FROM openjdk:17-jdk-slim
+WORKDIR /app
+# Copia o JAR gerado no estágio anterior
+COPY --from=build /app/target/*.jar app.jar
+# Usa a porta que definiste no application.properties
+EXPOSE 9093
 ENTRYPOINT ["java", "-jar", "app.jar"]
