@@ -4,6 +4,22 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+# Ignorar pastas de logs
+*.log
+logs/
+
+# Ignorar pastas de uploads locais (já que vais usar o Disk do Render)
+uploads/
+
+# Ignorar ficheiros do sistema e do IDE
+.idea/
+.vscode/
+*.iml
+.DS_Store
+
+# Ignorar ficheiros de configuração sensíveis (senhas)
+.env
+
 ### STS ###
 .apt_generated
 .classpath
