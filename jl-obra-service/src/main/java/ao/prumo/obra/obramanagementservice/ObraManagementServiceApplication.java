@@ -23,13 +23,14 @@ public class ObraManagementServiceApplication {
         SpringApplication.run(ObraManagementServiceApplication.class, args);
     }
 
-
+     //Render: https://jl-prumo-main.onrender.com
+     //Codespaces: https://miniature-space-carnival-97q7xvpgv4g92pvj4-9093.app.github.dev
     // 1. Configura o Swagger para usar o URL do Codespaces em vez de localhost
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .servers(List.of(
-                    new Server().url("https://miniature-space-carnival-97q7xvpgv4g92pvj4-9093.app.github.dev")
+                    new Server().url("https://jl-prumo-main.onrender.com")
                                 .description("Ambiente remoto Codespaces")
                 ));
     }
