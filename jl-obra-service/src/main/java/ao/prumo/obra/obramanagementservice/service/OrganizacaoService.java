@@ -2,12 +2,15 @@ package ao.prumo.obra.obramanagementservice.service;
 
 import ao.prumo.obra.obramanagementservice.entity.Endereco;
 import ao.prumo.obra.obramanagementservice.entity.Organizacao;
+import ao.prumo.obra.obramanagementservice.entity.Perfil;
+import ao.prumo.obra.obramanagementservice.entity.UserRole;
 import ao.prumo.obra.obramanagementservice.entity.dto.mapper.OrganizacaoMapper;
 import ao.prumo.obra.obramanagementservice.entity.dto.mapper.EnderecoMapper;
 import ao.prumo.obra.obramanagementservice.entity.dto.request.OrganizacaoRequest;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.OrganizacaoResponse;
 import ao.prumo.obra.obramanagementservice.entity.repository.OrganizacaoRepository;
 import ao.prumo.obra.obramanagementservice.entity.repository.EnderecoRepository;
+import ao.prumo.obra.obramanagementservice.entity.repository.PerfilRepository;
 import ao.prumo.obra.obramanagementservice.entity.dto.request.EnderecoRequest;
 import ao.prumo.obra.obramanagementservice.entity.dto.request.FuncionarioRequest;
 import ao.prumo.obra.obramanagementservice.file.FileStorageService;
@@ -37,6 +40,7 @@ public class OrganizacaoService
 
     private final OrganizacaoRepository repository;
     private final EnderecoRepository enderecoRepository;
+    private final PerfilRepository perfilRepository;
 
     private final OrganizacaoMapper mapper;
     private final EnderecoMapper enderecoMapper;
@@ -44,7 +48,7 @@ public class OrganizacaoService
     private final FileStorageService fileService;
 
     // Adicione o JdbcTemplate para interagir com a tabela de perfis do Supabase
-    private final JdbcTemplate jdbcTemplate;
+   /// private final JdbcTemplate jdbcTemplate;
 
     protected JpaRepository<Organizacao, UUID> getRepository() {
         return this.repository;
@@ -71,13 +75,16 @@ public class OrganizacaoService
         organizacao.setStatus(Boolean.TRUE);
         organizacao.setAdress(enderecoSalvo);
 
-        Organizacao organizacaoCriada = repository.save(organizacao);
+        Organizacao organizacaoCriada = repository.saveAndFlush(organizacao);
         // 2. VINCULAR O UTILIZADOR À ORGANIZAÇÃO NO SUPABASE
-        UUID usuarioSub = UUID.fromString(jwt.getSubject());
-        jdbcTemplate.update(
-                "UPDATE public.perfis SET organizacao_id = ?, role = 'ADMIN', acesso_liberado = true WHERE id = ?",
-                organizacaoCriada.getId(), usuarioSub
-        );
+        // Convertemos explicitamente para UUID para o PostgreSQL não reclamar do tipo de dados
+        // 2. Obtém o UUID do usuário do Token
+        UUID usuarioId = UUID.fromString(jwt.getSubject());
+
+        // Chamada direta ao método com SQL Nativo para evitar erro de tipo
+        perfilRepository.atualizarPerfilComoAdmin(
+        organizacaoCriada.getId(), "ADMIN", true,  usuarioId);
+
         log.info("Organização criada com sucesso.");
         return mapper.toResponse(organizacaoCriada);
     }

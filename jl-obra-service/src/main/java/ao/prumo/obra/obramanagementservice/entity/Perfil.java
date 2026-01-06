@@ -1,0 +1,35 @@
+package ao.prumo.obra.obramanagementservice.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+import java.util.UUID;
+
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@Table(name = "perfis")
+public class Perfil { 
+
+    @Id
+    private UUID id; // Este ID é o 'sub' do Supabase
+
+    @Column(name = "nome_completo")
+    private String nomeCompleto;
+
+    private String email;
+
+    @Column(name = "avatar_url")
+    private String avatarUrl;
+
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
+
+    @Column(name = "acesso_liberado")
+    private Boolean acessoLiberado;
+
+    @ManyToOne(fetch = FetchType.LAZY) // Lazy é melhor para performance
+    @JoinColumn(name = "organizacao_id", referencedColumnName = "id")
+    private Organizacao organizacaoId;
+}

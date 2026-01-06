@@ -17,7 +17,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import java.util.List;
 
 @SpringBootApplication
-@EnableJpaAuditing(auditorAwareRef = "auditorAwareImpl")
+@EnableJpaAuditing(auditorAwareRef = "securityAuditorAware")
 @EnableCaching
 public class ObraManagementServiceApplication {
 
@@ -25,7 +25,7 @@ public class ObraManagementServiceApplication {
         SpringApplication.run(ObraManagementServiceApplication.class, args);
     }
 
-     //Render: https://jl-prumo-main.onrender.com
+     //Render: https://jl-prumo-main.onrender.com :  new Server().url("https://jl-prumo-main.onrender.com").description("Servidor Render"),
      //Codespaces: https://miniature-space-carnival-97q7xvpgv4g92pvj4-9093.app.github.dev
     // 1. Configura o Swagger para usar o URL do Codespaces em vez de localhost
      @Bean
@@ -33,7 +33,6 @@ public class ObraManagementServiceApplication {
          final String securitySchemeName = "bearerAuth";
          return new OpenAPI()
                  .servers(List.of(
-                         new Server().url("https://jl-prumo-main.onrender.com").description("Servidor Render"),
                          new Server().url("https://miniature-space-carnival-97q7xvpgv4g92pvj4-9093.app.github.dev").description("Codespaces")
                  ))
                  .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
