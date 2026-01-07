@@ -10,8 +10,10 @@ import ao.prumo.obra.obramanagementservice.entity.dto.response.FuncionarioRespon
 import ao.prumo.obra.obramanagementservice.entity.repository.EnderecoRepository;
 import ao.prumo.obra.obramanagementservice.entity.repository.FuncionarioRepository;
 import ao.prumo.obra.obramanagementservice.entity.repository.PessoaRepository;
+import ao.prumo.obra.obramanagementservice.entity.repository.PerfilRepository;
 import ao.prumo.obra.obramanagementservice.file.FileStorageService;
 import ao.prumo.obra.obramanagementservice.utils.exception.ResourceNotFoundException;
+import ao.prumo.obra.obramanagementservice.config.SupabaseAuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
@@ -45,6 +47,8 @@ public class FuncionarioService
     private final EnderecoMapper enderecoMapper;  
 
     private final FileStorageService fileService;
+    private final PerfilRepository perfilRepository;
+    private final SupabaseAuthService supabaseAuthService;
 
     protected JpaRepository<Funcionario, UUID> getRepository() {
         return this.funcionarioRepository;
@@ -104,6 +108,21 @@ public class FuncionarioService
         funcionario.setCargoId(new Cargo(request.getCodCargo()));
         funcionario.setAgenciaId(new Agencia(request.getCodAgencia()));
         Funcionario salvo = funcionarioRepository.save(funcionario);
+
+        // 2. CONVIDAR NO SUPABASE AUTH (Novo passo)
+        // Isso dispara o e-mail de verificação
+        UUID supabaseUserId = supabaseAuthService.convidarUsuario(request.getEmail());
+
+        // 3. CRIAR PERFIL (Sincronização com a tabela perfis)
+        Perfil perfil = new Perfil();
+        perfil.setId(supabaseUserId); // O ID deve ser igual ao do Auth
+        perfil.setEmail(request.getEmail());
+        perfil.setNomeCompleto(request.getCodPessoa().getNome());
+        perfil.setRole(UserRole.USER); // Funcionário é USER
+        perfil.setOrganizacaoId(new Organizacao(organizacaoId));
+        perfil.setAcessoLiberado(false); // Só libera após validar e-mail (opcional)
+        perfilRepository.save(perfil);
+
         log.info("Funcionario criado com sucesso.");
         return funcionarioMapper.toResponse(salvo);
     }

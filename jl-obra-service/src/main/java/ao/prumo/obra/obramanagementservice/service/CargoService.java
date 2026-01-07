@@ -9,6 +9,8 @@ import ao.prumo.obra.obramanagementservice.entity.repository.CargoRepository;
 import ao.prumo.obra.obramanagementservice.utils.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -38,15 +41,22 @@ public class CargoService
 
     @Transactional
     @CacheEvict(value = "buscar-cargos", allEntries = true)
-    public CargoResponse criarCargo(CargoRequest req)
+    public CargoResponse criarCargo(CargoRequest req, Jwt jwt)
     {
         log.info("Iniciando a criação de uma novo Cargo.");
+        Map<String, Object> appMetadata = jwt.getClaimAsMap("app_metadata");
+        String orgIdToken = (String) appMetadata.get("org_id");
+
+        if (orgIdToken == null) {
+            throw new AccessDeniedException("Utilizador não vinculado a uma organização.");
+        }
+        UUID organizacaoId = UUID.fromString(orgIdToken);
         // Mapper converte o DTO para Entidade -> Service salva a Entidade
         // -> Mapper converte a Entidade salva para DTO de Resposta
         Cargo entity = cargoMapper.toEntity(req);
         entity.setStatus(Boolean.TRUE);
         // idOrganização= bb1827b3-57b9-49ec-a775-a7f5a91b8297
-        entity.setOrganizacaoId(new Organizacao(UUID.fromString("bb1827b3-57b9-49ec-a775-a7f5a91b8297")));
+        entity.setOrganizacaoId(new Organizacao(organizacaoId));
         Cargo entitySalva = repository.save(entity);
         log.info("Cargo criada com sucesso.");
         return cargoMapper.toResponse(entitySalva);

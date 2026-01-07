@@ -123,8 +123,8 @@ public class FuncionarioController
             @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
     @PostMapping("/cargo")
-    public ResponseEntity<?> criarCargo(@Valid @RequestBody CargoRequest request) {
-        CargoResponse response = serviceCargo.criarCargo(request);
+    public ResponseEntity<?> criarCargo(@Valid @RequestBody CargoRequest request, @AuthenticationPrincipal Jwt jwt) {
+        CargoResponse response = serviceCargo.criarCargo(request, jwt);
         return ResponseHttpBuilder.created("Cargo criado com sucesso.", response);
     }
 
