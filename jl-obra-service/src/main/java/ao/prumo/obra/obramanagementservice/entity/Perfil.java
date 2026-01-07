@@ -1,6 +1,8 @@
 package ao.prumo.obra.obramanagementservice.entity;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode; // Certifique-se de importar
+import org.hibernate.type.SqlTypes;
 import lombok.*;
 import java.util.UUID;
 
@@ -24,6 +26,8 @@ public class Perfil {
     private String avatarUrl;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "role", columnDefinition = "user_role")
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM) // <--- Esta é a anotação específica para Enums nativos
     private UserRole role;
 
     @Column(name = "acesso_liberado")

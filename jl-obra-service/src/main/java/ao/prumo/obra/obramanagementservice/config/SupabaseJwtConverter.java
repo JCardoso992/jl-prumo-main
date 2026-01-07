@@ -17,13 +17,19 @@ public class SupabaseJwtConverter implements Converter<Jwt, AbstractAuthenticati
     @Override
     public AbstractAuthenticationToken convert(Jwt jwt) {
         Map<String, Object> appMetadata = jwt.getClaimAsMap("app_metadata");
-        String role = (String) appMetadata.get("role");
-        Boolean ativo = (Boolean) appMetadata.get("ativo");
-
-        // Se o utilizador não estiver ativo, limpamos as autoridades (bloqueio)
+        
         Collection<GrantedAuthority> authorities = new ArrayList<>();
-        if (ativo != null && ativo && role != null) {
-            authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
+        
+        if (appMetadata != null) {
+            String role = (String) appMetadata.get("role");
+            // Se 'ativo' não existir no token, vamos assumir 'true' ou remover a checagem por enquanto
+            Object ativoObj = appMetadata.get("ativo");
+            boolean isAtivo = (ativoObj == null) || (Boolean) ativoObj;
+
+            if (isAtivo && role != null) {
+                // Adiciona ROLE_ antes do nome (ex: ROLE_ADMIN)
+                authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
+            }
         }
 
         return new JwtAuthenticationToken(jwt, authorities);

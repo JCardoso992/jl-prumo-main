@@ -23,25 +23,36 @@ public class SupabaseAuthService {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    public UUID convidarUsuario(String email) {
+    public UUID convidarUsuario(String email) 
+    {
         String url = supabaseUrl + "/auth/v1/admin/users";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+    
+     // ADICIONE ESTA LINHA: O Supabase exige a apikey em um header separado
+        headers.set("apikey", serviceRoleKey); 
+    
         headers.setBearerAuth(serviceRoleKey);
 
-        // O Supabase enviará o e-mail de confirmação automaticamente
         Map<String, Object> body = new HashMap<>();
         body.put("email", email);
-        body.put("email_confirm", false); // false para enviar link de confirmação
-        body.put("password", UUID.randomUUID().toString()); // Senha temporária aleatória
+        body.put("email_confirm", false); 
+        body.put("password", UUID.randomUUID().toString());
 
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
-        ResponseEntity<Map> response = restTemplate.postForEntity(url, entity, Map.class);
-
-        if (response.getStatusCode().is2xxSuccessful()) {
-            return UUID.fromString(response.getBody().get("id").toString());
+    
+        // Dica: Adicione um try-catch para ver o erro detalhado se falhar
+        try {
+            ResponseEntity<Map> response = restTemplate.postForEntity(url, entity, Map.class);
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                return UUID.fromString(response.getBody().get("id").toString());
+            }
+        } catch (org.springframework.web.client.HttpClientErrorException e) {
+         System.err.println("Erro Supabase: " + e.getResponseBodyAsString());
+         throw e;
         }
+    
         throw new RuntimeException("Erro ao criar usuário no Supabase Auth");
     }
 }

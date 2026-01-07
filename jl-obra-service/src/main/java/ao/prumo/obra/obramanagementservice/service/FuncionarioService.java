@@ -72,6 +72,7 @@ public class FuncionarioService
         String orgIdToken = (String) appMetadata.get("org_id");
 
         if (orgIdToken == null) {
+            log.error("Claims presentes no token: {}", jwt.getClaims()); // Isso ajuda a debugar no log
             throw new AccessDeniedException("Utilizador não vinculado a uma organização.");
         }
         UUID organizacaoId = UUID.fromString(orgIdToken);

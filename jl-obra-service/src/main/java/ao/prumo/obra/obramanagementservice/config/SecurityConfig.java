@@ -28,7 +28,7 @@ public class SecurityConfig {
              .anyRequest().authenticated()
             )
             .oauth2ResourceServer(oauth -> oauth
-                .jwt(Customizer.withDefaults()) // O Spring usará as propriedades do application.properties
+                .jwt(jwt -> jwt.jwtAuthenticationConverter(new SupabaseJwtConverter())) // REGISTRE AQUI O SEU CONVERTER
         );
     
         return http.build();
