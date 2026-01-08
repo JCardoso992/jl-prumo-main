@@ -19,6 +19,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,6 +51,7 @@ public class AgenciaController
     })
     @PostMapping(value="/criar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> criarAgencia(@Valid @RequestPart("request") AgenciaRequest request,
          @RequestPart("file") MultipartFile file )
     {
@@ -62,6 +66,7 @@ public class AgenciaController
     @Operation(summary = "Listar todas as agências (com paginação)")
     @ApiResponse(responseCode = "200", description = "Lista de agências encontrada")
     @GetMapping("/pages")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
     public ResponseEntity<?> listaDeAgencias(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
             @RequestParam(name = "size", defaultValue = "12", required = false) int size
@@ -87,6 +92,7 @@ public class AgenciaController
             @ApiResponse(responseCode = "404", description = "Agência não encontrada")
     })
     @GetMapping("/buscar/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
     public ResponseEntity<?> buscarAgenciaPorId(@PathVariable UUID id) {
         AgenciaResponse response = service.buscarPorId(id);
         return ResponseHttpBuilder.info("Agência recuperada com sucesso.", response);
@@ -103,6 +109,7 @@ public class AgenciaController
             @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
     @PutMapping(value="/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> atualizarAgencia(@PathVariable UUID id, @Valid @RequestPart("request") AgenciaRequest request,
         @RequestPart("file") MultipartFile file )
     {
@@ -121,6 +128,7 @@ public class AgenciaController
             @ApiResponse(responseCode = "404", description = "Agência não encontrada")
     })
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> excluirAgencia(@PathVariable UUID id) {
         service.excluirAgencia(id);
         return ResponseEntity.noContent().build();

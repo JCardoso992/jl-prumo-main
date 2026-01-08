@@ -20,6 +20,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,7 +49,8 @@ public class DespesaController
     })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> criarDespesa(@Valid @RequestBody DespesaRequest request) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ResponseEntity<?> criarDespesa(@Valid @RequestBody DespesaRequest request, @AuthenticationPrincipal Jwt jwt) {
         DespesaResponse response = service.criarDespesa(request);
         return ResponseHttpBuilder.created("Despesa criada com sucesso.", response);
     }
@@ -54,9 +58,11 @@ public class DespesaController
     @Operation(summary = "Listar despesas (paginado)")
     @ApiResponse(responseCode = "200", description = "Lista encontrada")
     @GetMapping("/pages")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
     public ResponseEntity<?> listaDeDespesas(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
-            @RequestParam(name = "size", defaultValue = "12", required = false) int size
+            @RequestParam(name = "size", defaultValue = "12", required = false) int size,
+            @AuthenticationPrincipal Jwt jwt
     ){
         Pageable pageable = PageRequest.of(page, size);
         Page<DespesaResponse> result = service.listar(pageable);
@@ -90,7 +96,8 @@ public class DespesaController
             @ApiResponse(responseCode = "404", description = "Despesa não encontrada")
     })
     @GetMapping("/buscar/{id}")
-    public ResponseEntity<?> buscarPorId(@PathVariable UUID id) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
+    public ResponseEntity<?> buscarPorId(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
         DespesaResponse response = service.buscarPorId(id);
         return ResponseHttpBuilder.info("Despesa recuperada com sucesso.", response);
     }
@@ -103,7 +110,8 @@ public class DespesaController
             @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<?> atualizarDespesa(@PathVariable UUID id, @Valid @RequestBody DespesaRequest request) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ResponseEntity<?> atualizarDespesa(@PathVariable UUID id, @Valid @RequestBody DespesaRequest request, @AuthenticationPrincipal Jwt jwt) {
         DespesaResponse response = service.atualizar(id, request);
         return ResponseHttpBuilder.info("Despesa atualizada com sucesso.", response);
     }
@@ -114,7 +122,8 @@ public class DespesaController
             @ApiResponse(responseCode = "404", description = "Despesa não encontrada")
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminarDespesa(@PathVariable UUID id) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ResponseEntity<?> eliminarDespesa(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
         service.excluir(id);
         return ResponseEntity.noContent().build();
     }
@@ -129,7 +138,8 @@ public class DespesaController
     })
     @PostMapping("/logistica")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> criar(@Valid @RequestBody LogisticaRequest request) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
+    public ResponseEntity<?> criar(@Valid @RequestBody LogisticaRequest request, @AuthenticationPrincipal Jwt jwt) {
         LogisticaResponse response = serviceLogistica.criar(request);
         return ResponseHttpBuilder.created("Item de logística criado com sucesso.", response);
     }
@@ -140,9 +150,11 @@ public class DespesaController
     @Operation(summary = "Listar itens de logística (paginado)")
     @ApiResponse(responseCode = "200", description = "Lista de itens de logística encontrado")
     @GetMapping("/logistica/pages")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
     public ResponseEntity<?> listar(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
-            @RequestParam(name = "size", defaultValue = "12", required = false) int size
+            @RequestParam(name = "size", defaultValue = "12", required = false) int size,
+            @AuthenticationPrincipal Jwt jwt
     ) {
         Pageable pageable = PageRequest.of(page, size);
         Page<LogisticaResponse> result = serviceLogistica.listar(pageable);
@@ -166,7 +178,8 @@ public class DespesaController
             @ApiResponse(responseCode = "404", description = "Item de logística não encontrado")
     })
     @GetMapping("/logistica/buscar/{id}")
-    public ResponseEntity<?> buscarLogisticaPorId(@PathVariable UUID id) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
+    public ResponseEntity<?> buscarLogisticaPorId(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
         LogisticaResponse response = serviceLogistica.buscarPorId(id);
         return ResponseHttpBuilder.info("Item de logística recuperado com sucesso.", response);
     }
@@ -181,9 +194,10 @@ public class DespesaController
             @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
     @PutMapping("/logistica/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ResponseEntity<?> atualizar(
             @PathVariable UUID id,
-            @Valid @RequestBody LogisticaRequest request) {
+            @Valid @RequestBody LogisticaRequest request, @AuthenticationPrincipal Jwt jwt) {
         LogisticaResponse response = serviceLogistica.atualizar(id, request);
         return ResponseHttpBuilder.info("Item de logística atualizado com sucesso.", response);
     }
@@ -197,7 +211,8 @@ public class DespesaController
             @ApiResponse(responseCode = "404", description = "Item de logística não encontrada")
     })
     @DeleteMapping("/logistica/{id}")
-    public ResponseEntity<?> excluir(@PathVariable UUID id) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ResponseEntity<?> excluir(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
         serviceLogistica.excluir(id);
         return ResponseEntity.noContent().build();
     }

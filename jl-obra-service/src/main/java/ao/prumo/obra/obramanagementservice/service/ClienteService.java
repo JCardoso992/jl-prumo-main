@@ -20,10 +20,13 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Map;
 import java.util.UUID;
 
 
@@ -51,9 +54,18 @@ public class ClienteService
 
     @Transactional
     @CacheEvict(value = "buscar-clientes", allEntries = true)
-    public ClienteResponse criarCliente(ClienteRequest req, MultipartFile file)
+    public ClienteResponse criarCliente(ClienteRequest req, MultipartFile file, Jwt jwt)
     {
         log.info("Iniciando a criação de uma novo cliente.");
+        // 1. Extrair o ID da organização do TOKEN
+        Map<String, Object> appMetadata = jwt.getClaimAsMap("app_metadata");
+        String orgIdToken = (String) appMetadata.get("org_id");
+
+        if (orgIdToken == null) {
+            log.error("Claims presentes no token: {}", jwt.getClaims()); // Isso ajuda a debugar no log
+            throw new AccessDeniedException("Utilizador não vinculado a uma organização.");
+        }
+        UUID organizacaoId = UUID.fromString(orgIdToken);
         // Mapper converte o DTO para Entidade -> Service salva a Entidade
         // -> Mapper converte a Entidade salva para DTO de Resposta
         // 1. Endereço 1 (obrigatório)
@@ -75,7 +87,7 @@ public class ClienteService
         pessoa.setAdress1(endereco1Salvo);
         pessoa.setAdress2(endereco2Salvo);
         pessoa.setStatus(Boolean.TRUE);
-        pessoa.setOrganizacaoId(new Organizacao(UUID.fromString("bb1827b3-57b9-49ec-a775-a7f5a91b8297")));
+        pessoa.setOrganizacaoId(new Organizacao(organizacaoId));
         Pessoa pessoaSalva = pessoaRepository.save(pessoa);
 
         // 4. Cliente
@@ -85,7 +97,7 @@ public class ClienteService
             final String filePath = fileService.saveFile(file, pessoa.getNome(), "Cliente");
             cliente.setArquivoPath(filePath);
         }
-        cliente.setOrganizacaoId(new Organizacao(UUID.fromString("bb1827b3-57b9-49ec-a775-a7f5a91b8297")));
+        cliente.setOrganizacaoId(new Organizacao(organizacaoId));
         cliente.setPessoaId(pessoaSalva); // Associa a pessoa recém-criada
         cliente.setStatus(Boolean.TRUE);
         Cliente clienteSalvo = repository.save(cliente);
@@ -186,7 +198,7 @@ public class ClienteService
     // READ - LIST (PAGINADO)
     // =========================================================================
     @Transactional(readOnly = true)
-    public Page<ClienteResponse> listarClientes(Pageable pageable)
+    public Page<ClienteResponse> listarClientes(Pageable pageable, Jwt jwt)
     {
         log.info("Iniciando a listagem de clientes.");
         return repository.findAll(pageable)
@@ -197,7 +209,7 @@ public class ClienteService
     // READ - BY ID
     // =========================================================================
     @Transactional(readOnly = true)
-    public ClienteResponse buscarClientePorId(UUID id) 
+    public ClienteResponse buscarClientePorId(UUID id, Jwt jwt) 
     {
         log.info("Iniciando a busca de cliente por ID {}.", id);
         Cliente cliente = repository.findById(id)

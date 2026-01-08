@@ -19,6 +19,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,9 +46,10 @@ public class ClienteController
     })
     @PostMapping(value="/criar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> criarCliente(@Valid @RequestPart("request") ClienteRequest request,  @RequestPart("file") MultipartFile file) 
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
+    public ResponseEntity<?> criarCliente(@Valid @RequestPart("request") ClienteRequest request,  @RequestPart("file") MultipartFile file, @AuthenticationPrincipal Jwt jwt) 
     {
-        ClienteResponse response = service.criarCliente(request, file);
+        ClienteResponse response = service.criarCliente(request, file, jwt);
         return ResponseHttpBuilder.created("Cliente criado com sucesso.", response);
     }
 
@@ -56,12 +60,14 @@ public class ClienteController
     @Operation(summary = "Listar clientes (paginado)")
     @ApiResponse(responseCode = "200", description = "Lista de clientes encontrado")
     @GetMapping("/pages")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
     public ResponseEntity<?> listaDeClientes(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
-            @RequestParam(name = "size", defaultValue = "12", required = false) int size
+            @RequestParam(name = "size", defaultValue = "12", required = false) int size,
+            @AuthenticationPrincipal Jwt jwt
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<ClienteResponse> clientes = service.listarClientes(pageable);
+        Page<ClienteResponse> clientes = service.listarClientes(pageable, jwt);
 
         Map<String, Object> response = new HashMap<>();
         response.put("content", clientes.getContent());
@@ -83,13 +89,14 @@ public class ClienteController
             @ApiResponse(responseCode = "404", description = "Cliente não encontrado")
     })
     @GetMapping("/buscar/{id}")
-    public ResponseEntity<?> buscarClientePorId(@PathVariable UUID id) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
+    public ResponseEntity<?> buscarClientePorId(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
         // Você precisará de um método findById ou similar no ClienteService que retorne o DTO.
         // Assumindo que você o implementou:
         // ClienteResponse response = service.buscarPorId(id);
 
         // Para usar a estrutura existente que herda do BaseService:
-        ClienteResponse response = service.buscarClientePorId(id);
+        ClienteResponse response = service.buscarClientePorId(id, jwt);
         return ResponseHttpBuilder.info("Cliente recuperado com sucesso.", response);
     }
 
@@ -104,8 +111,9 @@ public class ClienteController
             @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
     public ResponseEntity<?> atualizarCliente( @PathVariable UUID id,
-        @Valid @RequestPart("request") ClienteRequest request, @RequestPart("file") MultipartFile file ) 
+        @Valid @RequestPart("request") ClienteRequest request, @RequestPart("file") MultipartFile file) 
     {
         ClienteResponse response = service.alterarCliente(id, request, file);
         return ResponseHttpBuilder.info("Cliente atualizado com sucesso.", response);
@@ -120,6 +128,7 @@ public class ClienteController
             @ApiResponse(responseCode = "404", description = "Cliente não encontrado")
     })
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ResponseEntity<?> excluirCliente(@PathVariable UUID id) {
         service.excluirCliente(id);
         return ResponseEntity.noContent().build();

@@ -19,6 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
@@ -68,9 +69,11 @@ public class OrganizacaoController
     @Operation(summary = "Listar organizações (paginado)")
     @ApiResponse(responseCode = "200", description = "Lista de organização encontrado")
     @GetMapping("/pages")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<?> listar(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
-            @RequestParam(name = "size", defaultValue = "12", required = false) int size
+            @RequestParam(name = "size", defaultValue = "12", required = false) int size,
+            @AuthenticationPrincipal Jwt jwt
     ) {
         Pageable pageable = PageRequest.of(page, size);
         Page<OrganizacaoResponse> result = service.listar(pageable);
@@ -94,7 +97,8 @@ public class OrganizacaoController
             @ApiResponse(responseCode = "404", description = "Organização não encontrada")
     })
     @GetMapping("/buscar/{id}")
-    public ResponseEntity<?> buscarPorId(@PathVariable UUID id) 
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
+    public ResponseEntity<?> buscarPorId(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) 
     {
         OrganizacaoResponse response = service.buscarPorId(id);
         return ResponseHttpBuilder.info("Organização recuperada com sucesso.", response);
@@ -110,8 +114,9 @@ public class OrganizacaoController
             @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
     @PutMapping(value="/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ResponseEntity<?> atualizar(
-        @PathVariable UUID id, @Valid @RequestPart("request") OrganizacaoRequest request, @RequestPart("file") MultipartFile file )
+        @PathVariable UUID id, @Valid @RequestPart("request") OrganizacaoRequest request, @RequestPart("file") MultipartFile file, @AuthenticationPrincipal Jwt jwt)
     {
         OrganizacaoResponse response = service.atualizar(id, request, file);
         return ResponseHttpBuilder.info("Organização atualizada com sucesso.", response);
@@ -126,7 +131,8 @@ public class OrganizacaoController
         @ApiResponse(responseCode = "404", description = "Organização não encontrada")
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> excluir(@PathVariable UUID id) 
+    @PreAuthorize("hasAnyRole('ADMIN')")
+    public ResponseEntity<?> excluir(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) 
     {
         service.excluir(id);
         return ResponseEntity.noContent().build();
@@ -141,8 +147,9 @@ public class OrganizacaoController
             @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
     @PostMapping("/conta")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> criarConta(@Valid @RequestBody ContaOrganizacaoRequest request) {
+    public ResponseEntity<?> criarConta(@Valid @RequestBody ContaOrganizacaoRequest request, @AuthenticationPrincipal Jwt jwt) {
         ContaOrganizacaoResponse response = serviceConta.criarContaOrganizacao(request);
         return ResponseHttpBuilder.created("Conta da organização criada com sucesso.", response);
     }
@@ -153,9 +160,11 @@ public class OrganizacaoController
     @Operation(summary = "Listar contas da organização (paginado)")
     @ApiResponse(responseCode = "200", description = "Lista encontrada")
     @GetMapping("/conta/pages")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
     public ResponseEntity<?> listarConta(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
-            @RequestParam(name = "size", defaultValue = "12", required = false) int size
+            @RequestParam(name = "size", defaultValue = "12", required = false) int size,
+            @AuthenticationPrincipal Jwt jwt
     ) {
         Pageable pageable = PageRequest.of(page, size);
         Page<ContaOrganizacaoResponse> result = serviceConta.listar(pageable);
@@ -179,7 +188,8 @@ public class OrganizacaoController
             @ApiResponse(responseCode = "404", description = "Conta não encontrada")
     })
     @GetMapping("/conta/buscar/{id}")
-    public ResponseEntity<?> buscarContaPorId(@PathVariable UUID id) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
+    public ResponseEntity<?> buscarContaPorId(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
         ContaOrganizacaoResponse response = serviceConta.buscarPorId(id);
         return ResponseHttpBuilder.info("Conta recuperada com sucesso.", response);
     }
@@ -194,9 +204,10 @@ public class OrganizacaoController
             @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
     @PutMapping("/conta/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ResponseEntity<?> atualizar(
             @PathVariable UUID id,
-            @Valid @RequestBody ContaOrganizacaoRequest request) {
+            @Valid @RequestBody ContaOrganizacaoRequest request, @AuthenticationPrincipal Jwt jwt) {
         ContaOrganizacaoResponse response = serviceConta.atualizar(id, request);
         return ResponseHttpBuilder.info("Conta atualizada com sucesso.", response);
     }
@@ -210,7 +221,8 @@ public class OrganizacaoController
             @ApiResponse(responseCode = "404", description = "Conta não encontrada")
     })
     @DeleteMapping("/conta/{id}")
-    public ResponseEntity<?> excluirConta(@PathVariable UUID id) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ResponseEntity<?> excluirConta(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
         serviceConta.excluir(id);
         return ResponseEntity.noContent().build();
     }

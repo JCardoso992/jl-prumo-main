@@ -31,6 +31,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -62,7 +65,8 @@ public class ProjetoArquitetonicoController
     })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> criarProjetoArquitetonico(@Valid @RequestBody ProjetoArquitetonicoRequest request)
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ResponseEntity<?> criarProjetoArquitetonico(@Valid @RequestBody ProjetoArquitetonicoRequest request, @AuthenticationPrincipal Jwt jwt)
     {
         ProjetoArquitetonicoResponse response = service.criar(request);
         return ResponseHttpBuilder.created("Projeto arquitetônico criado com sucesso.", response);
@@ -71,9 +75,11 @@ public class ProjetoArquitetonicoController
     @Operation(summary = "Listar projetos arquitetônicos (paginado)")
     @ApiResponse(responseCode = "200", description = "Lista de projetos arquitetonicos encontrado")
     @GetMapping("/pages")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
     public ResponseEntity<?> listaDeProjetoArquitetonicos(
         @RequestParam(name = "page", defaultValue = "0", required = false) int page,
-        @RequestParam(name = "size", defaultValue = "12", required = false) int size
+        @RequestParam(name = "size", defaultValue = "12", required = false) int size,
+        @AuthenticationPrincipal Jwt jwt
     ){
         Pageable pageable = PageRequest.of(page, size);
         Page<ProjetoArquitetonicoResponse> result = service.listar(pageable);
@@ -94,7 +100,8 @@ public class ProjetoArquitetonicoController
         @ApiResponse(responseCode = "404", description = "Projeto arquitetonico não encontrado")
     })
     @GetMapping("/buscar/{id}")
-    public ResponseEntity<?> pesguisarProjetoArquitetonicoById(@PathVariable("id") UUID id)
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
+    public ResponseEntity<?> pesguisarProjetoArquitetonicoById(@PathVariable("id") UUID id, @AuthenticationPrincipal Jwt jwt)
     {
        ProjetoArquitetonicoResponse response = service.buscarPorId(id);
        return ResponseHttpBuilder.info("Projeto arquitetônico recuperado com sucesso.", response);
@@ -107,7 +114,8 @@ public class ProjetoArquitetonicoController
         @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
     @PutMapping("/{id}")
-    public ResponseEntity<?> atualizarProjetoArquitetonico(@PathVariable UUID id, @Valid @RequestBody ProjetoArquitetonicoRequest request)
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ResponseEntity<?> atualizarProjetoArquitetonico(@PathVariable UUID id, @Valid @RequestBody ProjetoArquitetonicoRequest request, @AuthenticationPrincipal Jwt jwt)
     {
         ProjetoArquitetonicoResponse response = service.atualizar(id, request);
         return ResponseHttpBuilder.info("Projeto arquitetônico atualizado com sucesso.", response);
@@ -119,7 +127,8 @@ public class ProjetoArquitetonicoController
             @ApiResponse(responseCode = "404", description = "Projeto arquitetonico não encontrado")
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<ProjetoArquitetonicoResponse> eliminarprojetoArquitetonico(@PathVariable UUID id)
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ResponseEntity<ProjetoArquitetonicoResponse> eliminarprojetoArquitetonico(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt)
     {
         service.excluir(id);
         return ResponseEntity.noContent().build();
@@ -134,8 +143,9 @@ public class ProjetoArquitetonicoController
         @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
     @PostMapping("/pagamento")
-    @ResponseStatus(HttpStatus.CREATED)    
-    public ResponseEntity<?> criar(@Valid @RequestBody PagamentoProjectoRequest request)
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")    
+    public ResponseEntity<?> criar(@Valid @RequestBody PagamentoProjectoRequest request, @AuthenticationPrincipal Jwt jwt)
     {
         PagamentoProjectoResponse response = servicePagamento.criar(request);
         return ResponseHttpBuilder.created("Pagamento do projecto criado com sucesso.", response);
@@ -145,11 +155,12 @@ public class ProjetoArquitetonicoController
     // READ - LIST PAGAMENTO DE PROJECTO
     // =========================================================================
     @Operation(summary = "Listar pagamentos de projectos (paginado)")
-    @GetMapping("/pagamento/pages/{id}")
+    @GetMapping("/pagamento/pages")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
     public ResponseEntity<?> listarPagamento(
         @RequestParam(name = "page", defaultValue = "0", required = false) int page,
         @RequestParam(name = "size", defaultValue = "12", required = false) int size,
-        @PathVariable UUID id
+        @AuthenticationPrincipal Jwt jwt
     ) {
         Pageable pageable = PageRequest.of(page, size);
         Page<PagamentoProjectoResponse> result = servicePagamento.listar(pageable);
@@ -173,7 +184,8 @@ public class ProjetoArquitetonicoController
         @ApiResponse(responseCode = "404", description = "Pagamento não encontrada")
     })
     @GetMapping("/pagamento/buscar/{id}")
-    public ResponseEntity<?> buscarPorIdPagamento(@PathVariable UUID id) 
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
+    public ResponseEntity<?> buscarPorIdPagamento(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) 
     {
         PagamentoProjectoResponse response = servicePagamento.buscarPorId(id);
         return ResponseHttpBuilder.info("Pagamento recuperado com sucesso.", response);
@@ -189,9 +201,10 @@ public class ProjetoArquitetonicoController
             @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
     @PutMapping("/pagamento/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ResponseEntity<?> atualizarPagamento(
             @PathVariable UUID id,
-            @Valid @RequestBody PagamentoProjectoRequest request) {
+            @Valid @RequestBody PagamentoProjectoRequest request, @AuthenticationPrincipal Jwt jwt) {
         PagamentoProjectoResponse response = servicePagamento.atualizar(id, request);
         return ResponseHttpBuilder.info("Pagamento atualizado com sucesso.", response);
     }
@@ -205,7 +218,8 @@ public class ProjetoArquitetonicoController
         @ApiResponse(responseCode = "404", description = "Pagamento não encontrado")
     })
     @DeleteMapping("/pagamento/{id}")
-    public ResponseEntity<?> excluirPagamento(@PathVariable UUID id) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ResponseEntity<?> excluirPagamento(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
         servicePagamento.excluir(id);
         return ResponseEntity.noContent().build();
     }
@@ -220,7 +234,8 @@ public class ProjetoArquitetonicoController
     })
     @PostMapping("/obra-projecto")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> criarObra(@Valid @RequestBody ObraRequest request) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ResponseEntity<?> criarObra(@Valid @RequestBody ObraRequest request, @AuthenticationPrincipal Jwt jwt) {
         ObraResponse response = serviceObra.criar(request);
         return ResponseHttpBuilder.created("Obra criada com sucesso.", response);
     }
@@ -230,11 +245,12 @@ public class ProjetoArquitetonicoController
     // =========================================================================
     @Operation(summary = "Listar obras (paginado)")
     @ApiResponse(responseCode = "200", description = "Lista de obra encontrado")
-    @GetMapping("/obra-projecto/pages/{id}")
+    @GetMapping("/obra-projecto/pages")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
     public ResponseEntity<?> listarObra(
         @RequestParam(name = "page", defaultValue = "0", required = false) int page,
         @RequestParam(name = "size", defaultValue = "12", required = false) int size,
-        @PathVariable UUID id
+        @AuthenticationPrincipal Jwt jwt
     ) {
         Pageable pageable = PageRequest.of(page, size);
         Page<ObraResponse> result = serviceObra.listar(pageable);
@@ -258,7 +274,8 @@ public class ProjetoArquitetonicoController
         @ApiResponse(responseCode = "404", description = "Obra não encontrada")
     })
     @GetMapping("/obra-projecto/buscar/{id}")
-    public ResponseEntity<?> buscarPorIdObra(@PathVariable UUID id) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
+    public ResponseEntity<?> buscarPorIdObra(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
         ObraResponse response = serviceObra.buscarPorId(id);
         return ResponseHttpBuilder.info("Obra recuperada com sucesso.", response);
     }
@@ -273,9 +290,10 @@ public class ProjetoArquitetonicoController
         @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
     @PutMapping("/obra-projecto/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ResponseEntity<?> atualizarObra(
             @PathVariable UUID id,
-            @Valid @RequestBody ObraRequest request) {
+            @Valid @RequestBody ObraRequest request, @AuthenticationPrincipal Jwt jwt) {
         ObraResponse response = serviceObra.atualizar(id, request);
         return ResponseHttpBuilder.info("Obra atualizada com sucesso.", response);
     }
@@ -289,7 +307,8 @@ public class ProjetoArquitetonicoController
         @ApiResponse(responseCode = "404", description = "Obra não encontrada")
     })
     @DeleteMapping("/obra-projecto/{id}")
-    public ResponseEntity<?> excluirObra(@PathVariable UUID id) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ResponseEntity<?> excluirObra(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
         serviceObra.excluir(id);
         return ResponseEntity.noContent().build();
     }
@@ -304,7 +323,8 @@ public class ProjetoArquitetonicoController
     })
     @PostMapping("/versao-projeto")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> criar(@Valid @RequestBody VersaoProjetoRequest request) 
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
+    public ResponseEntity<?> criar(@Valid @RequestBody VersaoProjetoRequest request, @AuthenticationPrincipal Jwt jwt) 
     {
         VersaoProjetoResponse response = serviceVersao.criar(request);
         return ResponseHttpBuilder.created("Versão de projeto criada com sucesso.", response);
@@ -315,11 +335,12 @@ public class ProjetoArquitetonicoController
     // =========================================================================
     @Operation(summary = "Listar versões de projeto (paginado)")
     @ApiResponse(responseCode = "200", description = "Lista de versões de projeto encontrada")
-    @GetMapping("/versao-projeto/{id}")
+    @GetMapping("/versao-projeto")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
     public ResponseEntity<?> listar(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
             @RequestParam(name = "size", defaultValue = "12", required = false) int size,
-            @PathVariable UUID id
+           @AuthenticationPrincipal Jwt jwt
     ) {
         Pageable pageable = PageRequest.of(page, size);
         Page<VersaoProjetoResponse> result = serviceVersao.listar(pageable);
@@ -343,7 +364,8 @@ public class ProjetoArquitetonicoController
             @ApiResponse(responseCode = "404", description = "Versão de projeto não encontrada")
     })
     @GetMapping("/versao-projeto/buscar/{id}")
-    public ResponseEntity<?> buscarPorId(@PathVariable UUID id) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
+    public ResponseEntity<?> buscarPorId(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
         VersaoProjetoResponse response = serviceVersao.buscarPorId(id);
         return ResponseHttpBuilder.info("Versão de projeto recuperada com sucesso.", response);
     }
@@ -358,9 +380,10 @@ public class ProjetoArquitetonicoController
             @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
     @PutMapping("/versao-projeto/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
     public ResponseEntity<?> atualizar(
             @PathVariable UUID id,
-            @Valid @RequestBody VersaoProjetoRequest request) {
+            @Valid @RequestBody VersaoProjetoRequest request, @AuthenticationPrincipal Jwt jwt) {
         VersaoProjetoResponse response = serviceVersao.atualizar(id, request);
         return ResponseHttpBuilder.info("Versão de projeto atualizada com sucesso.", response);
     }
@@ -374,7 +397,8 @@ public class ProjetoArquitetonicoController
             @ApiResponse(responseCode = "404", description = "Versão de projeto não encontrada")
     })
     @DeleteMapping("/versao-projeto/{id}")
-    public ResponseEntity<?> excluir(@PathVariable UUID id) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ResponseEntity<?> excluir(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
         serviceVersao.excluir(id);
         return ResponseEntity.noContent().build();
     }
@@ -389,7 +413,8 @@ public class ProjetoArquitetonicoController
     })
     @PostMapping("/etapa-obra")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> criarEtapaObra(@Valid @RequestBody EtapaObraRequest request) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
+    public ResponseEntity<?> criarEtapaObra(@Valid @RequestBody EtapaObraRequest request, @AuthenticationPrincipal Jwt jwt) {
         EtapaObraResponse response = serviceEtapa.criar(request);
         return ResponseHttpBuilder.created("Etapa da obra criada com sucesso.", response);
     }
@@ -399,11 +424,12 @@ public class ProjetoArquitetonicoController
     // =========================================================================
     @Operation(summary = "Listar etapas da obra (paginado)")
     @ApiResponse(responseCode = "200", description = "Lista de etapas da obra encontra.")
-    @GetMapping("/etapa-obra/{id}")
+    @GetMapping("/etapa-obra")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
     public ResponseEntity<?> listaDeEtapaObras(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
             @RequestParam(name = "size", defaultValue = "12", required = false) int size,
-            @PathVariable("id") Integer id
+            @AuthenticationPrincipal Jwt jwt
     ){
         Pageable pageable = PageRequest.of(page, size);
         Page<EtapaObraResponse> result = serviceEtapa.listar(pageable);
@@ -437,7 +463,8 @@ public class ProjetoArquitetonicoController
             @ApiResponse(responseCode = "404", description = "Etapa da obra não encontrada")
     })
     @GetMapping("/etapa-obra/buscar/{id}")
-    public ResponseEntity<?> pesguisarEtapaObraById(@PathVariable("id") UUID id)
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
+    public ResponseEntity<?> pesguisarEtapaObraById(@PathVariable("id") UUID id, @AuthenticationPrincipal Jwt jwt)
     {
         EtapaObraResponse response = serviceEtapa.buscarPorId(id);
         return ResponseHttpBuilder.info("Etapa da obra recuperada com sucesso.", response);
@@ -453,7 +480,8 @@ public class ProjetoArquitetonicoController
             @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
     @PutMapping("/etapa-obra/{id}")
-    public ResponseEntity<?> atualizarEtapaObra(@PathVariable UUID id, @Valid @RequestBody EtapaObraRequest request) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ResponseEntity<?> atualizarEtapaObra(@PathVariable UUID id, @Valid @RequestBody EtapaObraRequest request, @AuthenticationPrincipal Jwt jwt) {
         EtapaObraResponse response = serviceEtapa.atualizar(id, request);
         return ResponseHttpBuilder.info("Etapa da obra atualizada com sucesso.", response);
     }
@@ -468,7 +496,8 @@ public class ProjetoArquitetonicoController
             @ApiResponse(responseCode = "404", description = "Etapa da obra não encontrada")
     })
     @DeleteMapping("/etapa-obra/{id}")
-    public ResponseEntity<?> eliminarEtapaObra(@PathVariable UUID id) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ResponseEntity<?> eliminarEtapaObra(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
         serviceEtapa.excluir(id);
         return ResponseEntity.noContent().build();
     }
@@ -484,7 +513,8 @@ public class ProjetoArquitetonicoController
     })
     @PostMapping("/documento")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> criarDocumentoProjeto(@Valid @RequestBody DocumentoProjetoRequest request) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
+    public ResponseEntity<?> criarDocumentoProjeto(@Valid @RequestBody DocumentoProjetoRequest request, @AuthenticationPrincipal Jwt jwt) {
         DocumentoProjetoResponse response = serviceDocumento.criarDocumentoProjeto(request);
         return ResponseHttpBuilder.created("Documento do projeto criado com sucesso.", response);
     }
@@ -499,7 +529,8 @@ public class ProjetoArquitetonicoController
             @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
     @PutMapping("/documento/{id}")
-    public ResponseEntity<?> atualizarDocumentoProjeto(@PathVariable UUID id, @Valid @RequestBody DocumentoProjetoRequest request) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
+    public ResponseEntity<?> atualizarDocumentoProjeto(@PathVariable UUID id, @Valid @RequestBody DocumentoProjetoRequest request, @AuthenticationPrincipal Jwt jwt) {
         DocumentoProjetoResponse response = serviceDocumento.atualizar(id, request);
         return ResponseHttpBuilder.info("Documento do projeto atualizado com sucesso.", response);
     }
@@ -513,7 +544,8 @@ public class ProjetoArquitetonicoController
             @ApiResponse(responseCode = "404", description = "Documento de projeto não encontrado")
     })
     @DeleteMapping("/documento/{id}")
-    public ResponseEntity<?> eliminarDocumentoProjeto(@PathVariable UUID id) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
+    public ResponseEntity<?> eliminarDocumentoProjeto(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
         serviceDocumento.excluir(id);
         return ResponseEntity.noContent().build();
     }
@@ -537,7 +569,8 @@ public class ProjetoArquitetonicoController
             @ApiResponse(responseCode = "404", description = "Documento de projeto não encontrada")
     })
     @GetMapping("/documento/buscar/{id}")
-    public ResponseEntity<?> pesguisarDocumentoProjetoById(@PathVariable("id") UUID id)
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
+    public ResponseEntity<?> pesguisarDocumentoProjetoById(@PathVariable("id") UUID id, @AuthenticationPrincipal Jwt jwt)
     {
         DocumentoProjetoResponse response = serviceDocumento.buscarPorId(id);
         return ResponseHttpBuilder.info("Documento recuperado com sucesso.", response);
@@ -548,11 +581,12 @@ public class ProjetoArquitetonicoController
     // =========================================================================   
     @Operation(summary = "Listar documentos do projeto (paginado)")
     @ApiResponse(responseCode = "200", description = "Lista encontrada")
-    @GetMapping("/documento/{id}")
+    @GetMapping("/documento")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
     public ResponseEntity<?> listaDeDocumentoProjetos(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
             @RequestParam(name = "size", defaultValue = "12", required = false) int size,
-            @PathVariable("id") Integer id
+            @AuthenticationPrincipal Jwt jwt
     ){
         Pageable pageable = PageRequest.of(page, size);
         Page<DocumentoProjetoResponse> result = serviceDocumento.listar(pageable);

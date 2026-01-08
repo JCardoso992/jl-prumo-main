@@ -58,8 +58,11 @@ public class FuncionarioController
     @Operation(summary = "Listar funcionários (paginado)")
     @ApiResponse(responseCode = "200", description = "Lista de funcionarios encontrados")
     @GetMapping("/pages")
-    public ResponseEntity<?> listaDeFuncionarios( @RequestParam(name = "page", defaultValue = "0", required = false) int page,
-        @RequestParam(name = "size", defaultValue = "12", required = false) int size
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
+    public ResponseEntity<?> listaDeFuncionarios( 
+        @RequestParam(name = "page", defaultValue = "0", required = false) int page,
+        @RequestParam(name = "size", defaultValue = "12", required = false) int size,
+        @AuthenticationPrincipal Jwt jwt
     ){
         Pageable pageable = PageRequest.of(page, size);
         Page<FuncionarioResponse> result = service.listar(pageable);
@@ -83,7 +86,8 @@ public class FuncionarioController
             @ApiResponse(responseCode = "404", description = "Funcionario não encontrada")
     })
     @GetMapping("/buscar/{id}")
-    public ResponseEntity<?> pesguisarFuncionarioById(@PathVariable("id") UUID id)
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
+    public ResponseEntity<?> pesguisarFuncionarioById(@PathVariable("id") UUID id, @AuthenticationPrincipal Jwt jwt)
     {
         FuncionarioResponse response = service.buscarPorId(id);
         return ResponseHttpBuilder.info("Cliente recuperado com sucesso.", response);
@@ -96,7 +100,8 @@ public class FuncionarioController
             @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
     @PutMapping(value="/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> atualizarFuncionario(@PathVariable UUID id, @Valid @RequestPart("request") FuncionarioRequest request, @RequestPart("file") MultipartFile file ) 
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ResponseEntity<?> atualizarFuncionario(@PathVariable UUID id, @Valid @RequestPart("request") FuncionarioRequest request, @RequestPart("file") MultipartFile file, @AuthenticationPrincipal Jwt jwt) 
     {
         FuncionarioResponse response = service.alterarFuncionario(id, request, file);
         return ResponseHttpBuilder.info("Funcionario atualizado com sucesso.", response);
@@ -108,8 +113,8 @@ public class FuncionarioController
             @ApiResponse(responseCode = "404", description = "Funcionario não encontrado")
     })
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> excluirFuncionario(@PathVariable UUID id) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ResponseEntity<?> excluirFuncionario(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
         service.excluirFuncionario(id);
         return ResponseEntity.noContent().build();
     }
@@ -123,6 +128,7 @@ public class FuncionarioController
             @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
     @PostMapping("/cargo")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ResponseEntity<?> criarCargo(@Valid @RequestBody CargoRequest request, @AuthenticationPrincipal Jwt jwt) {
         CargoResponse response = serviceCargo.criarCargo(request, jwt);
         return ResponseHttpBuilder.created("Cargo criado com sucesso.", response);
@@ -134,9 +140,11 @@ public class FuncionarioController
     @Operation(summary = "Listar cargos (paginado)")
     @ApiResponse(responseCode = "200", description = "Lista de cargos encontrada")
     @GetMapping("/cargo/pages")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ResponseEntity<?> listarCargos(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
-            @RequestParam(name = "size", defaultValue = "12", required = false) int size
+            @RequestParam(name = "size", defaultValue = "12", required = false) int size,
+            @AuthenticationPrincipal Jwt jwt
     ) {
         Pageable pageable = PageRequest.of(page, size);
         Page<CargoResponse> cargos = serviceCargo.listarCargos(pageable);
@@ -160,7 +168,8 @@ public class FuncionarioController
             @ApiResponse(responseCode = "404", description = "Cargo não encontrado")
     })
     @GetMapping("/cargo/buscar/{id}")
-    public ResponseEntity<?> buscarCargoPorId(@PathVariable UUID id) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ResponseEntity<?> buscarCargoPorId(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
         CargoResponse response = serviceCargo.buscarCargoPorId(id);
         return ResponseHttpBuilder.info("Cargo recuperado com sucesso.", response);
     }
@@ -175,7 +184,8 @@ public class FuncionarioController
             @ApiResponse(responseCode = "400", description = "Dados inválidos fornecidos")
     })
     @PutMapping("/cargo/{id}")
-    public ResponseEntity<?> atualizarCargo(@PathVariable UUID id, @Valid @RequestBody CargoRequest request) 
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ResponseEntity<?> atualizarCargo(@PathVariable UUID id, @Valid @RequestBody CargoRequest request, @AuthenticationPrincipal Jwt jwt) 
     {
         CargoResponse response = serviceCargo.alterarCargo(id, request);
         return ResponseHttpBuilder.info("Cargo atualizado com sucesso.", response);
@@ -190,7 +200,8 @@ public class FuncionarioController
             @ApiResponse(responseCode = "404", description = "Cargo não encontrado")
     })
     @DeleteMapping("/cargo/{id}")
-    public ResponseEntity<?> excluirCargo(@PathVariable UUID id) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ResponseEntity<?> excluirCargo(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
         serviceCargo.excluirCargo(id);
         return ResponseEntity.noContent().build();
     }

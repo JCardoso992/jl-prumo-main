@@ -25,8 +25,8 @@ public class SupabaseAuthService {
 
     public UUID convidarUsuario(String email) 
     {
-        String url = supabaseUrl + "/auth/v1/admin/users";
-
+        //String url = supabaseUrl + "/auth/v1/admin/users";
+        String url = supabaseUrl + "/auth/v1/admin/invite";
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
     
@@ -38,7 +38,7 @@ public class SupabaseAuthService {
         Map<String, Object> body = new HashMap<>();
         body.put("email", email);
         body.put("email_confirm", false); 
-        body.put("password", UUID.randomUUID().toString());
+        //body.put("password", UUID.randomUUID().toString());
 
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
     
