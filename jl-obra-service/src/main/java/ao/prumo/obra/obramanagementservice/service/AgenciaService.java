@@ -72,21 +72,16 @@ public class AgenciaService{
    {
       log.info("Iniciando a atualização da agencia com ID {}.", id);
       // 1. Verifica se a agência existe pelo ID
-      Agencia agenciaExistente = this.repository.findById(id)
+      Agencia existente = this.repository.findById(id)
               .orElseThrow(() -> new ResourceNotFoundException("Agencia Não Existe")); // herdado do BaseService, que lança ResourceNotFoundException
-      // 2. Mapeia os dados do Request para a Entidade, ignorando o ID (pois o ID é imutável)
-      Agencia agenciaAtualizada = agenciaMapper.toEntity(req);
-      agenciaAtualizada.setId(agenciaExistente.getId()); // Garante que o ID original seja mantido
-      // 3. Persiste a atualização no banco de dados
+      // 2. Persiste a atualização no banco de dados
       if(file != null)
       {
          final String filePath = fileService.saveFile(file, req.getAbreviacao(), "Agencia");
-         agenciaAtualizada.setArquivoPath(filePath);
-      }else{
-         agenciaAtualizada.setArquivoPath(agenciaExistente.getArquivoPath());
+         existente.setArquivoPath(filePath);
       }
-
-      Agencia agenciaSalva = this.repository.save(agenciaAtualizada); // herdado do BaseService
+      agenciaMapper.updateEntityFromDto(req, existente);
+      Agencia agenciaSalva = this.repository.save(existente); // herdado do BaseService
       log.info("Agência com ID {} alterada com sucesso.", id);
       // 4. Converte e retorna o DTO de resposta
       return agenciaMapper.toResponse(agenciaSalva);

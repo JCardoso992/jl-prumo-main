@@ -65,7 +65,7 @@ public class FuncionarioController
         @AuthenticationPrincipal Jwt jwt
     ){
         Pageable pageable = PageRequest.of(page, size);
-        Page<FuncionarioResponse> result = service.listar(pageable);
+        Page<FuncionarioResponse> result = service.listar(pageable, jwt);
 
         Map<String, Object> response = new HashMap<>();
         response.put("content", result.getContent());
@@ -89,7 +89,7 @@ public class FuncionarioController
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
     public ResponseEntity<?> pesguisarFuncionarioById(@PathVariable("id") UUID id, @AuthenticationPrincipal Jwt jwt)
     {
-        FuncionarioResponse response = service.buscarPorId(id);
+        FuncionarioResponse response = service.buscarPorId(id, jwt);
         return ResponseHttpBuilder.info("Cliente recuperado com sucesso.", response);
     }
 
@@ -101,7 +101,7 @@ public class FuncionarioController
     })
     @PutMapping(value="/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public ResponseEntity<?> atualizarFuncionario(@PathVariable UUID id, @Valid @RequestPart("request") FuncionarioRequest request, @RequestPart("file") MultipartFile file, @AuthenticationPrincipal Jwt jwt) 
+    public ResponseEntity<?> atualizarFuncionario(@PathVariable UUID id, @Valid @RequestPart("request") FuncionarioRequest request, @RequestPart("file") MultipartFile file) 
     {
         FuncionarioResponse response = service.alterarFuncionario(id, request, file);
         return ResponseHttpBuilder.info("Funcionario atualizado com sucesso.", response);
@@ -114,7 +114,7 @@ public class FuncionarioController
     })
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public ResponseEntity<?> excluirFuncionario(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
+    public ResponseEntity<?> excluirFuncionario(@PathVariable UUID id) {
         service.excluirFuncionario(id);
         return ResponseEntity.noContent().build();
     }
@@ -147,7 +147,7 @@ public class FuncionarioController
             @AuthenticationPrincipal Jwt jwt
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<CargoResponse> cargos = serviceCargo.listarCargos(pageable);
+        Page<CargoResponse> cargos = serviceCargo.listarCargos(pageable, jwt);
 
         Map<String, Object> response = new HashMap<>();
         response.put("content", cargos.getContent());
@@ -170,7 +170,7 @@ public class FuncionarioController
     @GetMapping("/cargo/buscar/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ResponseEntity<?> buscarCargoPorId(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
-        CargoResponse response = serviceCargo.buscarCargoPorId(id);
+        CargoResponse response = serviceCargo.buscarCargoPorId(id, jwt);
         return ResponseHttpBuilder.info("Cargo recuperado com sucesso.", response);
     }
 
@@ -185,7 +185,7 @@ public class FuncionarioController
     })
     @PutMapping("/cargo/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public ResponseEntity<?> atualizarCargo(@PathVariable UUID id, @Valid @RequestBody CargoRequest request, @AuthenticationPrincipal Jwt jwt) 
+    public ResponseEntity<?> atualizarCargo(@PathVariable UUID id, @Valid @RequestBody CargoRequest request) 
     {
         CargoResponse response = serviceCargo.alterarCargo(id, request);
         return ResponseHttpBuilder.info("Cargo atualizado com sucesso.", response);
@@ -201,7 +201,7 @@ public class FuncionarioController
     })
     @DeleteMapping("/cargo/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public ResponseEntity<?> excluirCargo(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
+    public ResponseEntity<?> excluirCargo(@PathVariable UUID id) {
         serviceCargo.excluirCargo(id);
         return ResponseEntity.noContent().build();
     }

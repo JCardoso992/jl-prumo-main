@@ -16,10 +16,13 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -42,11 +45,20 @@ public class LogisticaService
     // =========================================================================
     @Transactional
     @CacheEvict(value = "buscar-equipamentos", allEntries = true)
-    public LogisticaResponse criar(LogisticaRequest request) {
+    public LogisticaResponse criar(LogisticaRequest request, Jwt jwt) 
+    {
         log.info("Iniciando a criação de um novo item de logística");
+        // 1. Extrair o ID da organização do TOKEN
+        Map<String, Object> appMetadata = jwt.getClaimAsMap("app_metadata");
+        String orgIdToken = (String) appMetadata.get("org_id");
+
+        if (orgIdToken == null) {
+            log.error("Claims presentes no token: {}", jwt.getClaims()); // Isso ajuda a debugar no log
+            throw new AccessDeniedException("Utilizador não vinculado a uma organização.");
+        }
+        UUID organizacaoId = UUID.fromString(orgIdToken);
         Logistica entity = mapper.toEntity(request);
-        // idOrganização= "1beae78b-d4a3-48b3-a0c3-a651c1980b82"
-        entity.setOrganizacaoId(new Organizacao(UUID.fromString("1beae78b-d4a3-48b3-a0c3-a651c1980b82")));
+        entity.setOrganizacaoId(new Organizacao(organizacaoId));
         entity.setMercadoriaId(new Despesa(request.getCodMercadoria()));
         Logistica entitySalva = repository.save(entity);
         log.info("Item de logística criado com sucesso.");
@@ -58,9 +70,18 @@ public class LogisticaService
     // =========================================================================
     @Transactional(readOnly = true)
     @Cacheable("buscar-equipamentos")
-    public Page<LogisticaResponse> listar(Pageable pageable)
+    public Page<LogisticaResponse> listar(Pageable pageable, Jwt jwt) 
     {
         log.info("Iniciando a listagem de item de logística.");
+        // 1. Extrair o ID da organização do TOKEN
+        Map<String, Object> appMetadata = jwt.getClaimAsMap("app_metadata");
+        String orgIdToken = (String) appMetadata.get("org_id");
+
+        if (orgIdToken == null) {
+            log.error("Claims presentes no token: {}", jwt.getClaims()); // Isso ajuda a debugar no log
+            throw new AccessDeniedException("Utilizador não vinculado a uma organização.");
+        }
+        UUID organizacaoId = UUID.fromString(orgIdToken);
         return repository.findAll(pageable)
                 .map(mapper::toResponse);
     }
@@ -70,9 +91,18 @@ public class LogisticaService
     // =========================================================================
     @Transactional(readOnly = true)
     @Cacheable("buscar-equipamento-por-id")
-    public LogisticaResponse buscarPorId(UUID id) 
+    public LogisticaResponse buscarPorId(UUID id, Jwt jwt)  
     {
         log.info("Iniciando a busca de item de logística por ID {}.", id);
+        // 1. Extrair o ID da organização do TOKEN
+        Map<String, Object> appMetadata = jwt.getClaimAsMap("app_metadata");
+        String orgIdToken = (String) appMetadata.get("org_id");
+
+        if (orgIdToken == null) {
+            log.error("Claims presentes no token: {}", jwt.getClaims()); // Isso ajuda a debugar no log
+            throw new AccessDeniedException("Utilizador não vinculado a uma organização.");
+        }
+        UUID organizacaoId = UUID.fromString(orgIdToken);
         Logistica entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Item de logística não encontrado"));
         log.info("Item de logística com ID {} foi encontrada.", id);
@@ -128,7 +158,6 @@ public class LogisticaService
         log.info("Iniciando a exclusão do item de logística com ID {}.", id);
         Logistica entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Item de logística não encontrado"));
-
         repository.delete(entity);
         log.info("Logistica com ID {} removida com sucesso", id);
     }

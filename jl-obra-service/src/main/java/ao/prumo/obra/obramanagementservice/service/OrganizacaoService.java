@@ -24,11 +24,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -94,9 +96,18 @@ public class OrganizacaoService
     // =========================================================================
     @Transactional(readOnly = true)
     @Cacheable(value = "buscar-organizacao")
-    public Page<OrganizacaoResponse> listar(Pageable pageable)
+    public Page<OrganizacaoResponse> listar(Pageable pageable, Jwt jwt)
     {
         log.info("Iniciando a listagem de organizaçães.");
+        // 1. Extrair o ID da organização do TOKEN
+        Map<String, Object> appMetadata = jwt.getClaimAsMap("app_metadata");
+        String orgIdToken = (String) appMetadata.get("org_id");
+
+        if (orgIdToken == null) {
+            log.error("Claims presentes no token: {}", jwt.getClaims()); // Isso ajuda a debugar no log
+            throw new AccessDeniedException("Utilizador não vinculado a uma organização.");
+        }
+        UUID organizacaoId = UUID.fromString(orgIdToken);
         return repository.findAll(pageable)
                 .map(mapper::toResponse);
     }
@@ -106,9 +117,18 @@ public class OrganizacaoService
     // =========================================================================
     @Transactional(readOnly = true)
     @Cacheable(value = "buscar-organizacao-por-id", key = "#id")
-    public OrganizacaoResponse buscarPorId(UUID id) 
+    public OrganizacaoResponse buscarPorId(UUID id, Jwt jwt)
     {
         log.info("Iniciando a busca de organização por ID {}.", id);
+        // 1. Extrair o ID da organização do TOKEN
+        Map<String, Object> appMetadata = jwt.getClaimAsMap("app_metadata");
+        String orgIdToken = (String) appMetadata.get("org_id");
+
+        if (orgIdToken == null) {
+            log.error("Claims presentes no token: {}", jwt.getClaims()); // Isso ajuda a debugar no log
+            throw new AccessDeniedException("Utilizador não vinculado a uma organização.");
+        }
+        UUID organizacaoId = UUID.fromString(orgIdToken);
         Organizacao organizacao = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Organização não encontrada"));
         log.info("Organização com ID {} foi encontrada.", id);
@@ -139,21 +159,16 @@ public class OrganizacaoService
         Endereco enderecoExistente = existente.getAdress();
 
         // Atualizar Endereço 1
-        Endereco enderecoNovosDados = enderecoMapper.toEntity(request.getCodAdress());
-        enderecoNovosDados.setId(enderecoExistente.getId());
-        enderecoRepository.save(enderecoNovosDados);        
+        enderecoMapper.updateEntityFromDto(request.getCodAdress(), enderecoExistente);
+        enderecoRepository.save(enderecoExistente);
 
-        Organizacao atualizado = mapper.toEntity(request);
-        atualizado.setId(existente.getId());
-        atualizado.setAdress(enderecoExistente);
+        mapper.updateEntityFromDto(request, existente);
         if(file != null)
         {
           final String filePath = fileService.saveFile(file, request.getFirma(), "Organizacao");
-          atualizado.setArquivoPath(filePath);
-        }else{
-          atualizado.setArquivoPath(existente.getArquivoPath());
+          existente.setArquivoPath(filePath);
         }
-        Organizacao atualizadoOrganizacao = repository.save(atualizado);
+        Organizacao atualizadoOrganizacao = repository.save(existente);
         log.info("Organização com ID {} alterada com sucesso.", id);
         return mapper.toResponse(atualizadoOrganizacao);
     }

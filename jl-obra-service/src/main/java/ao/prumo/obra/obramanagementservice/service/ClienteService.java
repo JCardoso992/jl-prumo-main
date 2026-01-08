@@ -114,62 +114,58 @@ public class ClienteService
      */
     @Transactional
     @Caching(evict = {
-           @CacheEvict(value = "buscar-clientes", allEntries = true),
-           @CacheEvict(value = "buscar-cliente-por-id", key = "#id")
+    @CacheEvict(value = "buscar-clientes", allEntries = true),
+    @CacheEvict(value = "buscar-cliente-por-id", key = "#id")
     })
-    public ClienteResponse alterarCliente(UUID id, ClienteRequest req, MultipartFile file)
-    {
-        log.info("Iniciando a atualização do cliente com ID: {}", id);
+    public ClienteResponse alterarCliente(UUID id, ClienteRequest req, MultipartFile file) {
+       log.info("Iniciando a atualização do cliente com ID: {}", id);
 
-        Cliente clienteExistente = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado"));
+       // 1. Recuperar entidades
+       Cliente clienteExistente = repository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado"));
+    
+      Pessoa pessoaExistente = clienteExistente.getPessoaId(); // Assume-se que a relação existe
 
-        Pessoa pessoaExistente = clienteExistente.getPessoaId();
-        Endereco endereco1Existente = pessoaExistente.getAdress1();
-        Endereco endereco2Existente = pessoaExistente.getAdress2();
+       // 2. Atualizar Endereço 1
+      if (pessoaExistente.getAdress1() != null) {
+          enderecoMapper.updateEntityFromDto(req.getCodPessoa().getCodAdress1(), pessoaExistente.getAdress1());
+          enderecoRepository.save(pessoaExistente.getAdress1());
+      }
 
-        // Atualizar Endereço 1
-        Endereco endereco1NovosDados = enderecoMapper.toEntity(req.getCodPessoa().getCodAdress1());
-        endereco1NovosDados.setId(endereco1Existente.getId());
-        enderecoRepository.save(endereco1NovosDados);
-
-        // Atualizar Endereço 2
-        Endereco endereco2Salvo = null;
-        if (req.getCodPessoa().getCodAdress2() != null) {
-            Endereco endereco2NovosDados = enderecoMapper.toEntity(req.getCodPessoa().getCodAdress2());
-            if (endereco2Existente != null) {
-                endereco2NovosDados.setId(endereco2Existente.getId());
+       // 3. Lógica Especial para Endereço 2 (Trata deleção e atualização)
+       if (req.getCodPessoa().getCodAdress2() != null) {
+          if (pessoaExistente.getAdress2() != null) {
+              // Atualiza existente
+             enderecoMapper.updateEntityFromDto(req.getCodPessoa().getCodAdress2(), pessoaExistente.getAdress2());
+             enderecoRepository.save(pessoaExistente.getAdress2());
+           } else {
+                // Cria novo se não existia antes mas veio no Request
+                Endereco novoEnd2 = enderecoMapper.toEntity(req.getCodPessoa().getCodAdress2());
+                pessoaExistente.setAdress2(enderecoRepository.save(novoEnd2));
             }
-            endereco2Salvo = enderecoRepository.save(endereco2NovosDados);
-        } else if (endereco2Existente != null) {
-            enderecoRepository.delete(endereco2Existente);
+        } else if (pessoaExistente.getAdress2() != null) {
+        // Se no Request veio nulo mas no banco existia, deletamos
+           Endereco endADeletar = pessoaExistente.getAdress2();
+           pessoaExistente.setAdress2(null); // Remove referência primeiro
+           enderecoRepository.delete(endADeletar);
         }
 
-        // Atualizar Pessoa
-        Pessoa pessoaAtualizada = pessoaMapper.toEntity(req.getCodPessoa());
-        pessoaAtualizada.setId(pessoaExistente.getId());
-        pessoaAtualizada.setAdress1(endereco1Existente);
-        pessoaAtualizada.setAdress2(endereco2Salvo);
-        pessoaAtualizada.setOrganizacaoId(pessoaExistente.getOrganizacaoId());
-        pessoaAtualizada = pessoaRepository.save(pessoaAtualizada);
+        // 4. Atualizar Pessoa (Corrigido erro da variável pessoaAtualizada)
+        pessoaMapper.updateEntityFromDto(req.getCodPessoa(), pessoaExistente);
+        pessoaRepository.save(pessoaExistente);
 
-        // Atualizar Cliente
-        Cliente clienteAtualizado = clienteMapper.toEntity(req);
-        if(file != null)
-        {
+        // 5. Atualizar Cliente e Imagem
+        clienteMapper.updateEntityFromDto(req, clienteExistente);
+    
+        if (file != null && !file.isEmpty()) {
           final String filePath = fileService.saveFile(file, pessoaExistente.getNome(), "Cliente");
-          clienteAtualizado.setArquivoPath(filePath);
-        }else{
-          clienteAtualizado.setArquivoPath(clienteExistente.getArquivoPath());
-        }
-        clienteAtualizado.setOrganizacaoId(clienteExistente.getOrganizacaoId());
-        clienteAtualizado.setId(clienteExistente.getId());
-        clienteAtualizado.setPessoaId(pessoaAtualizada);
+          clienteExistente.setArquivoPath(filePath);
+       }
 
-        Cliente clienteSalvo = repository.save(clienteAtualizado);
+       Cliente clienteSalvo = repository.save(clienteExistente);
 
-        log.info("Cliente com ID {} atualizado com sucesso.", id);
-        return clienteMapper.toResponse(clienteSalvo);
+       log.info("Cliente com ID {} atualizado com sucesso.", id);
+       return clienteMapper.toResponse(clienteSalvo);
     }
 
     /**
@@ -190,7 +186,8 @@ public class ClienteService
         Cliente cliente = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado"));
         // 2. Se o cliente foi encontrada, prosseguir com a exclusão.
-        repository.delete(cliente);
+        cliente.setStatus(Boolean.FALSE);
+        repository.save(cliente);
         log.info("Cliente com ID {} excluído com sucesso.", id);
     }
 

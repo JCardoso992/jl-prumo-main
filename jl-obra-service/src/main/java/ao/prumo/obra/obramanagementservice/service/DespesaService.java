@@ -15,10 +15,13 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -41,13 +44,21 @@ public class DespesaService
     // =========================================================================
     @Transactional
     @CacheEvict(value = "buscar-despesas", allEntries = true)
-    public DespesaResponse criarDespesa(DespesaRequest request)
+    public DespesaResponse criarDespesa(DespesaRequest request, Jwt jwt)
     {
         log.info("Iniciando a criação de uma nova despesa.");
+        // 1. Extrair o ID da organização do TOKEN
+        Map<String, Object> appMetadata = jwt.getClaimAsMap("app_metadata");
+        String orgIdToken = (String) appMetadata.get("org_id");
+
+        if (orgIdToken == null) {
+            log.error("Claims presentes no token: {}", jwt.getClaims()); // Isso ajuda a debugar no log
+            throw new AccessDeniedException("Utilizador não vinculado a uma organização.");
+        }
+        UUID organizacaoId = UUID.fromString(orgIdToken);
         Despesa despesa = mapper.toEntity(request);
         despesa.setStatus(Boolean.TRUE);
-        // idOrganização= 1beae78b-d4a3-48b3-a0c3-a651c1980b82
-        despesa.setOrganizacaoId(new Organizacao(UUID.fromString("1beae78b-d4a3-48b3-a0c3-a651c1980b82")));
+        despesa.setOrganizacaoId(new Organizacao(organizacaoId));
         log.info("Despesa criada com sucesso.");
         return mapper.toResponse(repository.save(despesa));
     }
@@ -57,9 +68,17 @@ public class DespesaService
     // =========================================================================
     @Transactional(readOnly = true)
     @Cacheable("buscar-despesas")
-    public Page<DespesaResponse> listar(Pageable pageable)
+    public Page<DespesaResponse> listar(Pageable pageable, Jwt jwt)
     {
         log.info("Iniciando a listagem de despesas.");
+         Map<String, Object> appMetadata = jwt.getClaimAsMap("app_metadata");
+        String orgIdToken = (String) appMetadata.get("org_id");
+
+        if (orgIdToken == null) {
+            log.error("Claims presentes no token: {}", jwt.getClaims()); // Isso ajuda a debugar no log
+            throw new AccessDeniedException("Utilizador não vinculado a uma organização.");
+        }
+        UUID organizacaoId = UUID.fromString(orgIdToken);
         return repository.findAll(pageable)
                 .map(mapper::toResponse);
     }
@@ -69,9 +88,17 @@ public class DespesaService
     // =========================================================================
     @Transactional(readOnly = true)
     @Cacheable("buscar-despesa-por-id")
-    public DespesaResponse buscarPorId(UUID id) 
+    public DespesaResponse buscarPorId(UUID id, Jwt jwt) 
     {
         log.info("Iniciando a busca de despesas por ID {}.", id);
+         Map<String, Object> appMetadata = jwt.getClaimAsMap("app_metadata");
+        String orgIdToken = (String) appMetadata.get("org_id");
+
+        if (orgIdToken == null) {
+            log.error("Claims presentes no token: {}", jwt.getClaims()); // Isso ajuda a debugar no log
+            throw new AccessDeniedException("Utilizador não vinculado a uma organização.");
+        }
+        UUID organizacaoId = UUID.fromString(orgIdToken);
         Despesa despesa = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Despesa não encontrada"));
         log.info("Despesa com ID {} foi encontrada.", id);
@@ -129,7 +156,8 @@ public class DespesaService
         log.info("Iniciando a exclusão da despesa com ID {}.", id);
         Despesa despesa = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Despesa não encontrada"));
-        repository.delete(despesa);
+        despesa.setStatus(Boolean.FALSE);        
+        repository.save(despesa);
         log.info("Despesa com ID {} removida com sucesso", id);
     }
 }

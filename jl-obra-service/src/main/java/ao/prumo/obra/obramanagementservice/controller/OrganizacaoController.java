@@ -76,7 +76,7 @@ public class OrganizacaoController
             @AuthenticationPrincipal Jwt jwt
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<OrganizacaoResponse> result = service.listar(pageable);
+        Page<OrganizacaoResponse> result = service.listar(pageable, jwt);
 
         Map<String, Object> response = new HashMap<>();
         response.put("content", result.getContent());
@@ -100,7 +100,7 @@ public class OrganizacaoController
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
     public ResponseEntity<?> buscarPorId(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) 
     {
-        OrganizacaoResponse response = service.buscarPorId(id);
+        OrganizacaoResponse response = service.buscarPorId(id, jwt);
         return ResponseHttpBuilder.info("Organização recuperada com sucesso.", response);
     }
 
@@ -116,7 +116,7 @@ public class OrganizacaoController
     @PutMapping(value="/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ResponseEntity<?> atualizar(
-        @PathVariable UUID id, @Valid @RequestPart("request") OrganizacaoRequest request, @RequestPart("file") MultipartFile file, @AuthenticationPrincipal Jwt jwt)
+        @PathVariable UUID id, @Valid @RequestPart("request") OrganizacaoRequest request, @RequestPart("file") MultipartFile file)
     {
         OrganizacaoResponse response = service.atualizar(id, request, file);
         return ResponseHttpBuilder.info("Organização atualizada com sucesso.", response);
@@ -132,7 +132,7 @@ public class OrganizacaoController
     })
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN')")
-    public ResponseEntity<?> excluir(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) 
+    public ResponseEntity<?> excluir(@PathVariable UUID id) 
     {
         service.excluir(id);
         return ResponseEntity.noContent().build();
@@ -207,7 +207,7 @@ public class OrganizacaoController
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ResponseEntity<?> atualizar(
             @PathVariable UUID id,
-            @Valid @RequestBody ContaOrganizacaoRequest request, @AuthenticationPrincipal Jwt jwt) {
+            @Valid @RequestBody ContaOrganizacaoRequest request) {
         ContaOrganizacaoResponse response = serviceConta.atualizar(id, request);
         return ResponseHttpBuilder.info("Conta atualizada com sucesso.", response);
     }
@@ -222,7 +222,7 @@ public class OrganizacaoController
     })
     @DeleteMapping("/conta/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public ResponseEntity<?> excluirConta(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
+    public ResponseEntity<?> excluirConta(@PathVariable UUID id) {
         serviceConta.excluir(id);
         return ResponseEntity.noContent().build();
     }

@@ -51,7 +51,7 @@ public class DespesaController
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ResponseEntity<?> criarDespesa(@Valid @RequestBody DespesaRequest request, @AuthenticationPrincipal Jwt jwt) {
-        DespesaResponse response = service.criarDespesa(request);
+        DespesaResponse response = service.criarDespesa(request, jwt);
         return ResponseHttpBuilder.created("Despesa criada com sucesso.", response);
     }
 
@@ -65,7 +65,7 @@ public class DespesaController
             @AuthenticationPrincipal Jwt jwt
     ){
         Pageable pageable = PageRequest.of(page, size);
-        Page<DespesaResponse> result = service.listar(pageable);
+        Page<DespesaResponse> result = service.listar(pageable, jwt);
 
         Map<String, Object> response = new HashMap<>();
         response.put("content", result.getContent());
@@ -98,7 +98,7 @@ public class DespesaController
     @GetMapping("/buscar/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
     public ResponseEntity<?> buscarPorId(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
-        DespesaResponse response = service.buscarPorId(id);
+        DespesaResponse response = service.buscarPorId(id, jwt);
         return ResponseHttpBuilder.info("Despesa recuperada com sucesso.", response);
     }
 
@@ -111,7 +111,7 @@ public class DespesaController
     })
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public ResponseEntity<?> atualizarDespesa(@PathVariable UUID id, @Valid @RequestBody DespesaRequest request, @AuthenticationPrincipal Jwt jwt) {
+    public ResponseEntity<?> atualizarDespesa(@PathVariable UUID id, @Valid @RequestBody DespesaRequest request) {
         DespesaResponse response = service.atualizar(id, request);
         return ResponseHttpBuilder.info("Despesa atualizada com sucesso.", response);
     }
@@ -123,7 +123,7 @@ public class DespesaController
     })
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public ResponseEntity<?> eliminarDespesa(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
+    public ResponseEntity<?> eliminarDespesa(@PathVariable UUID id) {
         service.excluir(id);
         return ResponseEntity.noContent().build();
     }
@@ -140,7 +140,7 @@ public class DespesaController
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
     public ResponseEntity<?> criar(@Valid @RequestBody LogisticaRequest request, @AuthenticationPrincipal Jwt jwt) {
-        LogisticaResponse response = serviceLogistica.criar(request);
+        LogisticaResponse response = serviceLogistica.criar(request, jwt);
         return ResponseHttpBuilder.created("Item de logística criado com sucesso.", response);
     }
 
@@ -157,7 +157,7 @@ public class DespesaController
             @AuthenticationPrincipal Jwt jwt
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<LogisticaResponse> result = serviceLogistica.listar(pageable);
+        Page<LogisticaResponse> result = serviceLogistica.listar(pageable, jwt);
 
         Map<String, Object> data = new HashMap<>();
         data.put("content", result.getContent());
@@ -180,7 +180,7 @@ public class DespesaController
     @GetMapping("/logistica/buscar/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
     public ResponseEntity<?> buscarLogisticaPorId(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
-        LogisticaResponse response = serviceLogistica.buscarPorId(id);
+        LogisticaResponse response = serviceLogistica.buscarPorId(id, jwt);
         return ResponseHttpBuilder.info("Item de logística recuperado com sucesso.", response);
     }
 
@@ -197,7 +197,7 @@ public class DespesaController
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ResponseEntity<?> atualizar(
             @PathVariable UUID id,
-            @Valid @RequestBody LogisticaRequest request, @AuthenticationPrincipal Jwt jwt) {
+            @Valid @RequestBody LogisticaRequest request) {
         LogisticaResponse response = serviceLogistica.atualizar(id, request);
         return ResponseHttpBuilder.info("Item de logística atualizado com sucesso.", response);
     }
@@ -212,7 +212,7 @@ public class DespesaController
     })
     @DeleteMapping("/logistica/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public ResponseEntity<?> excluir(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
+    public ResponseEntity<?> excluir(@PathVariable UUID id) {
         serviceLogistica.excluir(id);
         return ResponseEntity.noContent().build();
     }

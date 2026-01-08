@@ -44,10 +44,12 @@ public class CargoService
     public CargoResponse criarCargo(CargoRequest req, Jwt jwt)
     {
         log.info("Iniciando a criação de uma novo Cargo.");
+        // 1. Extrair o ID da organização do TOKEN
         Map<String, Object> appMetadata = jwt.getClaimAsMap("app_metadata");
         String orgIdToken = (String) appMetadata.get("org_id");
 
         if (orgIdToken == null) {
+            log.error("Claims presentes no token: {}", jwt.getClaims()); // Isso ajuda a debugar no log
             throw new AccessDeniedException("Utilizador não vinculado a uma organização.");
         }
         UUID organizacaoId = UUID.fromString(orgIdToken);
@@ -55,7 +57,6 @@ public class CargoService
         // -> Mapper converte a Entidade salva para DTO de Resposta
         Cargo entity = cargoMapper.toEntity(req);
         entity.setStatus(Boolean.TRUE);
-        // idOrganização= bb1827b3-57b9-49ec-a775-a7f5a91b8297
         entity.setOrganizacaoId(new Organizacao(organizacaoId));
         Cargo entitySalva = repository.save(entity);
         log.info("Cargo criada com sucesso.");
@@ -81,12 +82,9 @@ public class CargoService
         Cargo cargoExistente = this.repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cargo Não Existe")); // herdado do BaseService, que lança ResourceNotFoundException
         // 2. Mapeia os dados do Request para a Entidade, ignorando o ID (pois o ID é imutável)
-        Cargo cargoAtualizada = cargoMapper.toEntity(req);
-        cargoAtualizada.setId(cargoExistente.getId()); // Garante que o ID original seja mantido
-        cargoAtualizada.setStatus(Boolean.TRUE);
-        cargoAtualizada.setOrganizacaoId(cargoExistente.getOrganizacaoId());
+        cargoMapper.updateEntityFromDto(req, cargoExistente);
         // 3. Persiste a atualização no banco de dados
-        Cargo cargoSalva = this.repository.save(cargoAtualizada); // herdado do BaseService
+        Cargo cargoSalva = this.repository.save(cargoExistente); // herdado do BaseService
         log.info("Cargo com ID {} alterada com sucesso.", id);
         // 4. Converte e retorna o DTO de resposta
         return cargoMapper.toResponse(cargoSalva);
@@ -119,9 +117,18 @@ public class CargoService
     
     @Transactional(readOnly = true)
     @Cacheable("buscar-cargos")
-    public Page<CargoResponse> listarCargos(Pageable pageable)
+    public Page<CargoResponse> listarCargos(Pageable pageable, Jwt jwt)
     {
         log.info("Iniciando a listagem de cargos.");
+        // 1. Extrair o ID da organização do TOKEN
+        Map<String, Object> appMetadata = jwt.getClaimAsMap("app_metadata");
+        String orgIdToken = (String) appMetadata.get("org_id");
+
+        if (orgIdToken == null) {
+            log.error("Claims presentes no token: {}", jwt.getClaims()); // Isso ajuda a debugar no log
+            throw new AccessDeniedException("Utilizador não vinculado a uma organização.");
+        }
+        UUID organizacaoId = UUID.fromString(orgIdToken);
         return repository.findAll(pageable)
                 .map(cargoMapper::toResponse);
     }
@@ -129,9 +136,18 @@ public class CargoService
     
     @Transactional(readOnly = true)
     @Cacheable("buscar-cargo-por-id")
-    public CargoResponse buscarCargoPorId(UUID id) 
+    public CargoResponse buscarCargoPorId(UUID id, Jwt jwt) 
     {
         log.info("Iniciando a listagem do cargo por ID {}.", id);
+        // 1. Extrair o ID da organização do TOKEN
+        Map<String, Object> appMetadata = jwt.getClaimAsMap("app_metadata");
+        String orgIdToken = (String) appMetadata.get("org_id");
+
+        if (orgIdToken == null) {
+            log.error("Claims presentes no token: {}", jwt.getClaims()); // Isso ajuda a debugar no log
+            throw new AccessDeniedException("Utilizador não vinculado a uma organização.");
+        }
+        UUID organizacaoId = UUID.fromString(orgIdToken);
         Cargo cargo = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cargo não encontrado"));
         log.info("Cargo com ID {} foi encontrado.", id);

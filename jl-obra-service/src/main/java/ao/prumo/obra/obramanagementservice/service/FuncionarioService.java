@@ -132,9 +132,18 @@ public class FuncionarioService
     // READ
     // =========================================================================
     @Transactional(readOnly = true)
-    public FuncionarioResponse buscarPorId(UUID id) 
+    public FuncionarioResponse buscarPorId(UUID id, Jwt jwt)
     {
         log.info("Iniciando a busca de funcionario por ID {}.", id);
+        // 1. Extrair o ID da organização do TOKEN
+        Map<String, Object> appMetadata = jwt.getClaimAsMap("app_metadata");
+        String orgIdToken = (String) appMetadata.get("org_id");
+
+        if (orgIdToken == null) {
+            log.error("Claims presentes no token: {}", jwt.getClaims()); // Isso ajuda a debugar no log
+            throw new AccessDeniedException("Utilizador não vinculado a uma organização.");
+        }
+        UUID organizacaoId = UUID.fromString(orgIdToken);
         Funcionario funcionario = funcionarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Funcionário não encontrado"));
         log.info("Funcionario com ID {} foi encontrado.", id);
@@ -142,9 +151,18 @@ public class FuncionarioService
     }
 
     @Transactional(readOnly = true)
-    public Page<FuncionarioResponse> listar(Pageable pageable)
+    public Page<FuncionarioResponse> listar(Pageable pageable, Jwt jwt)
     {
         log.info("Iniciando a listagem de funcionarios.");
+        // 1. Extrair o ID da organização do TOKEN
+        Map<String, Object> appMetadata = jwt.getClaimAsMap("app_metadata");
+        String orgIdToken = (String) appMetadata.get("org_id");
+
+        if (orgIdToken == null) {
+            log.error("Claims presentes no token: {}", jwt.getClaims()); // Isso ajuda a debugar no log
+            throw new AccessDeniedException("Utilizador não vinculado a uma organização.");
+        }
+        UUID organizacaoId = UUID.fromString(orgIdToken);
         return funcionarioRepository.findAll(pageable)
                 .map(funcionarioMapper::toResponse);
     }
@@ -173,46 +191,45 @@ public class FuncionarioService
         Endereco endereco2Existente = funcionarioExistente.getPessoaId().getAdress2();
 
         // Atualizar Endereço 1
-        Endereco endereco1NovosDados = enderecoMapper.toEntity(req.getCodPessoa().getCodAdress1());
-        endereco1NovosDados.setId(endereco1Existente.getId());
-        enderecoRepository.save(endereco1NovosDados);
-
-        // Atualizar Endereço 2
-        Endereco endereco2Salvo = null;
-        if (req.getCodPessoa().getCodAdress2() != null) {
-            Endereco endereco2NovosDados = enderecoMapper.toEntity(req.getCodPessoa().getCodAdress2());
-            if (endereco2Existente != null) {
-                endereco2NovosDados.setId(endereco2Existente.getId());
-            }
-            endereco2Salvo = enderecoRepository.save(endereco2NovosDados);
-        } else if (endereco2Existente != null) {
-            enderecoRepository.delete(endereco2Existente);
+        // 2. Atualizar Endereço 1
+        if (pessoaExistente.getAdress1() != null) {
+          enderecoMapper.updateEntityFromDto(req.getCodPessoa().getCodAdress1(), pessoaExistente.getAdress1());
+          enderecoRepository.save(pessoaExistente.getAdress1());
         }
 
-        // Atualizar Pessoa
-        Pessoa pessoaAtualizada = pessoaMapper.toEntity(req.getCodPessoa());
-        pessoaAtualizada.setId(pessoaExistente.getId());
-        pessoaAtualizada.setAdress1(endereco1Existente);
-        pessoaAtualizada.setAdress2(endereco2Salvo);
-        pessoaAtualizada = pessoaRepository.save(pessoaAtualizada);
+        // 3. Lógica Especial para Endereço 2 (Trata deleção e atualização)
+       if (req.getCodPessoa().getCodAdress2() != null) {
+          if (pessoaExistente.getAdress2() != null) {
+              // Atualiza existente
+             enderecoMapper.updateEntityFromDto(req.getCodPessoa().getCodAdress2(), pessoaExistente.getAdress2());
+             enderecoRepository.save(pessoaExistente.getAdress2());
+           } else {
+                // Cria novo se não existia antes mas veio no Request
+                Endereco novoEnd2 = enderecoMapper.toEntity(req.getCodPessoa().getCodAdress2());
+                pessoaExistente.setAdress2(enderecoRepository.save(novoEnd2));
+            }
+        } else if (pessoaExistente.getAdress2() != null) {
+        // Se no Request veio nulo mas no banco existia, deletamos
+           Endereco endADeletar = pessoaExistente.getAdress2();
+           pessoaExistente.setAdress2(null); // Remove referência primeiro
+           enderecoRepository.delete(endADeletar);
+        }
+
+         // 4. Atualizar Pessoa (Corrigido erro da variável pessoaAtualizada)
+        pessoaMapper.updateEntityFromDto(req.getCodPessoa(), pessoaExistente);
+        pessoaRepository.save(pessoaExistente);
 
         // 4. Funcionário
-        Funcionario funcionarioAtualizado = funcionarioMapper.toEntity(req);
+        funcionarioMapper.updateEntityFromDto(req, funcionarioExistente);
         if(file != null)
         {
           final String filePath = fileService.saveFile(file, pessoaExistente.getNome(), "Funcionario");
-          funcionarioAtualizado.setArquivoPath(filePath);
-        }else{
-          funcionarioAtualizado.setArquivoPath(funcionarioExistente.getArquivoPath());
+          funcionarioExistente.setArquivoPath(filePath);
         }
-        funcionarioAtualizado.setOrganizacaoId(funcionarioExistente.getOrganizacaoId());
-        funcionarioAtualizado.setId(funcionarioExistente.getId());
-        funcionarioAtualizado.setStatus(Boolean.TRUE);
-        funcionarioAtualizado.setCargoId(new Cargo(funcionarioExistente.getCargoId().getId()));
-        funcionarioAtualizado.setAgenciaId(new Agencia(funcionarioExistente.getAgenciaId().getId()));
-        funcionarioAtualizado.setPessoaId(pessoaAtualizada);
+        funcionarioExistente.setCargoId(new Cargo(req.getCodCargo()));
+        funcionarioExistente.setAgenciaId(new Agencia(req.getCodAgencia()));
 
-        Funcionario funcionarioSalvo = funcionarioRepository.save(funcionarioAtualizado);
+        Funcionario funcionarioSalvo = funcionarioRepository.save(funcionarioExistente);
 
         log.info("Funcionario com ID {} atualizado com sucesso.", id);
         return funcionarioMapper.toResponse(funcionarioSalvo);
@@ -235,7 +252,8 @@ public class FuncionarioService
         log.info("Iniciando a exclusão do funcionario com ID {}.", id);
         Funcionario funcionario = funcionarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Funcionário não encontrado"));
-        funcionarioRepository.delete(funcionario);
+        funcionario.setStatus(Boolean.FALSE);
+        funcionarioRepository.save(funcionario);
         log.info("Funcionário com ID {} removido", id);
     }
 
