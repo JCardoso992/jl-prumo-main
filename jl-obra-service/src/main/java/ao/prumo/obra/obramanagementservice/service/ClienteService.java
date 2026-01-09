@@ -198,8 +198,16 @@ public class ClienteService
     public Page<ClienteResponse> listarClientes(Pageable pageable, Jwt jwt)
     {
         log.info("Iniciando a listagem de clientes.");
-        return repository.findAll(pageable)
-                .map(clienteMapper::toResponse);
+        // 1. Extrair o ID da organização do TOKEN
+        Map<String, Object> appMetadata = jwt.getClaimAsMap("app_metadata");
+        String orgIdToken = (String) appMetadata.get("org_id");
+
+        if (orgIdToken == null) {
+            log.error("Claims presentes no token: {}", jwt.getClaims()); // Isso ajuda a debugar no log
+            throw new AccessDeniedException("Utilizador não vinculado a uma organização.");
+        }
+        UUID organizacaoId = UUID.fromString(orgIdToken);
+        return repository.findByOrganizacaoId(organizacaoId, pageable).map(clienteMapper::toResponse);
     }
 
     // =========================================================================
@@ -209,7 +217,16 @@ public class ClienteService
     public ClienteResponse buscarClientePorId(UUID id, Jwt jwt) 
     {
         log.info("Iniciando a busca de cliente por ID {}.", id);
-        Cliente cliente = repository.findById(id)
+         // 1. Extrair o ID da organização do TOKEN
+        Map<String, Object> appMetadata = jwt.getClaimAsMap("app_metadata");
+        String orgIdToken = (String) appMetadata.get("org_id");
+
+        if (orgIdToken == null) {
+            log.error("Claims presentes no token: {}", jwt.getClaims()); // Isso ajuda a debugar no log
+            throw new AccessDeniedException("Utilizador não vinculado a uma organização.");
+        }
+        UUID organizacaoId = UUID.fromString(orgIdToken);
+        Cliente cliente = repository.findByIdAndOrganizacaoId(id, organizacaoId)
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado"));
         log.info("Cliente com ID {} foi encontrado.", id);
         return clienteMapper.toResponse(cliente);

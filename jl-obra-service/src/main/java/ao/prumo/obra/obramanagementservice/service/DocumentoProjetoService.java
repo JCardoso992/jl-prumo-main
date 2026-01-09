@@ -1,6 +1,9 @@
 package ao.prumo.obra.obramanagementservice.service;
 
 import ao.prumo.obra.obramanagementservice.entity.DocumentoProjeto;
+import ao.prumo.obra.obramanagementservice.entity.Funcionario;
+import ao.prumo.obra.obramanagementservice.entity.VersaoProjeto;
+import ao.prumo.obra.obramanagementservice.entity.Organizacao;
 import ao.prumo.obra.obramanagementservice.entity.dto.mapper.DocumentoProjetoMapper;
 import ao.prumo.obra.obramanagementservice.entity.dto.request.DocumentoProjetoRequest;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.DocumentoProjetoResponse;
@@ -12,9 +15,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -36,20 +42,43 @@ public class DocumentoProjetoService
     // CREATE
     // =========================================================================
     @Transactional
-    public DocumentoProjetoResponse criarDocumentoProjeto(DocumentoProjetoRequest request)
+    public DocumentoProjetoResponse criarDocumentoProjeto(DocumentoProjetoRequest request, Jwt jwt)
     {
         log.info("Iniciando a criação de um novo documento do projeto");
+        // 1. Extrair o ID da organização do TOKEN
+        Map<String, Object> appMetadata = jwt.getClaimAsMap("app_metadata");
+        String orgIdToken = (String) appMetadata.get("org_id");
+
+        if (orgIdToken == null) {
+            log.error("Claims presentes no token: {}", jwt.getClaims()); // Isso ajuda a debugar no log
+            throw new AccessDeniedException("Utilizador não vinculado a uma organização.");
+        }
+        UUID organizacaoId = UUID.fromString(orgIdToken);
         DocumentoProjeto documento = mapper.toEntity(request);
-        return mapper.toResponse(repository.save(documento));
+        documento.setArquitectoDesenhoId(new Funcionario(request.getCodArquitectoDesenho()));
+        documento.setOrganizacaoId(new Organizacao(organizacaoId));
+        documento.setVersaoProjetoId(new VersaoProjeto(request.getCodVersaoProjeto()));
+        documento.setStatus(Boolean.TRUE);
+        DocumentoProjeto documentoCriado = repository.save(documento);
+        log.info("Documento do Projeto criado com sucesso.");
+        return mapper.toResponse(documentoCriado);
     }
 
     // =========================================================================
     // READ - LIST (PAGINADO)
     // =========================================================================
     @Transactional(readOnly = true)
-    public Page<DocumentoProjetoResponse> listar(Pageable pageable)
+    public Page<DocumentoProjetoResponse> listar(Pageable pageable, Jwt jwt)
     {
         log.info("Iniciando a listagem de documentos do projeto.");
+        // 1. Extrair o ID da organização do TOKEN
+        Map<String, Object> appMetadata = jwt.getClaimAsMap("app_metadata");
+        String orgIdToken = (String) appMetadata.get("org_id");
+
+        if (orgIdToken == null) {
+            log.error("Claims presentes no token: {}", jwt.getClaims()); // Isso ajuda a debugar no log
+            throw new AccessDeniedException("Utilizador não vinculado a uma organização.");
+        }
         return repository.findAll(pageable)
                 .map(mapper::toResponse);
     }
@@ -58,9 +87,17 @@ public class DocumentoProjetoService
     // READ - BY ID
     // =========================================================================
     @Transactional(readOnly = true)
-    public DocumentoProjetoResponse buscarPorId(UUID id)
+    public DocumentoProjetoResponse buscarPorId(UUID id, Jwt jwt)
     {
         log.info("Iniciando a busca de documento do projeto por ID {}.", id);
+        // 1. Extrair o ID da organização do TOKEN
+        Map<String, Object> appMetadata = jwt.getClaimAsMap("app_metadata");
+        String orgIdToken = (String) appMetadata.get("org_id");
+
+        if (orgIdToken == null) {
+            log.error("Claims presentes no token: {}", jwt.getClaims()); // Isso ajuda a debugar no log
+            throw new AccessDeniedException("Utilizador não vinculado a uma organização.");
+        }
         DocumentoProjeto documento = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Documento do projeto não encontrado"));
         log.info("Documento do Projeto com ID {} foi encontrada.", id);        
@@ -84,10 +121,10 @@ public class DocumentoProjetoService
         DocumentoProjeto existente = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Documento do projeto não encontrado"));
 
-        DocumentoProjeto atualizado = mapper.toEntity(request);
-        atualizado.setId(existente.getId());
+        mapper.updateEntityFromDto(request, existente);
+        DocumentoProjeto existenteAtualizado = repository.save(existente);
         log.info("Documento do Projeto com ID {} alterada com sucesso.", id);
-        return mapper.toResponse(repository.save(atualizado));
+        return mapper.toResponse(existenteAtualizado);
     }
 
     // =========================================================================
@@ -104,8 +141,8 @@ public class DocumentoProjetoService
         log.info("Iniciando a exclusão do documento do projeto com ID {}.", id);
         DocumentoProjeto documento = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Documento do projeto não encontrado"));
-
-        repository.delete(documento);
+        documento.setStatus(Boolean.TRUE);
+        repository.save(documento);
         log.info("Documento do Projeto com ID {} removido com sucesso", id);
     }
 

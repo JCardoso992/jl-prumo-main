@@ -599,7 +599,7 @@ public class ProjetoArquitetonicoController
             @AuthenticationPrincipal Jwt jwt
     ){
         Pageable pageable = PageRequest.of(page, size);
-        Page<DocumentoProjetoResponse> result = serviceDocumentogit .listar(pageable, jwt);
+        Page<DocumentoProjetoResponse> result = serviceDocumento.listar(pageable, jwt);
 
         Map<String, Object> response = new HashMap<>();
         response.put("content", result.getContent());
