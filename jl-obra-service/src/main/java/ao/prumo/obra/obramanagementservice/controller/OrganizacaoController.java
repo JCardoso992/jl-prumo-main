@@ -69,7 +69,7 @@ public class OrganizacaoController
     @Operation(summary = "Listar organizações (paginado)")
     @ApiResponse(responseCode = "200", description = "Lista de organização encontrado")
     @GetMapping("/pages")
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> listar(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
             @RequestParam(name = "size", defaultValue = "12", required = false) int size,
@@ -131,7 +131,7 @@ public class OrganizacaoController
         @ApiResponse(responseCode = "404", description = "Organização não encontrada")
     })
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> excluir(@PathVariable UUID id) 
     {
         service.excluir(id);
@@ -150,7 +150,7 @@ public class OrganizacaoController
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> criarConta(@Valid @RequestBody ContaOrganizacaoRequest request, @AuthenticationPrincipal Jwt jwt) {
-        ContaOrganizacaoResponse response = serviceConta.criarContaOrganizacao(request);
+        ContaOrganizacaoResponse response = serviceConta.criarContaOrganizacao(request, jwt);
         return ResponseHttpBuilder.created("Conta da organização criada com sucesso.", response);
     }
 
@@ -167,7 +167,7 @@ public class OrganizacaoController
             @AuthenticationPrincipal Jwt jwt
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<ContaOrganizacaoResponse> result = serviceConta.listar(pageable);
+        Page<ContaOrganizacaoResponse> result = serviceConta.listar(pageable, jwt);
 
         Map<String, Object> response = new HashMap<>();
         response.put("content", result.getContent());
@@ -190,7 +190,7 @@ public class OrganizacaoController
     @GetMapping("/conta/buscar/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
     public ResponseEntity<?> buscarContaPorId(@PathVariable UUID id, @AuthenticationPrincipal Jwt jwt) {
-        ContaOrganizacaoResponse response = serviceConta.buscarPorId(id);
+        ContaOrganizacaoResponse response = serviceConta.buscarPorId(id, jwt);
         return ResponseHttpBuilder.info("Conta recuperada com sucesso.", response);
     }
 

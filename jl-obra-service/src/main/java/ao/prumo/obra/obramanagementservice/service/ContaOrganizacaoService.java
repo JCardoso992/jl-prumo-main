@@ -16,9 +16,12 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -41,12 +44,20 @@ public class ContaOrganizacaoService
     // =========================================================================
     @Transactional
     @CacheEvict(value = "buscar-contas", allEntries = true)
-    public ContaOrganizacaoResponse criarContaOrganizacao(ContaOrganizacaoRequest request)
+    public ContaOrganizacaoResponse criarContaOrganizacao(ContaOrganizacaoRequest request, Jwt jwt)
     {
         log.info("Iniciando a criação de uma nova ContaOrganizacao.");
-        // idOrganização= bb1827b3-57b9-49ec-a775-a7f5a91b8297
+        // 1. Extrair o ID da organização do TOKEN
+        Map<String, Object> appMetadata = jwt.getClaimAsMap("app_metadata");
+        String orgIdToken = (String) appMetadata.get("org_id");
+
+        if (orgIdToken == null) {
+            log.error("Claims presentes no token: {}", jwt.getClaims()); // Isso ajuda a debugar no log
+            throw new AccessDeniedException("Utilizador não vinculado a uma organização.");
+        }
+        UUID organizacaoId = UUID.fromString(orgIdToken);
         ContaOrganizacao entity = mapper.toEntity(request);
-        entity.setOrganicacaoId(new Organizacao(UUID.fromString("bb1827b3-57b9-49ec-a775-a7f5a91b8297")));
+        entity.setOrganicacaoId(new Organizacao(organizacaoId));
         entity.setAgenciaId(new Agencia(request.getCodAgencia()));
         entity.setStatus(Boolean.TRUE);
         ContaOrganizacao salvo = repository.save(entity);
@@ -59,9 +70,18 @@ public class ContaOrganizacaoService
     // =========================================================================
     @Transactional(readOnly = true)
     @Cacheable("buscar-contas")
-    public Page<ContaOrganizacaoResponse> listar(Pageable pageable)
+    public Page<ContaOrganizacaoResponse> listar(Pageable pageable, Jwt jwt)
     {
         log.info("Iniciando a listagem de contas da organizacao.");
+         // 1. Extrair o ID da organização do TOKEN
+        Map<String, Object> appMetadata = jwt.getClaimAsMap("app_metadata");
+        String orgIdToken = (String) appMetadata.get("org_id");
+
+        if (orgIdToken == null) {
+            log.error("Claims presentes no token: {}", jwt.getClaims()); // Isso ajuda a debugar no log
+            throw new AccessDeniedException("Utilizador não vinculado a uma organização.");
+        }
+        UUID organizacaoId = UUID.fromString(orgIdToken);
         return repository.findAll(pageable)
                 .map(mapper::toResponse);
     }
@@ -71,9 +91,18 @@ public class ContaOrganizacaoService
     // =========================================================================
     @Transactional(readOnly = true)
     @Cacheable(value = "buscar-conta-por-id", key = "#id")
-    public ContaOrganizacaoResponse buscarPorId(UUID id) 
+    public ContaOrganizacaoResponse buscarPorId(UUID id, Jwt jwt)
     {
         log.info("Iniciando a busca da conta da organizacao por ID {}.", id);
+         // 1. Extrair o ID da organização do TOKEN
+        Map<String, Object> appMetadata = jwt.getClaimAsMap("app_metadata");
+        String orgIdToken = (String) appMetadata.get("org_id");
+
+        if (orgIdToken == null) {
+            log.error("Claims presentes no token: {}", jwt.getClaims()); // Isso ajuda a debugar no log
+            throw new AccessDeniedException("Utilizador não vinculado a uma organização.");
+        }
+        UUID organizacaoId = UUID.fromString(orgIdToken);
         ContaOrganizacao entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Conta da organização não encontrada"));
         log.info("ContaOrganizacao com ID {} foi encontrada.", id);        
@@ -101,17 +130,8 @@ public class ContaOrganizacaoService
         ContaOrganizacao existente = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Conta da organização não encontrada"));
 
-        ContaOrganizacao atualizado = mapper.toEntity(request);
-        atualizado.setId(existente.getId());
-        if(request.getCodAgencia() != null)
-        {
-            atualizado.setAgenciaId(new Agencia(request.getCodAgencia()));
-        } else {
-            atualizado.setAgenciaId(existente.getAgenciaId());
-        }
-        atualizado.setOrganicacaoId(existente.getOrganicacaoId());
-        atualizado.setStatus(Boolean.TRUE);
-        ContaOrganizacao atualizadoSalvo = repository.save(atualizado);
+        mapper.updateEntityFromDto(request, existente);        
+        ContaOrganizacao atualizadoSalvo = repository.save(existente);
         log.info("Agência com ID {} alterada com sucesso.", id);
         return mapper.toResponse(atualizadoSalvo);
     }
@@ -134,7 +154,8 @@ public class ContaOrganizacaoService
         log.info("Iniciando a exclusão da conta da organizacao com ID {}.", id);
         ContaOrganizacao entity = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Conta da organização não encontrada"));
-        repository.delete(entity);
+        entity.setStatus(Boolean.FALSE);        
+        repository.save(entity);
         log.info("ContaOrganizacao com ID {} removida com sucesso", id);
     }
 }

@@ -21,9 +21,12 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -49,17 +52,25 @@ public class ProjetoArquitetonicoService
     // =========================================================================
     @Transactional
     @CacheEvict(value = "buscar-projeto-arquitetônicos", allEntries = true)
-    public ProjetoArquitetonicoResponse criar(ProjetoArquitetonicoRequest request)
+    public ProjetoArquitetonicoResponse criar(ProjetoArquitetonicoRequest request, Jwt jwt)
     {
         log.info("Iniciando a criação de uma novo projeto arquitetônico");
+        // 1. Extrair o ID da organização do TOKEN
+        Map<String, Object> appMetadata = jwt.getClaimAsMap("app_metadata");
+        String orgIdToken = (String) appMetadata.get("org_id");
+
+        if (orgIdToken == null) {
+            log.error("Claims presentes no token: {}", jwt.getClaims()); // Isso ajuda a debugar no log
+            throw new AccessDeniedException("Utilizador não vinculado a uma organização.");
+        }
+        UUID organizacaoId = UUID.fromString(orgIdToken);
         // 1. Endereço 1 (obrigatório)
         EnderecoRequest endRequest = request.getCodEndereco();
         Endereco enderecoSalvo = enderecoRepository.save(enderecoMapper.toEntity(endRequest));
 
         ProjetoArquitetonico entity = mapper.toEntity(request);
         entity.setStatus(Boolean.TRUE);
-        // idOrganização= bb1827b3-57b9-49ec-a775-a7f5a91b8297
-        entity.setOrganizacaoId(new Organizacao(UUID.fromString("bb1827b3-57b9-49ec-a775-a7f5a91b8297")));
+        entity.setOrganizacaoId(new Organizacao(organizacaoId));
         entity.setEnderecoId(enderecoSalvo);
         entity.setArquitectoChefeId(new Funcionario(request.getCodArquitectoChefe()));
         entity.setClienteId(new Cliente(request.getCodcliente()));
@@ -74,9 +85,18 @@ public class ProjetoArquitetonicoService
     // =========================================================================
     @Transactional(readOnly = true)
     @Cacheable("buscar-projeto-arquitetônicos")
-    public Page<ProjetoArquitetonicoResponse> listar(Pageable pageable)
+    public Page<ProjetoArquitetonicoResponse> listar(Pageable pageable, Jwt jwt)
     {
         log.info("Iniciando a listagem de projetos arquitetônicos.");
+        // 1. Extrair o ID da organização do TOKEN
+        Map<String, Object> appMetadata = jwt.getClaimAsMap("app_metadata");
+        String orgIdToken = (String) appMetadata.get("org_id");
+
+        if (orgIdToken == null) {
+            log.error("Claims presentes no token: {}", jwt.getClaims()); // Isso ajuda a debugar no log
+            throw new AccessDeniedException("Utilizador não vinculado a uma organização.");
+        }
+        UUID organizacaoId = UUID.fromString(orgIdToken);
         return repository.findAll(pageable)
                 .map(mapper::toResponse);
     }
@@ -86,9 +106,18 @@ public class ProjetoArquitetonicoService
     // =========================================================================
     @Transactional(readOnly = true)
     @Cacheable("buscar-projeto-arquitetônico-por-id")
-    public ProjetoArquitetonicoResponse buscarPorId(UUID id) 
+    public ProjetoArquitetonicoResponse buscarPorId(UUID id, Jwt jwt)
     {
         log.info("Iniciando a busca de projeto arquitetônico por ID {}.", id);
+        // 1. Extrair o ID da organização do TOKEN
+        Map<String, Object> appMetadata = jwt.getClaimAsMap("app_metadata");
+        String orgIdToken = (String) appMetadata.get("org_id");
+
+        if (orgIdToken == null) {
+            log.error("Claims presentes no token: {}", jwt.getClaims()); // Isso ajuda a debugar no log
+            throw new AccessDeniedException("Utilizador não vinculado a uma organização.");
+        }
+        UUID organizacaoId = UUID.fromString(orgIdToken);
         ProjetoArquitetonico projeto = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Projeto arquitetônico não encontrado"));
         log.info("Projeto arquitetônico com ID {} foi encontrado.", id);
@@ -115,12 +144,9 @@ public class ProjetoArquitetonicoService
         log.info("Iniciando a atualização do projeto arquitetônico com ID {}.", id);
         ProjetoArquitetonico existente = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Projeto arquitetônico não encontrado"));
-
-        Endereco enderecoExistente = enderecoRepository.findById(existente.getEnderecoId().getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Projeto arquitetônico não encontrado"));        
-
-        enderecoMapper.updateEntityFromDto(request.getCodEndereco(), enderecoExistente);
-        enderecoRepository.save(enderecoExistente);
+      
+        enderecoMapper.updateEntityFromDto(request.getCodEndereco(), existente.getEnderecoId());
+        enderecoRepository.save(existente.getEnderecoId());
 
         mapper.updateEntityFromDto(request, existente);         
         ProjetoArquitetonico atualizadoSalvo = repository.save(existente);
@@ -146,8 +172,8 @@ public class ProjetoArquitetonicoService
         log.info("Iniciando a exclusão do projeto arquitetônico com ID {}.", id);
         ProjetoArquitetonico projeto = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Projeto arquitetônico não encontrado"));
-
-        repository.delete(projeto);
+        projeto.setStatus(Boolean.FALSE);
+        repository.save(projeto);
         log.info("Projeto arquitetônico com ID {} removido com sucesso", id);
     }
 }
