@@ -4,11 +4,14 @@ import ao.prumo.obra.obramanagementservice.entity.*;
 import ao.prumo.obra.obramanagementservice.entity.dto.mapper.EnderecoMapper;
 import ao.prumo.obra.obramanagementservice.entity.dto.mapper.FuncionarioMapper;
 import ao.prumo.obra.obramanagementservice.entity.dto.mapper.PessoaMapper;
+import ao.prumo.obra.obramanagementservice.entity.dto.mapper.FuncionarioViewMapper;
 import ao.prumo.obra.obramanagementservice.entity.dto.request.EnderecoRequest;
 import ao.prumo.obra.obramanagementservice.entity.dto.request.FuncionarioRequest;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.FuncionarioResponse;
+import ao.prumo.obra.obramanagementservice.entity.dto.response.FuncionarioViewResponse;
 import ao.prumo.obra.obramanagementservice.entity.repository.EnderecoRepository;
 import ao.prumo.obra.obramanagementservice.entity.repository.FuncionarioRepository;
+import ao.prumo.obra.obramanagementservice.entity.repository.FuncionarioViewRepository;
 import ao.prumo.obra.obramanagementservice.entity.repository.PessoaRepository;
 import ao.prumo.obra.obramanagementservice.entity.repository.PerfilRepository;
 import ao.prumo.obra.obramanagementservice.file.FileStorageService;
@@ -49,6 +52,9 @@ public class FuncionarioService
     private final FileStorageService fileService;
     private final PerfilRepository perfilRepository;
     private final SupabaseAuthService supabaseAuthService;
+
+    private final FuncionarioViewRepository detalheRepository;
+    private final FuncionarioViewMapper detalheMapper;
 
     protected JpaRepository<Funcionario, UUID> getRepository() {
         return this.funcionarioRepository;
@@ -132,6 +138,7 @@ public class FuncionarioService
     // READ
     // =========================================================================
     @Transactional(readOnly = true)
+    @Cacheable(value = "buscar-funcionario-por-id", key = "#id")
     public FuncionarioResponse buscarPorId(UUID id, Jwt jwt)
     {
         log.info("Iniciando a busca de funcionario por ID {}.", id);
@@ -151,6 +158,7 @@ public class FuncionarioService
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "buscar-funcionarios")
     public Page<FuncionarioResponse> listar(Pageable pageable, Jwt jwt)
     {
         log.info("Iniciando a listagem de funcionarios.");
@@ -178,6 +186,7 @@ public class FuncionarioService
     @Transactional
     @Caching(evict = {
            @CacheEvict(value = "buscar-funcionarios", allEntries = true),
+           @CacheEvict(value = "listar-funcionarios-detalhe", allEntries = true),
            @CacheEvict(value = "buscar-funcionario-por-id", key = "#id")
     })
     public FuncionarioResponse alterarFuncionario(UUID id, FuncionarioRequest req, MultipartFile file)
@@ -245,6 +254,7 @@ public class FuncionarioService
     @Transactional
     @Caching(evict = {
            @CacheEvict(value = "buscar-funcionarios", allEntries = true),
+           @CacheEvict(value = "listar-funcionarios-detalhe", allEntries = true),
            @CacheEvict(value = "buscar-funcionario-por-id", key = "#id")
     })
     public void excluirFuncionario(UUID id) 
@@ -255,6 +265,24 @@ public class FuncionarioService
         funcionario.setStatus(Boolean.FALSE);
         funcionarioRepository.save(funcionario);
         log.info("Funcionário com ID {} removido", id);
+    }
+
+    @Transactional(readOnly = true)
+    @Cacheable(value = "listar-funcionarios-detalhe")
+    public Page<FuncionarioViewResponse> listarFuncionarioDetalhe(Pageable pageable, Jwt jwt)
+    {
+        log.info("Iniciando a listagem de funcionarios detalhados.");
+        // 1. Extrair o ID da organização do TOKEN
+        Map<String, Object> appMetadata = jwt.getClaimAsMap("app_metadata");
+        String orgIdToken = (String) appMetadata.get("org_id");
+
+        if (orgIdToken == null) {
+            log.error("Claims presentes no token: {}", jwt.getClaims()); // Isso ajuda a debugar no log
+            throw new AccessDeniedException("Utilizador não vinculado a uma organização.");
+        }
+        UUID organizacaoId = UUID.fromString(orgIdToken);
+        return detalheRepository.findByOrganizacaoId(organizacaoId, pageable)
+                .map(detalheMapper::toResponse);
     }
 
 }

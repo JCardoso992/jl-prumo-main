@@ -5,6 +5,7 @@ import ao.prumo.obra.obramanagementservice.entity.dto.response.FuncionarioRespon
 import ao.prumo.obra.obramanagementservice.service.FuncionarioService;
 import ao.prumo.obra.obramanagementservice.entity.dto.request.CargoRequest;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.CargoResponse;
+import ao.prumo.obra.obramanagementservice.entity.dto.response.FuncionarioViewResponse;
 import ao.prumo.obra.obramanagementservice.service.CargoService;
 import ao.prumo.obra.obramanagementservice.utils.globalConstantes.Constante;
 import ao.prumo.obra.obramanagementservice.utils.http.ResponseHttp;
@@ -204,5 +205,27 @@ public class FuncionarioController
     public ResponseEntity<?> excluirCargo(@PathVariable UUID id) {
         serviceCargo.excluirCargo(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Listar funcionários (paginado)")
+    @ApiResponse(responseCode = "200", description = "Lista de funcionarios encontrados")
+    @GetMapping("/pages/detalhe")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
+    public ResponseEntity<?> listaDeFuncionariosDetalhados( 
+        @RequestParam(name = "page", defaultValue = "0", required = false) int page,
+        @RequestParam(name = "size", defaultValue = "12", required = false) int size,
+        @AuthenticationPrincipal Jwt jwt
+    ){
+        Pageable pageable = PageRequest.of(page, size);
+        Page<FuncionarioViewResponse> result = service.listarFuncionarioDetalhe(pageable, jwt);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("content", result.getContent());
+        response.put("page", result.getNumber());
+        response.put("size", result.getSize());
+        response.put("totalElements", result.getTotalElements());
+        response.put("totalPages", result.getTotalPages());
+
+        return ResponseHttpBuilder.info("Lista de funcionários recuperada.", response);
     }
 }
