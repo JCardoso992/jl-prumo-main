@@ -1,46 +1,42 @@
 package ao.prumo.obra.obramanagementservice.entity;
 
-import ao.prumo.obra.obramanagementservice.entity.enums.TipoContrato;
 import ao.prumo.obra.obramanagementservice.entity.enums.EstadoCivil;
 import ao.prumo.obra.obramanagementservice.entity.enums.Identificacao;
 import ao.prumo.obra.obramanagementservice.entity.enums.Sexo;
-import ao.prumo.obra.obramanagementservice.entity.enums.EstadoUtilizador;
+import ao.prumo.obra.obramanagementservice.entity.enums.EstadoCliente;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Immutable;
 
-import java.math.BigDecimal;
 import java.util.Map;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
 
 @Entity
-@Table(name = "vw_funcionario_detalhado")
+@Table(name = "vw_cliente_detalhado")
 @Immutable
 @Getter
 @Setter
-public class FuncionarioView 
+public class ClienteView 
 {
 
     @Id
-    @Column(name = "funcionario_id")
-    private UUID funcionarioId;
+    @Column(name = "cliente_id")
+    private UUID clienteId;
 
     private LocalDateTime createdDate;
-    private String numProcesso;
-    private String numConta;
-    private String iban;
-    private String telefone;
+    private String telefone1;
+    private String telefone2;
     private String email;
-    private BigDecimal salario;
+    private String fax;
     private String arquivoPath;
+    private String enderecoWeb;
+    private Boolean status;
 
     @Enumerated(EnumType.STRING)
-    private EstadoUtilizador estadoUtilizador;
-    @Enumerated(EnumType.STRING)
-    private TipoContrato tipoContrato;
+    private EstadoCliente estadoCliente;
 
     @Column(name = "organizacao_id")
     private UUID organizacaoId;
@@ -67,14 +63,4 @@ public class FuncionarioView
     private String endereco;
     private String cidade;
 
-    // Agência
-    private UUID agenciaId;
-    private String agenciaDescricao;
-    private String agenciaAbrev;
-
-    // Cargo
-    private UUID cargoId;
-    private String cargoDescricao;
-    private String cargoAbrev;
 }
-

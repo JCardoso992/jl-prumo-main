@@ -2,6 +2,7 @@ package ao.prumo.obra.obramanagementservice.controller;
 
 import ao.prumo.obra.obramanagementservice.entity.dto.request.ClienteRequest;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.ClienteResponse;
+import ao.prumo.obra.obramanagementservice.entity.dto.response.ClienteViewResponse;
 import ao.prumo.obra.obramanagementservice.service.ClienteService;
 import ao.prumo.obra.obramanagementservice.utils.globalConstantes.Constante;
 import ao.prumo.obra.obramanagementservice.utils.http.ResponseHttpBuilder;
@@ -132,5 +133,31 @@ public class ClienteController
     public ResponseEntity<?> excluirCliente(@PathVariable UUID id) {
         service.excluirCliente(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // =========================================================================
+    // READ - LIST (PAGINADO)
+    // =========================================================================
+
+    @Operation(summary = "Listar clientes Detelhes (paginado)")
+    @ApiResponse(responseCode = "200", description = "Lista de clientes detalhado encontrado")
+    @GetMapping("/pages/detalhado")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
+    public ResponseEntity<?> listaDeClientesDetalhado(
+            @RequestParam(name = "page", defaultValue = "0", required = false) int page,
+            @RequestParam(name = "size", defaultValue = "12", required = false) int size,
+            @AuthenticationPrincipal Jwt jwt
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ClienteViewResponse> clientes = service.listarClientesDetalhado(pageable, jwt);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("content", clientes.getContent());
+        response.put("page", clientes.getNumber());
+        response.put("size", clientes.getSize());
+        response.put("totalElements", clientes.getTotalElements());
+        response.put("totalPages", clientes.getTotalPages());
+
+        return ResponseHttpBuilder.info("Lista de clientes recuperada com sucesso.", response);
     }
 }

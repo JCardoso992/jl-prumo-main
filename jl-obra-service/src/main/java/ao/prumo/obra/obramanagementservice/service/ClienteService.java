@@ -4,12 +4,15 @@ import ao.prumo.obra.obramanagementservice.entity.*;
 import ao.prumo.obra.obramanagementservice.entity.dto.mapper.ClienteMapper;
 import ao.prumo.obra.obramanagementservice.entity.dto.mapper.EnderecoMapper;
 import ao.prumo.obra.obramanagementservice.entity.dto.mapper.PessoaMapper;
+import ao.prumo.obra.obramanagementservice.entity.dto.mapper.ClienteViewMapper;
 import ao.prumo.obra.obramanagementservice.entity.dto.request.ClienteRequest;
 import ao.prumo.obra.obramanagementservice.entity.dto.request.EnderecoRequest;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.ClienteResponse;
+import ao.prumo.obra.obramanagementservice.entity.dto.response.ClienteViewResponse;
 import ao.prumo.obra.obramanagementservice.entity.repository.ClienteRepository;
 import ao.prumo.obra.obramanagementservice.entity.repository.EnderecoRepository;
 import ao.prumo.obra.obramanagementservice.entity.repository.PessoaRepository;
+import ao.prumo.obra.obramanagementservice.entity.repository.ClienteViewRepository;
 import ao.prumo.obra.obramanagementservice.file.FileStorageService;
 import ao.prumo.obra.obramanagementservice.utils.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -46,6 +49,9 @@ public class ClienteService
     private final EnderecoMapper enderecoMapper;
 
     private final FileStorageService fileService;
+
+    private final ClienteViewRepository clienteViewRepository;
+    private final ClienteViewMapper clienteViewMapper;
 
     protected JpaRepository<Cliente, UUID> getRepository()
     {
@@ -114,8 +120,9 @@ public class ClienteService
      */
     @Transactional
     @Caching(evict = {
-    @CacheEvict(value = "buscar-clientes", allEntries = true),
-    @CacheEvict(value = "buscar-cliente-por-id", key = "#id")
+        @CacheEvict(value = "buscar-clientes", allEntries = true),
+        @CacheEvict(value = "buscar-clientes-detalhado", allEntries = true),
+        @CacheEvict(value = "buscar-cliente-por-id", key = "#id")
     })
     public ClienteResponse alterarCliente(UUID id, ClienteRequest req, MultipartFile file) {
        log.info("Iniciando a atualização do cliente com ID: {}", id);
@@ -176,6 +183,7 @@ public class ClienteService
     @Transactional
     @Caching(evict = {
            @CacheEvict(value = "buscar-clientes", allEntries = true),
+           @CacheEvict(value = "buscar-clientes-detalhado", allEntries = true),
            @CacheEvict(value = "buscar-cliente-por-id", key = "#id")
     })
     public void excluirCliente(UUID id) throws ResourceNotFoundException 
@@ -195,6 +203,7 @@ public class ClienteService
     // READ - LIST (PAGINADO)
     // =========================================================================
     @Transactional(readOnly = true)
+    @Cacheable(value = "buscar-clientes")  
     public Page<ClienteResponse> listarClientes(Pageable pageable, Jwt jwt)
     {
         log.info("Iniciando a listagem de clientes.");
@@ -214,6 +223,7 @@ public class ClienteService
     // READ - BY ID
     // =========================================================================
     @Transactional(readOnly = true)
+    @Cacheable(value = "buscar-cliente-por-id", key = "#id")
     public ClienteResponse buscarClientePorId(UUID id, Jwt jwt) 
     {
         log.info("Iniciando a busca de cliente por ID {}.", id);
@@ -230,6 +240,26 @@ public class ClienteService
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado"));
         log.info("Cliente com ID {} foi encontrado.", id);
         return clienteMapper.toResponse(cliente);
+    }
+
+    // =========================================================================
+    // READ - LIST (PAGINADO)
+    // =========================================================================
+    @Transactional(readOnly = true)
+    @Cacheable(value = "buscar-clientes-detalhado")
+    public Page<ClienteViewResponse> listarClientesDetalhado(Pageable pageable, Jwt jwt)
+    {
+        log.info("Iniciando a listagem de clientes detalhados.");
+        // 1. Extrair o ID da organização do TOKEN
+        Map<String, Object> appMetadata = jwt.getClaimAsMap("app_metadata");
+        String orgIdToken = (String) appMetadata.get("org_id");
+
+        if (orgIdToken == null) {
+            log.error("Claims presentes no token: {}", jwt.getClaims()); // Isso ajuda a debugar no log
+            throw new AccessDeniedException("Utilizador não vinculado a uma organização.");
+        }
+        UUID organizacaoId = UUID.fromString(orgIdToken);
+        return clienteViewRepository.findByOrganizacaoId(organizacaoId, pageable).map(clienteViewMapper::toResponse);
     }
 
 }
