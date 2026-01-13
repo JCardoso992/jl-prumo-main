@@ -79,8 +79,7 @@ public class DespesaService
             throw new AccessDeniedException("Utilizador não vinculado a uma organização.");
         }
         UUID organizacaoId = UUID.fromString(orgIdToken);
-        return repository.findAll(pageable)
-                .map(mapper::toResponse);
+        return repository.findByOrganizacaoId(organizacaoId, pageable).map(mapper::toResponse);
     }
 
     // =========================================================================
@@ -99,7 +98,7 @@ public class DespesaService
             throw new AccessDeniedException("Utilizador não vinculado a uma organização.");
         }
         UUID organizacaoId = UUID.fromString(orgIdToken);
-        Despesa despesa = repository.findById(id)
+        Despesa despesa = repository.findByIdAndOrganizacaoId(id, organizacaoId)
                 .orElseThrow(() -> new ResourceNotFoundException("Despesa não encontrada"));
         log.info("Despesa com ID {} foi encontrada.", id);
         return mapper.toResponse(despesa);

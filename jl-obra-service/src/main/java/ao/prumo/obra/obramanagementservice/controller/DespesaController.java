@@ -60,10 +60,10 @@ public class DespesaController
     @GetMapping("/pages")
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'USER')")
     public ResponseEntity<?> listaDeDespesas(
-            @RequestParam(name = "page", defaultValue = "0", required = false) int page,
-            @RequestParam(name = "size", defaultValue = "12", required = false) int size,
-            @AuthenticationPrincipal Jwt jwt
-    ){
+        @RequestParam(name = "page", defaultValue = "0", required = false) int page,
+        @RequestParam(name = "size", defaultValue = "12", required = false) int size,
+        @AuthenticationPrincipal Jwt jwt)
+    {
         Pageable pageable = PageRequest.of(page, size);
         Page<DespesaResponse> result = service.listar(pageable, jwt);
 
