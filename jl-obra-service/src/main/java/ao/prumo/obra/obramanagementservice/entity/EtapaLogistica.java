@@ -25,6 +25,8 @@ public class EtapaLogistica extends BaseAuditingEntity
     private UUID id;
     @Column(name = "data_criacao")
     private Date dataCriacao;
+    @Column(name = "quantidade_danificada")
+    private Integer quantidadeDanificada;
 
     @Enumerated(EnumType.STRING)
     private LogisticaEstado logisticaEstado;

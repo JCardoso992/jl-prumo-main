@@ -13,6 +13,7 @@ import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 
@@ -20,6 +21,9 @@ import java.util.List;
 @EnableJpaAuditing(auditorAwareRef = "securityAuditorAware")
 @EnableCaching
 public class ObraManagementServiceApplication {
+
+    @Value("${app.cor.origins}")
+    private String allowedOrigins;
 
     public static void main(String[] args) {
         SpringApplication.run(ObraManagementServiceApplication.class, args);
@@ -33,7 +37,7 @@ public class ObraManagementServiceApplication {
          final String securitySchemeName = "bearerAuth";
          return new OpenAPI()
                  .servers(List.of(
-                         new Server().url("https://miniature-space-carnival-97q7xvpgv4g92pvj4-9093.app.github.dev").description("Codespaces")
+                         new Server().url(allowedOrigins).description("Documentação da API Microservice JL-PRUMO Obra Management Service")
                  ))
                  .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
                  .components(new Components()

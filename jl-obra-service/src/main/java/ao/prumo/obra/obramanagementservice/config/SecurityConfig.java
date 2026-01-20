@@ -10,27 +10,35 @@ import org.springframework.security.config.Customizer;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
 
+    @Value("${app.cor.origins}")
+    private String allowedOrigins;
+
+    @Value("${app.cor.frontend}")
+    private String allowedOriginsFrontend;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-           .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-           .csrf(csrf -> csrf.disable())
-           .authorizeHttpRequests(auth -> auth
-             .requestMatchers("/api/v1/obra/public/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-             .anyRequest().authenticated()
-            )
-            .oauth2ResourceServer(oauth -> oauth
-                .jwt(jwt -> jwt.jwtAuthenticationConverter(new SupabaseJwtConverter())) // REGISTRE AQUI O SEU CONVERTER
-        );
-    
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/v1/obra/public/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        .anyRequest().authenticated())
+                .oauth2ResourceServer(oauth -> oauth
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(new SupabaseJwtConverter())) // REGISTRE AQUI O SEU
+                                                                                                // CONVERTER
+                );
+
         return http.build();
     }
 
@@ -38,7 +46,8 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("*")); // Em produção, use o URL do Render
+        //configuration.setAllowedOrigins(Arrays.asList("*")); // Em produção, use o URL do Render
+        configuration.setAllowedOrigins(List.of(allowedOriginsFrontend, allowedOrigins));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
 
