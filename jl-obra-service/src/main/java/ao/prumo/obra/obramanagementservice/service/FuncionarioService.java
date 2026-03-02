@@ -117,19 +117,19 @@ public class FuncionarioService
         Funcionario salvo = funcionarioRepository.save(funcionario);
 
         // 2. CONVIDAR NO SUPABASE AUTH (Novo passo)
-        // Isso dispara o e-mail de verificação
-        UUID supabaseUserId = supabaseAuthService.convidarUsuario(request.getEmail());
+        if (request.getEstadoUtilizador().compareTo(EstadoUtilizador.NORMAL) != 0) {
 
-        // 3. CRIAR PERFIL (Sincronização com a tabela perfis)
-        Perfil perfil = new Perfil();
-        perfil.setId(supabaseUserId); // O ID deve ser igual ao do Auth
-        perfil.setEmail(request.getEmail());
-        perfil.setNomeCompleto(request.getCodPessoa().getNome());
-        perfil.setRole(UserRole.USER); // Funcionário é USER
-        perfil.setOrganizacaoId(new Organizacao(organizacaoId));
-        perfil.setAcessoLiberado(false); // Só libera após validar e-mail (opcional)
-        perfilRepository.save(perfil);
-
+            // 3. CRIAR PERFIL (Sincronização com a tabela perfis)
+            Perfil perfil = new Perfil();
+            perfil.setId(supabaseUserId); // O ID deve ser igual ao do Auth
+            perfil.setEmail(request.getEmail());
+            perfil.setNomeCompleto(request.getCodPessoa().getNome());
+            perfil.setRole(UserRole.USER); // Funcionário é USER
+            perfil.setOrganizacaoId(new Organizacao(organizacaoId));
+            perfil.setAcessoLiberado(false); // Só libera após validar e-mail (opcional)
+            perfilRepository.save(perfil);
+        }
+       
         log.info("Funcionario criado com sucesso.");
         return funcionarioMapper.toResponse(salvo);
     }
