@@ -15,12 +15,16 @@ import BasicLayout from "layouts/authentication/components/BasicLayout";
 import bgImage from "assets/images/bg-sign-in-basic.jpeg";
 import { supabase } from "config/supabase";
 import { useNavigate } from "react-router-dom";
+import MDSnackbar from "components/MDSnackbar";
 
 function Basic() {
   const [rememberMe, setRememberMe] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [errorSB, setErrorSB] = useState(false);
   const navigate = useNavigate();
+  const openErrorSB = () => setErrorSB(true);
+  const closeErrorSB = () => setErrorSB(false);
 
   const handleSetRememberMe = () => setRememberMe(!rememberMe);
 
@@ -33,17 +37,28 @@ function Basic() {
     });
 
     if (error) {
-      alert(error.message);
+      setErrorSB(true);
       return;
     }
 
-    if (!rememberMe) {
-      // sessão apenas na memória
-      await supabase.auth.setSession(data.session);
-    }
+    await supabase.auth.setSession(data.session);
 
     navigate("/dashboard");
   };
+
+  const renderErrorSB = (
+    <MDSnackbar
+      color="error"
+      icon="warning"
+      title="Erro"
+      content="Volte a digitar os dados!"
+      dateTime=""
+      open={errorSB}
+      onClose={closeErrorSB}
+      close={closeErrorSB}
+      bgWhite
+    />
+  );
 
   return (
     <BasicLayout image={bgImage}>
@@ -113,12 +128,13 @@ function Basic() {
               </MDTypography>
             </MDBox>
             <MDBox mt={4} mb={1}>
-              <MDButton variant="gradient" color="info" fullWidth>
+              <MDButton type="submit" variant="gradient" color="info" fullWidth>
                 Entrar
               </MDButton>
             </MDBox>
           </MDBox>
         </MDBox>
+        {renderErrorSB}
       </Card>
     </BasicLayout>
   );

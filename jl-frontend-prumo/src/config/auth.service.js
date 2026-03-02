@@ -43,10 +43,10 @@ class AuthService {
   /**
    * Retorna role (AGORA SÍNCRONO)
    */
-  static getRoleFromToken(token){
+  static getRoleFromToken(token) {
     if (!token) return null;
 
-    const decoded = jwtDecode<SupabaseJwtPayload>(token);
+    const decoded = jwtDecode < SupabaseJwtPayload > (token);
     return decoded.app_metadata?.role ?? null;
   }
 
@@ -65,7 +65,7 @@ class AuthService {
   /**
    * Verifica múltiplas roles
    */
-  static async hasAnyRole(roles){
+  static async hasAnyRole(roles) {
     const session = await this.getSession();
     const token = session?.access_token;
 
