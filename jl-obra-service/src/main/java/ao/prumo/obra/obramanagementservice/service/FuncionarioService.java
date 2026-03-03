@@ -9,6 +9,7 @@ import ao.prumo.obra.obramanagementservice.entity.dto.request.EnderecoRequest;
 import ao.prumo.obra.obramanagementservice.entity.dto.request.FuncionarioRequest;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.FuncionarioResponse;
 import ao.prumo.obra.obramanagementservice.entity.dto.response.FuncionarioViewResponse;
+import ao.prumo.obra.obramanagementservice.entity.enums.EstadoUtilizador;
 import ao.prumo.obra.obramanagementservice.entity.repository.EnderecoRepository;
 import ao.prumo.obra.obramanagementservice.entity.repository.FuncionarioRepository;
 import ao.prumo.obra.obramanagementservice.entity.repository.FuncionarioViewRepository;
@@ -120,8 +121,9 @@ public class FuncionarioService
         if (request.getEstadoUtilizador().compareTo(EstadoUtilizador.NORMAL) != 0) {
 
             // 3. CRIAR PERFIL (Sincronização com a tabela perfis)
+            UUID usuarioId = UUID.fromString(jwt.getSubject());
             Perfil perfil = new Perfil();
-            perfil.setId(supabaseUserId); // O ID deve ser igual ao do Auth
+            perfil.setId(usuarioId); // O ID deve ser igual ao do Auth
             perfil.setEmail(request.getEmail());
             perfil.setNomeCompleto(request.getCodPessoa().getNome());
             perfil.setRole(UserRole.USER); // Funcionário é USER

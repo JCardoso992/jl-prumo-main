@@ -56,7 +56,7 @@ function Footer({ light }) {
                 &nbsp;José Cardoso&nbsp;
               </MDTypography>
             </Link>
-            para uma web melhor
+            para uma web melhor.
           </MDBox>
         </MDBox>
       </Container>
