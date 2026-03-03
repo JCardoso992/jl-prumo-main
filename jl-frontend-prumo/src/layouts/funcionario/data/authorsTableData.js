@@ -5,7 +5,6 @@ import MDBadge from "components/MDBadge";
 import team2 from "assets/images/team-2.jpg";
 import team3 from "assets/images/team-3.jpg";
 import team4 from "assets/images/team-4.jpg";
-import PropTypes from "prop-types";
 
 export default function data() {
   const Author = ({ image, name, email }) => (
@@ -20,12 +19,6 @@ export default function data() {
     </MDBox>
   );
 
-  Author.propTypes = {
-    image: PropTypes.string.isRequired,
-    name: PropTypes.string,
-    email: PropTypes.string,
-  };
-
   const Job = ({ title, description }) => (
     <MDBox lineHeight={1} textAlign="left">
       <MDTypography display="block" variant="caption" color="text" fontWeight="medium">
@@ -34,11 +27,6 @@ export default function data() {
       <MDTypography variant="caption">{description}</MDTypography>
     </MDBox>
   );
-
-  Job.propTypes = {
-    title: PropTypes.string,
-    description: PropTypes.string,
-  };
 
   return {
     columns: [
